@@ -1,0 +1,45 @@
+parameters:
+- name: buildNumber
+  type: string
+- name: containerRegistryConnection
+  type: string
+- name: containerRepository
+  type: string
+
+steps:
+
+- task: Docker@2
+  displayName: 'Build admin container'
+  inputs:
+    containerRegistry: '${{ parameters.containerRegistryConnection }}'
+    repository: '${{ parameters.containerRepository }}'
+    command: 'build'
+    Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}
+
+- task: Docker@2
+  displayName: 'Build presentation container'
+  inputs:
+    containerRegistry: '${{ parameters.containerRegistryConnection }}'
+    repository: '${{ parameters.containerRepository }}'
+    command: 'build'
+    Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}
+
+- task: Docker@2
+  displayName: 'Build worker container'
+  inputs:
+    containerRegistry: '${{ parameters.containerRegistryConnection }}'
+    repository: '${{ parameters.containerRepository }}'
+    command: 'build'
+    Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}

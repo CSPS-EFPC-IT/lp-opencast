@@ -1,0 +1,39 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
+    - LICENSE
+
+resources:
+  repositories:
+  - repository: lp-common
+    type: git
+    name: learning-platform/lp-common
+
+variables:
+- group: appDev-pb-public
+
+pool:
+  vmImage: ubuntu-20.04
+
+steps:
+- checkout: self # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-opencast folder.
+- checkout: lp-common # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-common folder.
+
+- task: Bash@3
+  displayName: 'Set containerRepositoryName Variable'
+  inputs:
+    filePath: 'lp-common/azure/scripts/set_container_repository_names_variable_v2.sh'
+    arguments: >-
+      --git-branch-names "$(Build.SourceBranchName)"
+      --git-repository-name "$(Build.Repository.Name)"
+      --variable-name "containerRepositoryName"
+
+- template: templates/build-steps.yml
+  parameters:
+    buildNumber: $(Build.BuildNumber)
+    containerRepository: $(containerRepositoryName)
+    containerRegistryConnection: $(containerRegistryConnection)
