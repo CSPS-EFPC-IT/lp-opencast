@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# Setup OpenCast Server.
+# This script must be run as root (ex.: sudo sh ./[script_name])
+# Style Guide: https://google.github.io/styleguide/shellguide.html
+
+# Parameters: all manadatory and must be prefixed with "--" on command line.
+declare -A parameters=( \
+  [db_server_admin_password]="" \
+  [db_server_admin_username]="" \
+  [db_server_fqdn]="" \
+  [db_server_db_name]="" \
+  [smtp_server_fqdn]="" \
+  [smtp_server_from_address]="" \
+  [smtp_server_password]="" \
+  [smtp_server_port]="" \
+  [smtp_server_username]="" \
+  [server_admin_email]="" \
+  [server_fqdn]="" \
+  [server_reboot_utc_time]="" \
+  [server_resource_name]="" \
+)
+
+# Functions
+
+# All libraries not available at build time.
+# shellcheck source=/dev/null
+source ./logger.sh
+# shellcheck source=/dev/null
+source ./utils.sh
+
+function main() {
+  utils::set_exit_trap
+  logger::title "Start of $0"
+
+  #############################################################################
+
+  logger::title "Parse Input Parameters"
+  utils::parse_parameters "$@"
+
+  logger::title "Upgrade Server and Remove Unused Packages"
+  ./upgrade_server
+
+  logger::title "Install Unattended Upgrade Tools"
+  ./install_unattended_upgrade_tools \
+    --server_admin_email "${parameters[server_admin_email]}" \
+    --server_fqdn "${parameters[server_fqdn]}" \
+    --server_reboot_utc_time "${parameters[server_reboot_utc_time]}" \
+    --server_resource_name "${parameters[server_resource_name]}" \
+    --smtp_server_fqdn "${parameters[smtp_server_fqdn]}" \
+    --smtp_server_from_address "${parameters[smtp_server_from_address]}" \
+    --smtp_server_password "${parameters[smtp_server_password]}" \
+    --smtp_server_port "${parameters[smtp_server_port]}" \
+    --smtp_server_username "${parameters[smtp_server_username]}"
+
+## Installer tout le nécessaire pour l'application.
+## Docker
+## Docker-compose
+## mysql client
+
+# Créer base de données et usager pour l'application
+
+# Configurer le "file services share". (2)
+
+## Créer le fichier d'environnement pour l'application.
+
+## Lancer l'application en arrière plan
+
+  #############################################################################
+
+  logger::title "End of $0"
+  utils::unset_exit_trap
+}
+
+main "$@"
