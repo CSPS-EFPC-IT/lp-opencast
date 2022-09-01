@@ -1,0 +1,459 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Application Gateway resource used by the Virtual Machine."
+            }
+        },
+        "applicationGatewayResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Application Gateway used by the Virtual machine."
+            }
+        },
+        "applicationGatewaySubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription Id of the Application Gateway used by the Virtual Machine."
+            }
+        },
+        "appOpenSearchJavaOpts": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbJdbcPass": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbJdbcUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbJdbcUser": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDownloadUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityAdminPass": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityAdminUser": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityDigestPass": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityDigestUser": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectServerUrlAdmin": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectServerUrlPresentation": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectServerUrlWorker": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appPropOrgOpenCastProjectAdminUiUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appPropOrgOpenCastProjectEngageUiUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "databaseServerAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Database Server Administrator's password."
+            }
+        },
+        "databaseServerAdminUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Database Server Administrator's username."
+            }
+        },
+        "databaseServerDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the application database within the Database Server."
+            }
+        },
+        "databaseServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Database Server resource."
+            }
+        },
+        "databaseServerResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Name of the Resource Group containing the Database Server."
+            }
+        },
+        "databaseServerSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription ID of the Database Server."
+            }
+        },
+        "databaseServerType": {
+            "type": "string",
+            "defaultValue": "Microsoft.DBforMariaDB/servers",
+            "metadata": {
+                "description": "The Type of the Database Server resource."
+            }
+        },
+        "databaseServerTypeApiVersion": {
+            "type": "string",
+            "defaultValue": "2018-06-01",
+            "metadata": {
+                "description": "The Version of the Database Server resource type API."
+            }
+        },
+        "deploymentTimestamp" : {
+            "type": "int",
+            "defaultValue": "[int(utcNow('ddHHmmss'))]",
+            "metadata": {
+                "description": "The deployment timestamp. Determines whether the Virtual Machine Custom Script extension is rerun. Default value will have the Virtual Machine Custom Script extension rerun at each ARM template deployment. Ref.: https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux#property-value-details"
+            }
+        },
+        "genericShellScriptsRepoRawFilesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URL of the Generic Shell Scripts repository raw files."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The name of the Azure Location where resources will be created."
+            }
+        },
+        "networkInterfaceCardName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of Network InterCard Card resource used by the Virtual Machine."
+            }
+        },
+        "projectRepoRawFilesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URL of the current project repository raw files."
+            }
+        },
+        "resourceTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional tags to add to each resource created."
+            }
+        },
+        "smtpServerFqdn": {
+            "type": "string",
+            "metadata": {
+                "description": "The Fully Qualified Domain Name of the SMTP server."
+            }
+        },
+        "smtpServerFromAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The FROM address to used with the SMTP server."
+            }
+        },
+        "smtpServerPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Password of the SMTP server account."
+            }
+        },
+        "smtpServerPort": {
+            "type": "int",
+            "defaultValue": 587,
+            "metadata": {
+                "description": "The Port number used by the SMTP server."
+            }
+        },
+        "smtpServerUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Username of the SMTP server account."
+            }
+        },
+        "virtualMachineAdminEmail": {
+            "type": "string",
+            "metadata": {
+                "description": "The Email address of the Virtual Machine Administrator."
+            }
+        },
+        "virtualMachineAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password of the Virtual Machine's Administrator."
+            }
+        },
+        "virtualMachineAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The username of the Virtual Machine's Administrator."
+            }
+        },
+        "virtualMachineName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Machine's resource."
+            }
+        },
+        "virtualMachineOsDiskName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Disk resource used by the Virtual machine's Operating System."
+            }
+        },
+        "virtualMachineRebootUtcTime": {
+            "type": "string",
+            "defaultValue": "07:00",
+            "metadata": {
+                "description": "The Time of the day at which the Virtual Machine will be rebooted after an automatic upgrade."
+            }
+        },
+        "virtualMachineTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Optional tags specific to Virtual Machines."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network resource used by the Virtual Machine."
+            }
+        },
+        "virtualMachineSize":{
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+            "metadata": {
+                "description": "The Size of the Virtual Machine. Ref.: https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?pivots=deployment-language-arm-template#hardwareprofile-1"
+            }
+        },
+        "virtualNetworkResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Virtual Network used by the Virtual Machine."
+
+            }
+        },
+        "virtualNetworkSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network Subnet used by the Virtual Machine."
+            }
+        },
+        "virtualNetworkSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription Id of the Virtual Network used by the Virtual Machine."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('networkInterfaceCardName')]",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId(parameters('virtualNetworkSubscriptionId'), parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('virtualNetworkSubnetName'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "applicationGatewayBackendAddressPools": [
+                                {
+                                    "id": "[reference(resourceId(parameters('applicationGatewaySubscriptionId'), parameters('applicationGatewayResourceGroupName'), 'Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '2022-01-01').backendAddressPools[0].id]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": true,
+                "enableIPForwarding": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('virtualMachineName')]",
+            "tags": "[union(parameters('resourceTags'), parameters('virtualMachineTags'))]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceCardName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "canonical",
+                        "offer": "0001-com-ubuntu-server-focal",
+                        "sku": "20_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[parameters('virtualMachineOsDiskName')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[toLower(parameters('virtualMachineName'))]",
+                    "adminUsername": "[parameters('virtualMachineAdminUsername')]",
+                    "adminPassword": "[parameters('virtualMachineAdminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceCardName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(parameters('virtualMachineName'),'/setup')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "timestamp": "[parameters('deploymentTimestamp')]",
+                    "fileUris":[]
+                },
+                "protectedSettings": {
+                    "fileUris": [
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/install_unattended_upgrade_tools')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/logger.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/os.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/mysql.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/upgrade_server')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/utils.sh')]",
+                        "[concat(parameters('projectRepoRawFilesBaseUrl'),'/azure/scripts/setup_server')]"
+                    ],
+                    "commandToExecute": "[concat('./setup_server',
+                        ' --app_opensearch_java_opts ', '\"', parameters('appOpenSearchJavaOpts'), '\"',
+                        ' --app_org_opencastproject_db_jdbc_pass ', '\"', parameters('appOrgOpenCastProjectDbJdbcPass'), '\"',
+                        ' --app_org_opencastproject_db_jdbc_url ', '\"',  parameters('appOrgOpenCastProjectDbJdbcUrl'), '\"',
+                        ' --app_org_opencastproject_db_jdbc_user ', '\"', parameters('appOrgOpenCastProjectDbJdbcUser'), '\"',
+                        ' --app_org_opencastproject_download_url ', '\"', parameters('appOrgOpenCastProjectDownloadUrl'), '\"',
+                        ' --app_org_opencastproject_security_admin_pass ', '\"', parameters('appOrgOpenCastProjectSecurityAdminPass'), '\"',
+                        ' --app_org_opencastproject_security_admin_user ', '\"', parameters('appOrgOpenCastProjectSecurityAdminUser'), '\"',
+                        ' --app_org_opencastproject_security_digest_pass ', '\"', parameters('appOrgOpenCastProjectSecurityDigestPass'), '\"',
+                        ' --app_org_opencastproject_security_digest_user ', '\"', parameters('appOrgOpenCastProjectSecurityDigestUser'), '\"',
+                        ' --app_org_opencastproject_server_url_admin ', '\"', parameters('appOrgOpenCastProjectServerUrlAdmin'), '\"',
+                        ' --app_org_opencastproject_server_url_presentation ', '\"', parameters('appOrgOpenCastProjectServerUrlPresentation'), '\"',
+                        ' --app_org_opencastproject_server_url_worker ', '\"', parameters('appOrgOpenCastProjectServerUrlWorker'), '\"',
+                        ' --app_prop_org_opencastproject_admin_ui_url ', '\"',  parameters('appPropOrgOpenCastProjectAdminUiUrl'), '\"',
+                        ' --app_prop_org_opencastproject_engage_ui_url ', '\"', parameters('appPropOrgOpenCastProjectEngageUiUrl'), '\"',
+                        ' --db_server_admin_password ', '\"', parameters('databaseServerAdminPassword'), '\"',
+                        ' --db_server_admin_username ', '\"', parameters('databaseServerAdminUsername'), '\"',
+                        ' --db_server_db_name ', '\"', parameters('databaseServerDatabaseName'), '\"',
+                        ' --db_server_fqdn ', '\"', reference(resourceId(parameters('databaseServerSubscriptionId'), parameters('databaseServerResourceGroupName'), parameters('databaseServerType'), parameters('databaseServerName')), parameters('databaseServerTypeApiVersion')).fullyQualifiedDomainName, '\"',
+                        ' --server_admin_email ', '\"', parameters('virtualMachineAdminEmail'), '\"',
+                        ' --server_fqdn ', '\"', parameters('virtualMachineName'), '\"',
+                        ' --server_reboot_utc_time ', '\"', parameters('virtualMachineRebootUtcTime'), '\"',
+                        ' --server_resource_name ', '\"', parameters('virtualMachineName'), '\"',
+                        ' --smtp_server_fqdn ', '\"', parameters('smtpServerFqdn'), '\"',
+                        ' --smtp_server_from_address ', '\"', parameters('smtpServerFromAddress'), '\"',
+                        ' --smtp_server_password ', '\"', parameters('smtpServerPassword'), '\"',
+                        ' --smtp_server_port ', '\"', parameters('smtpServerPort'), '\"',
+                        ' --smtp_server_username ', '\"', parameters('smtpServerUsername'), '\"',
+                        ' > /var/log/setup_server.$(date +\"%Y%m%dT%H%M%S\").log 2>&1')]"
+                }
+            }
+        }
+     ],
+    "outputs": {}
+}
