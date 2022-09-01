@@ -13,9 +13,9 @@ steps:
       echo "length(parameters.containerRepository) = ${MYSECRET2}"
       echo "replace('lp-opencast_issue-1633', '-', '.') = ${MYSECRET3}"
     env:
-      MYSECRET1: ${{ parameters.containerRepository }}
-      MYSECRET2: ${{ length(parameters.containerRepository) }}
-      MYSECRET3: ${{ replace('lp-opencast_issue-1633', '-', '.') }}
+      MYSECRET1: "${{ parameters.containerRepository }}"
+      MYSECRET2: "${{ length(parameters.containerRepository) }}"
+      MYSECRET3: "${{ replace(parameters.containerRepository, '-', '.') }}""
 
 # - task: Docker@2
 #   displayName: 'Build admin container'
