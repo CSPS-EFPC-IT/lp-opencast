@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceApiVersion": {
+            "type": "string",
+            "defaultValue": "2022-01-01"
+        },
+        "resourceChildName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourceGroupName": {
+            "type": "string",
+            "defaultValue": "OpenCast-DEV-RG"
+        },
+        "resourceName": {
+            "type": "string",
+            "defaultValue": "OpenCast-DEV-Admin-NIC"
+        },
+        "resourceType": {
+            "type": "string",
+            "defaultValue": "Microsoft.Network/networkInterfaces"
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": "b44b3cf6-fb7d-4b25-9a81-b903fd8bd936"
+        }
+    },
+    "resources": [],
+    "outputs": {
+    //   "resourceFullObject": {
+    //     "type": "object",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName')), parameters('resourceApiVersion'), 'Full')]"
+    //   },
+      "resourceObject": {
+        "type": "object",
+        "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName')), parameters('resourceApiVersion'))]"
+      }
+    //   "resourceObjectPropertyLevel1": {
+    //     "type": "string",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName')), parameters('resourceApiVersion')).fullyQualifiedDomainName]"
+    //   }
+    //   "resourceObjectPropertyLevel2": {
+    //     "type": "string",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName')), parameters('resourceApiVersion')).backendAddressPools[0].name]"
+    //   }
+    //   "childFullObject": {
+    //     "type": "object",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName'), parameters('resourceChildName')), parameters('resourceApiVersion'), 'Full')]"
+    //   }
+    //   ,"childFullObjectPropertyLevel1": {
+    //     "type": "string",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName'), parameters('resourceChildName')), parameters('resourceApiVersion'), 'Full').resourceGroupName]"
+    //   },
+    //   ,"childFullObjectPropertyLevel2": {
+    //     "type": "string",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName'), parameters('resourceChildName')), parameters('resourceApiVersion'), 'Full').properties.secretUriWithVersion]"
+    //   }
+    //   "childObject": {
+    //     "type": "object",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName'), parameters('resourceChildName')), parameters('resourceApiVersion'))]"
+    //   }
+    // //   ,"childObjectPropertyLevel1": {
+    //     "type": "string",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName'), parameters('resourceChildName')), parameters('resourceApiVersion')).secretUriWithVersion]"
+    //   }
+    //   "childObjectPropertyLevel2": {
+    //     "type": "int",
+    //     "value": "[reference(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), parameters('resourceType'), parameters('resourceName'), parameters('resourceChildName')), parameters('resourceApiVersion')).attributes.exp]"
+    //   }
+    // "testObject": {
+    //     "type": "object",
+    //     "value": "[createObject(resourceId(parameters('subscriptionId'), parameters('resourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('resourceName')), createObject())]"
+    //   }
+    }
+  }

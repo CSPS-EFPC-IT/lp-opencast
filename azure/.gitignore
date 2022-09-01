@@ -1,0 +1,2 @@
+arm-templates/*.parameters.*.json
+!arm-templates/*.parameters.example.json
