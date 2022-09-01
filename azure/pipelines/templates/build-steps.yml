@@ -11,7 +11,7 @@ steps:
   - script: |
       echo "parameters.containerRepository = ${MYSECRET1}"
       echo "length(parameters.containerRepository) = ${MYSECRET2}"
-      echo "replace('lp-opencast_issue-1633', '-', '.') = ${MYSECRET3}"
+      echo "replace(parameters.containerRepository, '-', '.') = ${MYSECRET3}"
     env:
       MYSECRET1: "${{ parameters.containerRepository }}"
       MYSECRET2: "${{ length(parameters.containerRepository) }}"
