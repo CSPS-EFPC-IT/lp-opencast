@@ -12,7 +12,7 @@ steps:
   displayName: 'Build admin container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: ${{ replace(parameters.containerRepository, '_', '-admin_') }}
+    repository: ${{ replace('lp-opencast_issue-1634', '_', '-admin_') }}
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
     buildContext: 'lp-opencast'
