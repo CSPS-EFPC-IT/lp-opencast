@@ -9,7 +9,7 @@ parameters:
 steps:
 
   - script: |
-      echo "parameters.containerRepository = ${MYSECRET2}"
+      echo "parameters.containerRepository = ${MYSECRET1}"
       echo "length(parameters.containerRepository) = ${MYSECRET2}"
       echo "replace('lp-opencast_issue-1633', '-', '.') = ${MYSECRET3}"
     env:
