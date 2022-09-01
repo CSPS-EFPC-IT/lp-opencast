@@ -8,6 +8,15 @@ parameters:
 
 steps:
 
+  - script: |
+      echo "parameters.containerRegistry = ${MYSECRET2}"
+      echo "length(parameters.containerRegistry) = ${MYSECRET2}"
+      echo "replace('lp-opencast_issue-1633', '-', '.') = ${MYSECRET3}"
+    env:
+      MYSECRET1: ${{ parameters.containerRegistry }}
+      MYSECRET2: ${{ length(parameters.containerRegistry) }}
+      MYSECRET3: ${{ replace('lp-opencast_issue-1633', '-', '.') }}
+
 # - task: Docker@2
 #   displayName: 'Build admin container'
 #   inputs:
@@ -20,23 +29,23 @@ steps:
 #       latest
 #       ${{ parameters.buildNumber }}
 
-- task: Docker@2
-  displayName: 'Build presentation container'
-  inputs:
-    containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: "${{ length(parameters.containerRepository) }}"
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
+# - task: Docker@2
+#   displayName: 'Build presentation container'
+#   inputs:
+#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
+#     repository: "${{ length(parameters.containerRepository) }}"
+#     command: 'buildAndPush'
+#     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
+#     buildContext: 'lp-opencast'
+#     tags: |
+#       latest
+#       ${{ parameters.buildNumber }}
 
 # - task: Docker@2
 #   displayName: 'Build worker container'
 #   inputs:
 #     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-#     repository: ${{ replace(parameters['containerRepository'], '_', '-worker_') }}
+#     repository: ${{ replace(parameters.containerRepository, '_', '-worker_') }}
 #     command: 'buildAndPush'
 #     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
 #     buildContext: 'lp-opencast'
