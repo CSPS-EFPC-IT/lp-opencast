@@ -8,35 +8,35 @@ parameters:
 
 steps:
 
-- task: Docker@2
-  displayName: 'Build admin container'
-  inputs:
-    containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: ${{ replace('lp-opencast_issue-1634', '_', '-admin_') }}
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
+# - task: Docker@2
+#   displayName: 'Build admin container'
+#   inputs:
+#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
+#     repository: ${{ replace('lp-opencast_issue-1634', '_', '-admin_') }}
+#     command: 'buildAndPush'
+#     Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
+#     buildContext: 'lp-opencast'
+#     tags: |
+#       latest
+#       ${{ parameters.buildNumber }}
 
-- task: Docker@2
-  displayName: 'Build presentation container'
-  inputs:
-    containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: "${{ replace(parameters.containerRepository, '_', '-presentation_') }}"
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
+# - task: Docker@2
+#   displayName: 'Build presentation container'
+#   inputs:
+#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
+#     repository: "${{ replace(parameters.containerRepository, '_', '-presentation_') }}"
+#     command: 'buildAndPush'
+#     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
+#     buildContext: 'lp-opencast'
+#     tags: |
+#       latest
+#       ${{ parameters.buildNumber }}
 
 - task: Docker@2
   displayName: 'Build worker container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: $[ replace(${{ parameters.containerRepository }}, '_', '-worker_') ]
+    repository: $[ replace('${{ parameters.containerRepository }}', '_', '-worker_') ]
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
     buildContext: 'lp-opencast'
