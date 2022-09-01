@@ -20,23 +20,23 @@ steps:
 #       latest
 #       ${{ parameters.buildNumber }}
 
-# - task: Docker@2
-#   displayName: 'Build presentation container'
-#   inputs:
-#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-#     repository: "${{ replace(parameters.containerRepository, '_', '-presentation_') }}"
-#     command: 'buildAndPush'
-#     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
-#     buildContext: 'lp-opencast'
-#     tags: |
-#       latest
-#       ${{ parameters.buildNumber }}
+- task: Docker@2
+  displayName: 'Build presentation container'
+  inputs:
+    containerRegistry: '${{ parameters.containerRegistryConnection }}'
+    repository: ${{ if(contains(parameters.containerRepository, '_'), replace(parameters.containerRepository, '_', '-presentation_'), 'patate') }}
+    command: 'buildAndPush'
+    Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}
 
 - task: Docker@2
   displayName: 'Build worker container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: ${{ replace(coalesce(parameters.containerRepository,'coalesceFailure'), '_', '-worker_') }}
+    repository: ${{ replace(parameters['containerRepository'], '_', '-worker_') }}
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
     buildContext: 'lp-opencast'
