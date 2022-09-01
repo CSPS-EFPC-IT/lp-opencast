@@ -24,7 +24,7 @@ steps:
   displayName: 'Build presentation container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: "${{ contains(parameters.containerRepository, '_') }}"
+    repository: "${{ contains(parameters.containerRepository, 'opencast') }}"
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
     buildContext: 'lp-opencast'
