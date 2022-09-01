@@ -8,47 +8,38 @@ parameters:
 
 steps:
 
-  - script: |
-      echo "parameters.containerRepository = ${MYSECRET1}"
-      echo "length(parameters.containerRepository) = ${MYSECRET2}"
-      echo "replace(parameters.containerRepository, '-', '.') = ${MYSECRET3}"
-    env:
-      MYSECRET1: "${{ parameters.containerRepository }}"
-      MYSECRET2: "${{ length(parameters.containerRepository) }}"
-      MYSECRET3: "${{ replace(parameters.containerRepository, '-', '.') }}"
+- task: Docker@2
+  displayName: 'Build admin container'
+  inputs:
+    containerRegistry: ${{ parameters.containerRegistryConnection }}
+    repository: '${{ parameters.containerRepository }}/admin'
+    command: 'buildAndPush'
+    Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}
 
-# - task: Docker@2
-#   displayName: 'Build admin container'
-#   inputs:
-#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-#     repository: ${{ replace('lp-opencast_issue-1634', '_', '-admin_') }}
-#     command: 'buildAndPush'
-#     Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
-#     buildContext: 'lp-opencast'
-#     tags: |
-#       latest
-#       ${{ parameters.buildNumber }}
+- task: Docker@2
+  displayName: 'Build presentation container'
+  inputs:
+    containerRegistry: ${{ parameters.containerRegistryConnection }}
+    repository: '${{ parameters.containerRepository }}/presentation'
+    command: 'buildAndPush'
+    Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}
 
-# - task: Docker@2
-#   displayName: 'Build presentation container'
-#   inputs:
-#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-#     repository: "${{ length(parameters.containerRepository) }}"
-#     command: 'buildAndPush'
-#     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
-#     buildContext: 'lp-opencast'
-#     tags: |
-#       latest
-#       ${{ parameters.buildNumber }}
-
-# - task: Docker@2
-#   displayName: 'Build worker container'
-#   inputs:
-#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-#     repository: ${{ replace(parameters.containerRepository, '_', '-worker_') }}
-#     command: 'buildAndPush'
-#     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
-#     buildContext: 'lp-opencast'
-#     tags: |
-#       latest
-#       ${{ parameters.buildNumber }}
+- task: Docker@2
+  displayName: 'Build worker container'
+  inputs:
+    containerRegistry: ${{ parameters.containerRegistryConnection }}
+    repository: '${{ parameters.containerRepository }}/worker'
+    command: 'buildAndPush'
+    Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
+    buildContext: 'lp-opencast'
+    tags: |
+      latest
+      ${{ parameters.buildNumber }}
