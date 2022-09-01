@@ -24,7 +24,7 @@ steps:
   displayName: 'Build presentation container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: "${{ contains(parameters.containerRepository, 'opencast') }}"
+    repository: "${{ length(parameters.containerRepository) }}"
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
     buildContext: 'lp-opencast'
@@ -32,14 +32,14 @@ steps:
       latest
       ${{ parameters.buildNumber }}
 
-- task: Docker@2
-  displayName: 'Build worker container'
-  inputs:
-    containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: ${{ replace(parameters['containerRepository'], '_', '-worker_') }}
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
+# - task: Docker@2
+#   displayName: 'Build worker container'
+#   inputs:
+#     containerRegistry: '${{ parameters.containerRegistryConnection }}'
+#     repository: ${{ replace(parameters['containerRepository'], '_', '-worker_') }}
+#     command: 'buildAndPush'
+#     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
+#     buildContext: 'lp-opencast'
+#     tags: |
+#       latest
+#       ${{ parameters.buildNumber }}
