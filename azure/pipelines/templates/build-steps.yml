@@ -15,7 +15,7 @@ steps:
     env:
       MYSECRET1: "${{ parameters.containerRepository }}"
       MYSECRET2: "${{ length(parameters.containerRepository) }}"
-      MYSECRET3: "${{ replace(parameters.containerRepository, '-', '.') }}""
+      MYSECRET3: "${{ replace(parameters.containerRepository, '-', '.') }}"
 
 # - task: Docker@2
 #   displayName: 'Build admin container'
