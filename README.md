@@ -47,7 +47,7 @@ The following environment variables are used to control the application at run-t
 -   **ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER** * : Username for the communication between Opencast nodes and capture agents.
 -   **ORG_OPENCASTPROJECT_SERVER_URL_ADMIN** * : The HTTP-URL where Opencast-admin is accessible.
 -   **ORG_OPENCASTPROJECT_SERVER_URL_PRESENTATION** * : The HTTP-URL where Opencast-presentation is accessible.
--   **ORG_OPENCASTPROJECT_SERVER_URL_WORKER** * : The HTTP-URL where Opencast-worker is accessible.
+-   **ORG_OPENCASTPROJECT_SERVER_URL_WORKER_N** * : The HTTP-URL where Opencast-worker is accessible. Replace N with the worker digit instance.
 -   **PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL** * : HTTP-URL of the admin node.
 -   **PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL** * : HTTP-URL of the engage node.
 

@@ -17,7 +17,7 @@ services:
       - opensearch:/usr/share/opensearch/data
 
   opencast-admin:
-    image: lp-opencast-admin:12.0
+    image: lp-opencast-admin:12.2
     environment:
       ELASTICSEARCH_SERVER_HOST: ${ELASTICSEARCH_SERVER_HOST}
       ORG_OPENCASTPROJECT_DB_JDBC_PASS: ${ORG_OPENCASTPROJECT_DB_JDBC_PASS}
@@ -38,7 +38,7 @@ services:
       - data:/data
 
   opencast-presentation:
-    image: lp-opencast-presentation:12.0
+    image: lp-opencast-presentation:12.2
     environment:
       ELASTICSEARCH_SERVER_HOST: ${ELASTICSEARCH_SERVER_HOST}
       ORG_OPENCASTPROJECT_DB_JDBC_PASS: ${ORG_OPENCASTPROJECT_DB_JDBC_PASS}
@@ -58,8 +58,8 @@ services:
     volumes:
       - data:/data
 
-  opencast-worker:
-    image: lp-opencast-worker:12.0
+  opencast-worker-1:
+    image: lp-opencast-worker:12.2
     environment:
       ELASTICSEARCH_SERVER_HOST: ${ELASTICSEARCH_SERVER_HOST}
       ORG_OPENCASTPROJECT_DB_JDBC_PASS: ${ORG_OPENCASTPROJECT_DB_JDBC_PASS}
@@ -71,7 +71,7 @@ services:
       ORG_OPENCASTPROJECT_SECURITY_ADMIN_USER: ${ORG_OPENCASTPROJECT_SECURITY_ADMIN_USER}
       ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS: ${ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS}
       ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER: ${ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER}
-      ORG_OPENCASTPROJECT_SERVER_URL: ${ORG_OPENCASTPROJECT_SERVER_URL_WORKER}
+      ORG_OPENCASTPROJECT_SERVER_URL: ${ORG_OPENCASTPROJECT_SERVER_URL_WORKER_1}
       PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL: ${PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL}
       PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL: ${PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL}
     volumes:
