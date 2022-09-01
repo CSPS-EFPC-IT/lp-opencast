@@ -12,7 +12,7 @@ steps:
   displayName: 'Build admin container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: '${{ parameters.containerRepository }}-admin'
+    repository: '${{ replace(parameters.containerRepository, "_", "-admin_") }}'
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
     buildContext: 'lp-opencast'
@@ -24,7 +24,7 @@ steps:
   displayName: 'Build presentation container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: '${{ parameters.containerRepository }}-presentation'
+    repository: '${{ replace(parameters.containerRepository, "_", "-presentation_") }}'
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
     buildContext: 'lp-opencast'
@@ -36,7 +36,7 @@ steps:
   displayName: 'Build worker container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: '${{ parameters.containerRepository }}-worker'
+    repository: '${{ replace(parameters.containerRepository, "_", "-worker_") }}'
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
     buildContext: 'lp-opencast'
