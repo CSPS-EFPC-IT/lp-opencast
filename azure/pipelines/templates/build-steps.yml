@@ -9,12 +9,12 @@ parameters:
 steps:
 
   - script: |
-      echo "parameters.containerRegistry = ${MYSECRET2}"
-      echo "length(parameters.containerRegistry) = ${MYSECRET2}"
+      echo "parameters.containerRepository = ${MYSECRET2}"
+      echo "length(parameters.containerRepository) = ${MYSECRET2}"
       echo "replace('lp-opencast_issue-1633', '-', '.') = ${MYSECRET3}"
     env:
-      MYSECRET1: ${{ parameters.containerRegistry }}
-      MYSECRET2: ${{ length(parameters.containerRegistry) }}
+      MYSECRET1: ${{ parameters.containerRepository }}
+      MYSECRET2: ${{ length(parameters.containerRepository) }}
       MYSECRET3: ${{ replace('lp-opencast_issue-1633', '-', '.') }}
 
 # - task: Docker@2
