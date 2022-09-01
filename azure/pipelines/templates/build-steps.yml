@@ -36,7 +36,7 @@ steps:
   displayName: 'Build worker container'
   inputs:
     containerRegistry: '${{ parameters.containerRegistryConnection }}'
-    repository: $[ replace('${{ parameters.containerRepository }}', '_', '-worker_') ]
+    repository: ${{ replace(coalesce(parameters.containerRepository,'coalesceFailure'), '_', '-worker_') }}
     command: 'buildAndPush'
     Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
     buildContext: 'lp-opencast'
