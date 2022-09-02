@@ -77,7 +77,7 @@ jobs:
           #     MYSECRET: $(applicationGatewayNetworkSecurityGroupName)
 
           - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Virtual Network'
+            displayName: 'Deploy Virtual Network Resource'
             inputs:
               deploymentScope: 'Resource Group'
               azureResourceManagerConnection: '$(serviceConnectionName)'
@@ -104,7 +104,7 @@ jobs:
                 -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
                 -virtualNetworkName "$(virtualNetworkName)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
+              deploymentName: '$(solutionName)_virtual-network_$(Build.BuildNumber)'
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy Blob Service'
