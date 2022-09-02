@@ -47,7 +47,7 @@ steps:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
-      --resource-type ""Microsoft.OperationalInsights/workspaces"
+      --resource-type "Microsoft.OperationalInsights/workspaces"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.logAnalyticsWorkspaceNameVariableName }}"
 
