@@ -157,9 +157,9 @@
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
-                "dnsSettings": {
-                    "domainNameLabel": "[toLower(parameters('publicIpAddressDomainNameLabel'))]"
-                },
+                // "dnsSettings": {
+                //     "domainNameLabel": "[toLower(parameters('publicIpAddressDomainNameLabel'))]"
+                // },
                 "ipTags": []
             }
         },
