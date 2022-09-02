@@ -8,7 +8,7 @@ parameters:
 
 steps:
 - task: Bash@3
-  displayName: 'Set Application Gateway's Network Security Group's Resource Name Variable'
+  displayName: "Set Application Gateway's Network Security Group's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
