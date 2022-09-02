@@ -48,7 +48,7 @@ jobs:
               applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
               applicationGatewaySubnetNameVariableName: 'applicationGatewaySubnetName'
               applicationGatewayUserAssignedIdentityNameVariableName: 'applicationGatewayUserAssignedIdentityName'
-              applicationGatwayPublicIpAddressNameVariableName: 'applicationGatewayPublicIpAddressName'
+              applicationGatewayPublicIpAddressNameVariableName: 'applicationGatewayPublicIpAddressName'
               applicationNetworkSecurityGroupNameVariableName: 'applicationNetworkSecurityGroupName'
               applicationSubnetNameVariableName: 'applicationSubnetName'
               dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
