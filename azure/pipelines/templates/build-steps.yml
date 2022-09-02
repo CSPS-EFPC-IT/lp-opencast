@@ -4,12 +4,11 @@ parameters:
 - name: buildSourceBranchName
   type: string
 - name: componentNames
-  type: array
-  default: [
-    "admin",
-    "presentation",
-    "worker"
-  ]
+  type: object
+  default:
+    - admin
+    - presentation
+    - worker
 - name: containerRegistryConnection
   type: string
 - name: containerRepositoryBaseName
