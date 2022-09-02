@@ -42,303 +42,220 @@ jobs:
           - checkout: self # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-opencast folder.
           - checkout: lp-common # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-common folder.
 
-          # Set NSG Resource Name Variables
-          - task: Bash@3
-            displayName: 'Set Application Gateway's Network Security Group's Resource Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --component-name "AG"
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/networkSecurityGroups"
-                --solution-name "$(solutionName)"
-                --variable-name "applicationGatewayNetworkSecurityGroupName"
+          - template: set-resource-names-steps.yml
+            parameters:
+              applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
+              environmentName: '$(environmentName)'
+              solutionName: '$(solutionName)'
 
-          - task: Bash@3
-            displayName: 'Set Application's Network Security Group Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --component-name "App"
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/networkSecurityGroups"
-                --solution-name "$(solutionName)"
-                --variable-name "applicationNetworkSecurityGroupName"
+          - script: echo "value = ${APPLICATIONGATEWAYNETWORKSECURITYGROUPNAME}"
 
-          - task: Bash@3
-            displayName: 'Set Data's Network Security Group Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --component-name "Data"
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/networkSecurityGroups"
-                --solution-name "$(solutionName)"
-                --variable-name "dataNetworkSecurityGroupName"
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Virtual Network'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(lp-opencast-dev-public.serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(location)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
+          #     overrideParameters: >-
+          #       -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
+          #       -applicationGatewaySubnetAddressRange "$(applicationGatewaySubnetAddressRange)"
+          #       -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
+          #       -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
+          #       -applicationSubnetAddressRange "$(applicationSubnetAddressRange)"
+          #       -applicationSubnetName "$(applicationSubnetName)"
+          #       -bastionHostSubnetAddressRange "$(bastionHostSubnetAddressRange)"
+          #       -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
+          #       -dataSubnetName "$(dataSubnetName)"
+          #       -dataSubnetAddressRange "$(dataSubnetAddressRange)"
+          #       -deniedIpAddressList "$(deniedIpAddressList)"
+          #       -location "$(location)"
+          #       -resourceTags "$(resourceTags)"
+          #       -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
 
-          # Set Virtual Network Resource names.
-          - task: Bash@3
-            displayName: 'Set Virtual Network Resource Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/virtualNetworks"
-                --solution-name "$(solutionName)"
-                --variable-name "virtualNetworkName"
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Blob Service'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(location)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-common/azure/arm-templates/deploy-blob-service.json'
+          #     overrideParameters: >-
+          #       -allowedIpAddressList "$(storageAccountAllowedIpAddressList)"
+          #       -location "$(location)"
+          #       -resourceTags $(resourceTags)
+          #       -storageAccountName "$(storageAccountName)"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #       -virtualNetworkResourceGroupName "$(resourceGroupName)"
+          #       -virtualNetworkSubnetName "$(virtualNetworkSubnetName)"
+          #       -virtualNetworkSubscriptionId "$(subscriptionId)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(componentName)-blob-service_$(Build.BuildNumber)'
 
-          - task: Bash@3
-            displayName: 'Set Application Gatway's VNet Subnet Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --component-name "AG"
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/virtualNetworks/subnets"
-                --solution-name "$(solutionName)"
-                --variable-name "applicationGatewaySubnetName"
+          # - task: Bash@3
+          #   displayName: 'Set Blob Service Container Name Variable'
+          #   inputs:
+          #     filePath: 'lp-common/azure/scripts/set_blob_service_container_names_variable.sh'
+          #     arguments: >-
+          #       --raw-names "$(containerRepositoryName)"
+          #       --variable-name "storageAccountBlobServiceContainerName"
 
-          - task: Bash@3
-            displayName: 'Set Application's VNet Subnet Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --component-name "App"
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/virtualNetworks/subnets"
-                --solution-name "$(solutionName)"
-                --variable-name "applicationSubnetName"
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Blob Service Container'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(location)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-common/azure/arm-templates/deploy-blob-service-container.json'
+          #     overrideParameters: >-
+          #       -containerName "$(storageAccountBlobServiceContainerName)"
+          #       -storageAccountName "$(storageAccountName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(componentName)-blob-service-container_$(Build.BuildNumber)'
 
-          - task: Bash@3
-            displayName: 'Set Data's VNet Subnet Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --component-name "Data"
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/virtualNetworks/subnets"
-                --solution-name "$(solutionName)"
-                --variable-name "dataSubnetName"
+          # - task: AzureCLI@2
+          #   displayName: 'Set Database Server FQDN Variable'
+          #   inputs:
+          #     azureSubscription: '$(serviceConnectionName)'
+          #     scriptType: 'bash'
+          #     scriptLocation: 'scriptPath'
+          #     scriptPath: 'lp-common/azure/scripts/set_database_server_fqdn_variable_v2.sh'
+          #     arguments: >-
+          #       --database-server-name "$(databaseServerName)"
+          #       --resource-group-name "$(resourceGroupName)"
+          #       --subscription-name "$(subscriptionName)"
+          #       --variable-name "databaseServerFqdn"
 
-          # Set Application Gateway resource name
-          - task: Bash@3
-            displayName: 'Set Application Gateway Resource Name Variable'
-            inputs:
-              filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-              arguments: >-
-                --environment-name "$(environmentName)
-                --resource-type "Microsoft.Network/applicationGateways"
-                --solution-name "$(solutionName)"
-                --variable-name "applicationGatewayName"
+          # - task: AzureCLI@2
+          #   displayName: 'Set Alternate Container Repository Tag Variable'
+          #   condition: eq(variables['containerRepositoryTag'], 'latest')
+          #   inputs:
+          #     azureSubscription: '$(serviceConnectionName)'
+          #     scriptType: 'bash'
+          #     scriptLocation: 'scriptPath'
+          #     scriptPath: 'lp-common/azure/scripts/set_alternate_container_repository_tag_variable.sh'
+          #     arguments: >-
+          #       --container-registry-name "$(containerRegistryName)"
+          #       --container-repository-name "$(containerRepositoryName)"
+          #       --container-repository-tag "$(containerRepositoryTag)"
+          #       --variable-name "containerRepositoryTag"
+          #     failOnStandardError: true
 
-          # Deploy resources 
+          # - task: AzureCLI@2
+          #   displayName: 'Set Blob Service Container Variables'
+          #   inputs:
+          #     azureSubscription: '$(serviceConnectionName)'
+          #     scriptType: 'bash'
+          #     scriptLocation: 'scriptPath'
+          #     scriptPath: 'lp-common/azure/scripts/set_blob_service_container_variables.sh'
+          #     arguments: >-
+          #       --storage-account-name "$(storageAccountName)"
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Virtual Network'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(lp-opencast-dev-public.serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(location)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
-              overrideParameters: >-
-                -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
-                -applicationGatewaySubnetAddressRange "$(applicationGatewaySubnetAddressRange)"
-                -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
-                -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
-                -applicationSubnetAddressRange "$(applicationSubnetAddressRange)"
-                -applicationSubnetName "$(applicationSubnetName)"
-                -bastionHostSubnetAddressRange "$(bastionHostSubnetAddressRange)"
-                -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
-                -dataSubnetName "$(dataSubnetName)"
-                -dataSubnetAddressRange "$(dataSubnetAddressRange)"
-                -deniedIpAddressList "$(deniedIpAddressList)"
-                -location "$(location)"
-                -resourceTags "$(resourceTags)"
-                -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
-                -virtualNetworkName "$(virtualNetworkName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
-
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Blob Service'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(location)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-common/azure/arm-templates/deploy-blob-service.json'
-              overrideParameters: >-
-                -allowedIpAddressList "$(storageAccountAllowedIpAddressList)"
-                -location "$(location)"
-                -resourceTags $(resourceTags)
-                -storageAccountName "$(storageAccountName)"
-                -virtualNetworkName "$(virtualNetworkName)"
-                -virtualNetworkResourceGroupName "$(resourceGroupName)"
-                -virtualNetworkSubnetName "$(virtualNetworkSubnetName)"
-                -virtualNetworkSubscriptionId "$(subscriptionId)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(componentName)-blob-service_$(Build.BuildNumber)'
-
-          - task: Bash@3
-            displayName: 'Set Blob Service Container Name Variable'
-            inputs:
-              filePath: 'lp-common/azure/scripts/set_blob_service_container_names_variable.sh'
-              arguments: >-
-                --raw-names "$(containerRepositoryName)"
-                --variable-name "storageAccountBlobServiceContainerName"
-
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Blob Service Container'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(location)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-common/azure/arm-templates/deploy-blob-service-container.json'
-              overrideParameters: >-
-                -containerName "$(storageAccountBlobServiceContainerName)"
-                -storageAccountName "$(storageAccountName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(componentName)-blob-service-container_$(Build.BuildNumber)'
-
-          - task: AzureCLI@2
-            displayName: 'Set Database Server FQDN Variable'
-            inputs:
-              azureSubscription: '$(serviceConnectionName)'
-              scriptType: 'bash'
-              scriptLocation: 'scriptPath'
-              scriptPath: 'lp-common/azure/scripts/set_database_server_fqdn_variable_v2.sh'
-              arguments: >-
-                --database-server-name "$(databaseServerName)"
-                --resource-group-name "$(resourceGroupName)"
-                --subscription-name "$(subscriptionName)"
-                --variable-name "databaseServerFqdn"
-
-          - task: AzureCLI@2
-            displayName: 'Set Alternate Container Repository Tag Variable'
-            condition: eq(variables['containerRepositoryTag'], 'latest')
-            inputs:
-              azureSubscription: '$(serviceConnectionName)'
-              scriptType: 'bash'
-              scriptLocation: 'scriptPath'
-              scriptPath: 'lp-common/azure/scripts/set_alternate_container_repository_tag_variable.sh'
-              arguments: >-
-                --container-registry-name "$(containerRegistryName)"
-                --container-repository-name "$(containerRepositoryName)"
-                --container-repository-tag "$(containerRepositoryTag)"
-                --variable-name "containerRepositoryTag"
-              failOnStandardError: true
-
-          - task: AzureCLI@2
-            displayName: 'Set Blob Service Container Variables'
-            inputs:
-              azureSubscription: '$(serviceConnectionName)'
-              scriptType: 'bash'
-              scriptLocation: 'scriptPath'
-              scriptPath: 'lp-common/azure/scripts/set_blob_service_container_variables.sh'
-              arguments: >-
-                --storage-account-name "$(storageAccountName)"
-
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy App Service'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(location)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-idm/azure/arm-templates/deploy-app-service.json'
-              overrideParameters: >-
-                -activityLoggerEnabled "$(activityLoggerEnabled)"
-                -adminAccounts $(adminAccounts)
-                -apiThrottle $(apiThrottle)
-                -appDebug "$(appDebug)"
-                -appEnv "$(environmentName)"
-                -appInstallOptions "$(appInstallOptions)"
-                -appKey "$(appKey)"
-                -appName "$(appName)"
-                -appServiceName "$(appServiceName)"
-                -appServicePlanName "$(appServicePlanName)"
-                -appTimezone "$(appTimezone)"
-                -appUrl "https://$(appServiceName).azurewebsites.net"
-                -authorizedEmailDomains "$(authorizedEmailDomains)"
-                -azureStorageConnectionString "$(storageAccountConnectionString)"
-                -azureStorageContainer "$(storageAccountBlobServiceContainerName)"
-                -azureStorageKey "$(storageAccountKey)"
-                -azureStorageName "$(storageAccountName)"
-                -azureStorageUrl "$(storageAccountBlobServiceEndPoint)"
-                -bulkImportBatchSize $(bulkImportBatchSize)
-                -bulkProcessBatchSize $(bulkProcessBatchSize)
-                -cacheDriver "$(cacheDriver)"
-                -containerImageName "$(containerRepositoryName):$(containerRepositoryTag)"
-                -containerRegistryName "$(containerRegistryName)"
-                -containerRegistryResourceGroupName "$(containerRegistryResourceGroupName)"
-                -containerRegistrySubscriptionId "$(containerRegistrySubscriptionId)"
-                -dbAdminPassword "$(databaseServerAdminPassword)"
-                -dbAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
-                -dbConnection "$(dbConnection)"
-                -dbDatabase "$(dbDatabase)"
-                -dbHost "$(databaseServerFqdn)"
-                -dbPassword "$(dbPassword)"
-                -dbPort $(dbPort)
-                -dbUsername "$(dbUsername)"
-                -deniedIpAddressList "$(deniedIpAddressList)"
-                -esbBaseUrl "$(esbBaseUrl)"
-                -esbVersion "$(esbVersion)"
-                -excelRemoteDisk "$(excelRemoteDisk)"
-                -homeRedirectUrlEn "$(homeRedirectUrlEn)"
-                -homeRedirectUrlFr "$(homeRedirectUrlFr)"
-                -keycloakBaseUrl "$(keycloakBaseUrl)"
-                -keycloakClientId "$(keycloakClientId)"
-                -keycloakClientSecret "$(keycloakClientSecret)"
-                -keycloakEsbApiClientId "$(keycloakEsbApiClientId)"
-                -keycloakEsbApiClientSecret "$(keycloakEsbApiClientSecret)"
-                -keycloakLogoutRedirectUri "$(keycloakLogoutRedirectUri)"
-                -keycloakRealm "$(keycloakRealm)"
-                -location "$(location)"
-                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-                -logChannel "$(logChannel)"
-                -logLevel "$(logLevel)"
-                -loginRedirectUrlEn "$(loginRedirectUrlEn)"
-                -loginRedirectUrlFr "$(loginRedirectUrlFr)"
-                -mailEncryption "$(mailEncryption)"
-                -mailFromAddress "$(smtpFromAddress)"
-                -mailFromName "$(mailFromName)"
-                -mailHost "$(smtpServerFqdn)"
-                -mailMailer "$(mailMailer)"
-                -mailPassword "$(smtpClientPassword)"
-                -mailPort $(smtpServerPort)
-                -mailUsername "$(smtpClientUsername)"
-                -maintenanceDriver "$(MaintenanceDriver)"
-                -maintenanceStore "$(MaintenanceStore)"
-                -matomoSiteId "$(matomoSiteId)"
-                -myLearningUrlEn "$(myLearningUrlEn)"
-                -myLearningUrlFr "$(myLearningUrlFr)"
-                -mysqlAttrSslCapath "$(mysqlAttrSslCapath)"
-                -mysqlAttrSslVerifyServerCert "$(mysqlAttrSslVerifyServerCert)"
-                -oauthClients $(oauthClients)
-                -passportPrivateKey "$(passportPrivateKey)"
-                -passportPublicKey "$(passportPublicKey)"
-                -queueConnection "$(queueConnection)"
-                -resourceTags $(resourceTags)
-                -sessionDriver "$(sessionDriver)"
-                -sessionLifetime $(sessionLifetime)
-                -systemAccountEmail "$(systemAccountEmail)"
-                -systemAccountPassword "$(systemAccountPassword)"
-                -systemAccountUsername "$(systemAccountUsername)"
-                -virtualNetworkName "$(virtualNetworkName)"
-                -virtualNetworkSubnetName "$(virtualNetworkSubnetName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(appServiceName)_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy App Service'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(location)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-idm/azure/arm-templates/deploy-app-service.json'
+          #     overrideParameters: >-
+          #       -activityLoggerEnabled "$(activityLoggerEnabled)"
+          #       -adminAccounts $(adminAccounts)
+          #       -apiThrottle $(apiThrottle)
+          #       -appDebug "$(appDebug)"
+          #       -appEnv "$(environmentName)"
+          #       -appInstallOptions "$(appInstallOptions)"
+          #       -appKey "$(appKey)"
+          #       -appName "$(appName)"
+          #       -appServiceName "$(appServiceName)"
+          #       -appServicePlanName "$(appServicePlanName)"
+          #       -appTimezone "$(appTimezone)"
+          #       -appUrl "https://$(appServiceName).azurewebsites.net"
+          #       -authorizedEmailDomains "$(authorizedEmailDomains)"
+          #       -azureStorageConnectionString "$(storageAccountConnectionString)"
+          #       -azureStorageContainer "$(storageAccountBlobServiceContainerName)"
+          #       -azureStorageKey "$(storageAccountKey)"
+          #       -azureStorageName "$(storageAccountName)"
+          #       -azureStorageUrl "$(storageAccountBlobServiceEndPoint)"
+          #       -bulkImportBatchSize $(bulkImportBatchSize)
+          #       -bulkProcessBatchSize $(bulkProcessBatchSize)
+          #       -cacheDriver "$(cacheDriver)"
+          #       -containerImageName "$(containerRepositoryName):$(containerRepositoryTag)"
+          #       -containerRegistryName "$(containerRegistryName)"
+          #       -containerRegistryResourceGroupName "$(containerRegistryResourceGroupName)"
+          #       -containerRegistrySubscriptionId "$(containerRegistrySubscriptionId)"
+          #       -dbAdminPassword "$(databaseServerAdminPassword)"
+          #       -dbAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
+          #       -dbConnection "$(dbConnection)"
+          #       -dbDatabase "$(dbDatabase)"
+          #       -dbHost "$(databaseServerFqdn)"
+          #       -dbPassword "$(dbPassword)"
+          #       -dbPort $(dbPort)
+          #       -dbUsername "$(dbUsername)"
+          #       -deniedIpAddressList "$(deniedIpAddressList)"
+          #       -esbBaseUrl "$(esbBaseUrl)"
+          #       -esbVersion "$(esbVersion)"
+          #       -excelRemoteDisk "$(excelRemoteDisk)"
+          #       -homeRedirectUrlEn "$(homeRedirectUrlEn)"
+          #       -homeRedirectUrlFr "$(homeRedirectUrlFr)"
+          #       -keycloakBaseUrl "$(keycloakBaseUrl)"
+          #       -keycloakClientId "$(keycloakClientId)"
+          #       -keycloakClientSecret "$(keycloakClientSecret)"
+          #       -keycloakEsbApiClientId "$(keycloakEsbApiClientId)"
+          #       -keycloakEsbApiClientSecret "$(keycloakEsbApiClientSecret)"
+          #       -keycloakLogoutRedirectUri "$(keycloakLogoutRedirectUri)"
+          #       -keycloakRealm "$(keycloakRealm)"
+          #       -location "$(location)"
+          #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+          #       -logChannel "$(logChannel)"
+          #       -logLevel "$(logLevel)"
+          #       -loginRedirectUrlEn "$(loginRedirectUrlEn)"
+          #       -loginRedirectUrlFr "$(loginRedirectUrlFr)"
+          #       -mailEncryption "$(mailEncryption)"
+          #       -mailFromAddress "$(smtpFromAddress)"
+          #       -mailFromName "$(mailFromName)"
+          #       -mailHost "$(smtpServerFqdn)"
+          #       -mailMailer "$(mailMailer)"
+          #       -mailPassword "$(smtpClientPassword)"
+          #       -mailPort $(smtpServerPort)
+          #       -mailUsername "$(smtpClientUsername)"
+          #       -maintenanceDriver "$(MaintenanceDriver)"
+          #       -maintenanceStore "$(MaintenanceStore)"
+          #       -matomoSiteId "$(matomoSiteId)"
+          #       -myLearningUrlEn "$(myLearningUrlEn)"
+          #       -myLearningUrlFr "$(myLearningUrlFr)"
+          #       -mysqlAttrSslCapath "$(mysqlAttrSslCapath)"
+          #       -mysqlAttrSslVerifyServerCert "$(mysqlAttrSslVerifyServerCert)"
+          #       -oauthClients $(oauthClients)
+          #       -passportPrivateKey "$(passportPrivateKey)"
+          #       -passportPublicKey "$(passportPublicKey)"
+          #       -queueConnection "$(queueConnection)"
+          #       -resourceTags $(resourceTags)
+          #       -sessionDriver "$(sessionDriver)"
+          #       -sessionLifetime $(sessionLifetime)
+          #       -systemAccountEmail "$(systemAccountEmail)"
+          #       -systemAccountPassword "$(systemAccountPassword)"
+          #       -systemAccountUsername "$(systemAccountUsername)"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #       -virtualNetworkSubnetName "$(virtualNetworkSubnetName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(appServiceName)_$(Build.BuildNumber)'
