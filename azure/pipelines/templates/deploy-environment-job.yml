@@ -44,21 +44,20 @@ jobs:
 
           - template: set-resource-names-steps.yml
             parameters:
+              applicationGatewayNameVariableName: 'applicationGatewayName'
               applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
               applicationGatewaySubnetNameVariableName: 'applicationGatewaySubnetName'
+              applicationGatewayUserAssignedIdentityNameVariableName: 'applicationGatewayUserAssignedIdentityName'
+              applicationGatwayPublicIpAddressNameVariableName: 'applicationGatewayPublicIpAddressName'
               applicationNetworkSecurityGroupNameVariableName: 'applicationNetworkSecurityGroupName'
               applicationSubnetNameVariableName: 'applicationSubnetName'
               dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
               dataSubnetNameVariableName:  'dataSubnetName'
               environmentName: '$(environmentName)'
-              solutionName: '$(solutionName)'
-              virtualNetworkNameVariableName: 'virtualNetworkName'
-
-              applicationGatewayNameVariableName: 'applicationGatewayName'
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
-              applicationGatwayPublicIpAddressNameVariableName: 'applicationGatewayPublicIpAddressName'
-              applicationGatewayUserAssignedIdentityNameVariableName: 'ApplicationGatewayUserAssignedIdentityName'
+              solutionName: '$(solutionName)'
+              virtualNetworkNameVariableName: 'virtualNetworkName'
 
 
           - script: |
@@ -77,7 +76,7 @@ jobs:
 
               # echo "applicationGatewayName = $(applicationGatewayName)"
               # echo "applicationGatewayPublicIpAddressName = $(applicationGatewayPublicIpAddressName)"
-              # echo "ApplicationGatewayUserAssignedIdentityName = $(ApplicationGatewayUserAssignedIdentityName)"
+              # echo "applicationGatewayUserAssignedIdentityName = $(applicationGatewayUserAssignedIdentityName)"
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Log Analytics Workspace Resource'
