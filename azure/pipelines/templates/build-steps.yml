@@ -1,45 +1,31 @@
 parameters:
 - name: buildNumber
   type: string
+- name: buildSourceBranchName
+  type: string
+- name: componentNames
+  type: array
+  default: [
+    "admin",
+    "presentation",
+    "worker"
+  ]
 - name: containerRegistryConnection
   type: string
-- name: containerRepository
+- name: containerRepositoryBaseName
   type: string
 
 steps:
 
-- task: Docker@2
-  displayName: 'Build admin container'
-  inputs:
-    containerRegistry: ${{ parameters.containerRegistryConnection }}
-    repository: '${{ parameters.containerRepository }}/admin'
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-admin/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
-
-- task: Docker@2
-  displayName: 'Build presentation container'
-  inputs:
-    containerRegistry: ${{ parameters.containerRegistryConnection }}
-    repository: '${{ parameters.containerRepository }}/presentation'
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-presentation/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
-
-- task: Docker@2
-  displayName: 'Build worker container'
-  inputs:
-    containerRegistry: ${{ parameters.containerRegistryConnection }}
-    repository: '${{ parameters.containerRepository }}/worker'
-    command: 'buildAndPush'
-    Dockerfile: 'lp-opencast/docker/opencast-worker/Dockerfile'
-    buildContext: 'lp-opencast'
-    tags: |
-      latest
-      ${{ parameters.buildNumber }}
+- ${{ each component in parameters.componentNames }}:
+  - task: Docker@2
+    displayName: 'Build ${{ component }} container'
+    inputs:
+      containerRegistry: ${{ parameters.containerRegistryConnection }}
+      repository: '${{ parameters.containerRepositoryBaseName }}/${{ component }}'
+      command: 'buildAndPush'
+      Dockerfile: 'lp-opencast/docker/opencast-${{ component }}/Dockerfile'
+      buildContext: 'lp-opencast'
+      tags: |
+        'latest_${{ parameters.buildSourceBranchName }}'
+        '${{ parameters.buildNumber }}_${{ parameters.buildSourceBranchName }}'
