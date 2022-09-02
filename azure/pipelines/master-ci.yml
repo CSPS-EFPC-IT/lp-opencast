@@ -24,16 +24,16 @@ steps:
 - checkout: lp-common # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-common folder.
 
 - task: Bash@3
-  displayName: 'Set containerRepositoryName Variable'
+  displayName: 'Set Container Repository Root Name Variable'
   inputs:
     filePath: 'lp-common/azure/scripts/set_container_repository_names_variable_v2.sh'
     arguments: >-
       --git-branch-names "$(Build.SourceBranchName)"
       --git-repository-name "$(Build.Repository.Name)"
-      --variable-name "containerRepositoryName"
+      --variable-name "containerRepositoryRootName"
 
 - template: templates/build-steps.yml
   parameters:
     buildNumber: $(Build.BuildNumber)
-    containerRepository: $(containerRepositoryName)
+    containerRepositoryRootName: $(containerRepositoryRootName)
     containerRegistryConnection: $(containerRegistryConnection)
