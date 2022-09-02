@@ -19,15 +19,15 @@ Run the following commands from the project root directory:
 
 opencast-admin
 ```
-docker build --tag lp-opencast-admin:12.0 --file docker/opencast-admin/Dockerfile .
+docker build --tag lp-opencast/admin:12.0 --file docker/opencast-admin/Dockerfile .
 ```
 opencast-presentation
 ```
-docker build --tag lp-opencast-presentation:12.0 --file docker/opencast-presentation/Dockerfile .
+docker build --tag lp-opencast/presentation:12.0 --file docker/opencast-presentation/Dockerfile .
 ```
 opencast-worker
 ```
-docker build --tag lp-opencast-worker:12.0 --file docker/opencast-worker/Dockerfile .
+docker build --tag lp-opencast/worker:12.0 --file docker/opencast-worker/Dockerfile .
 ```
 
 # Runtime
