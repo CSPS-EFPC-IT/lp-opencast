@@ -45,47 +45,63 @@ jobs:
           - template: set-resource-names-steps.yml
             parameters:
               applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
+              applicationGatewaySubnetNameVariableName: 'applicationGatewaySubnetName'
+              applicationNetworkSecurityGroupNameVariableName: 'applicationNetworkSecurityGroupName'
+              applicationSubnetNameVariableName: 'applicationSubnetName'
+              dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
+              dataSubnetNameVariableName:  'dataSubnetName'
               environmentName: '$(environmentName)'
               solutionName: '$(solutionName)'
+              virtualNetworkNameVariableName: 'virtualNetworkName'
 
-          - script: echo "value = $(applicationGatewayNetworkSecurityGroupName)"
+          - script: |
+              echo "applicationGatewayNetworkSecurityGroupName = $(applicationGatewayNetworkSecurityGroupName)"
+              echo "applicationGatewaySubnetName = $(applicationGatewaySubnetName)"
+              echo "applicationNetworkSecurityGroupName = $(applicationNetworkSecurityGroupName)"
+              echo "applicationSubnetName = $(applicationSubnetName)"
+              echo "dataNetworkSecurityGroupName = $(dataNetworkSecurityGroupName)"
+              echo "dataSubnetName = $(dataSubnetName)"
+              echo "virtualNetworkName = $(virtualNetworkName)"
+              echo "TBD = $(TBD)"
+              echo "TBD = $(TBD)"
+              echo "TBD = $(TBD)"
 
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: echo "MYSECRET = ${MYSECRET}"
-            env:
-              MYSECRET: $(applicationGatewayNetworkSecurityGroupName)
-
-          # - task: AzureResourceManagerTemplateDeployment@3
-          #   displayName: 'Deploy Virtual Network'
+          # - task: Bash@3
           #   inputs:
-          #     deploymentScope: 'Resource Group'
-          #     azureResourceManagerConnection: '$(lp-opencast-dev-public.serviceConnectionName)'
-          #     subscriptionId: '$(subscriptionId)'
-          #     action: 'Create Or Update Resource Group'
-          #     resourceGroupName: '$(resourceGroupName)'
-          #     location: '$(location)'
-          #     templateLocation: 'Linked artifact'
-          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
-          #     overrideParameters: >-
-          #       -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
-          #       -applicationGatewaySubnetAddressRange "$(applicationGatewaySubnetAddressRange)"
-          #       -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
-          #       -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
-          #       -applicationSubnetAddressRange "$(applicationSubnetAddressRange)"
-          #       -applicationSubnetName "$(applicationSubnetName)"
-          #       -bastionHostSubnetAddressRange "$(bastionHostSubnetAddressRange)"
-          #       -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
-          #       -dataSubnetName "$(dataSubnetName)"
-          #       -dataSubnetAddressRange "$(dataSubnetAddressRange)"
-          #       -deniedIpAddressList "$(deniedIpAddressList)"
-          #       -location "$(location)"
-          #       -resourceTags "$(resourceTags)"
-          #       -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
-          #       -virtualNetworkName "$(virtualNetworkName)"
-          #     deploymentMode: 'Incremental'
-          #     deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
+          #     targetType: 'inline'
+          #     script: echo "MYSECRET = ${MYSECRET}"
+          #   env:
+          #     MYSECRET: $(applicationGatewayNetworkSecurityGroupName)
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Virtual Network'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(lp-opencast-dev-public.serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
+              overrideParameters: >-
+                -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
+                -applicationGatewaySubnetAddressRange "$(applicationGatewaySubnetAddressRange)"
+                -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
+                -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
+                -applicationSubnetAddressRange "$(applicationSubnetAddressRange)"
+                -applicationSubnetName "$(applicationSubnetName)"
+                -bastionHostSubnetAddressRange "$(bastionHostSubnetAddressRange)"
+                -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
+                -dataSubnetName "$(dataSubnetName)"
+                -dataSubnetAddressRange "$(dataSubnetAddressRange)"
+                -deniedIpAddressList "$(deniedIpAddressList)"
+                -location "$(location)"
+                -resourceTags "$(resourceTags)"
+                -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
+                -virtualNetworkName "$(virtualNetworkName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy Blob Service'
