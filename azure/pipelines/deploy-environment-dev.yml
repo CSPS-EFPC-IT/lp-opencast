@@ -1,0 +1,15 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: master-ci
+    source: 'lp-opencast/Master CI'
+    trigger:
+      branches:
+        include:
+        - master
+
+extends:
+  template: templates/deploy-environment-job.yml
+  parameters:
+    env: 'dev'

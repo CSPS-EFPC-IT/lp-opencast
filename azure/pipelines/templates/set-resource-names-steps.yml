@@ -1,0 +1,96 @@
+parameters:
+- name: applicationGatewayNetworkSecurityGroupNameVariableName
+  type: string
+- name: environmentName
+  type: string
+- name: solutionName
+  type: string
+
+steps:
+- task: Bash@3
+  displayName: 'Set Application Gateway's Network Security Group's Resource Name Variable'
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "AG"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Network/networkSecurityGroups"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.applicationGatewayNetworkSecurityGroupNameVariableName }}"
+
+# - task: Bash@3
+#   displayName: 'Set Application's Network Security Group Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --component-name "App"
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/networkSecurityGroups"
+#       --solution-name "$(solutionName)"
+#       --variable-name "applicationNetworkSecurityGroupName"
+
+# - task: Bash@3
+#   displayName: 'Set Data's Network Security Group Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --component-name "Data"
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/networkSecurityGroups"
+#       --solution-name "$(solutionName)"
+#       --variable-name "dataNetworkSecurityGroupName"
+
+# # Set Virtual Network Resource names.
+# - task: Bash@3
+#   displayName: 'Set Virtual Network Resource Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/virtualNetworks"
+#       --solution-name "$(solutionName)"
+#       --variable-name "virtualNetworkName"
+
+# - task: Bash@3
+#   displayName: 'Set Application Gatway's VNet Subnet Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --component-name "AG"
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/virtualNetworks/subnets"
+#       --solution-name "$(solutionName)"
+#       --variable-name "applicationGatewaySubnetName"
+
+# - task: Bash@3
+#   displayName: 'Set Application's VNet Subnet Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --component-name "App"
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/virtualNetworks/subnets"
+#       --solution-name "$(solutionName)"
+#       --variable-name "applicationSubnetName"
+
+# - task: Bash@3
+#   displayName: 'Set Data's VNet Subnet Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --component-name "Data"
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/virtualNetworks/subnets"
+#       --solution-name "$(solutionName)"
+#       --variable-name "dataSubnetName"
+
+# # Set Application Gateway resource name
+# - task: Bash@3
+#   displayName: 'Set Application Gateway Resource Name Variable'
+#   inputs:
+#     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+#     arguments: >-
+#       --environment-name "$(environmentName)
+#       --resource-type "Microsoft.Network/applicationGateways"
+#       --solution-name "$(solutionName)"
+#       --variable-name "applicationGatewayName"
