@@ -78,7 +78,7 @@ steps:
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
-      --component-name "AG"
+      --component-name "App"
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/virtualNetworks/subnets"
       --solution-name "${{ parameters.solutionName }}"
