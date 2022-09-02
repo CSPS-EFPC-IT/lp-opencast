@@ -63,6 +63,7 @@
         },
         "publicIpAddressDomainNameLabel": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "The domain name label of the public IP Address. The concatenation of the domain name label and the regionalized DNS zone make up the fully qualified domain name associated with the public IP address. An DNS record is created for the public IP in the Microsoft Azure DNS system."
             }
@@ -157,9 +158,9 @@
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
-                // "dnsSettings": {
-                //     "domainNameLabel": "[toLower(parameters('publicIpAddressDomainNameLabel'))]"
-                // },
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(parameters('publicIpAddressDomainNameLabel'))]"
+                },
                 "ipTags": []
             }
         },
