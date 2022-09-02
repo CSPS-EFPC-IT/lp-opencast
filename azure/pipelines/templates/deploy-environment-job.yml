@@ -44,18 +44,18 @@ jobs:
 
           - template: set-resource-names-steps.yml
             parameters:
-              variableName: 'applicationGatewayNetworkSecurityGroupName'
+              applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
               environmentName: '$(environmentName)'
               solutionName: '$(solutionName)'
 
-          - script: echo "value = $(applicationGatewayNetworkSecurityGroupName)"
+          # - script: echo "value = $(applicationGatewayNetworkSecurityGroupName)"
 
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: echo "MYSECRET = ${MYSECRET}"
-            env:
-              MYSECRET: $(applicationGatewayNetworkSecurityGroupName)
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: echo "MYSECRET = ${MYSECRET}"
+          #   env:
+          #     MYSECRET: $(applicationGatewayNetworkSecurityGroupName)
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy Virtual Network'

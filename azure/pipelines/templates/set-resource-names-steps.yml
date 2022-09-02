@@ -1,5 +1,5 @@
 parameters:
-- name: variableName
+- name: applicationGatewayNetworkSecurityGroupNameVariableName
   type: string
 - name: environmentName
   type: string
@@ -16,7 +16,7 @@ steps:
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/networkSecurityGroups"
       --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.variableName }}"
+      --variable-name "${{ parameters.applicationGatewayNetworkSecurityGroupNameVariableName }}"
 
 # - task: Bash@3
 #   displayName: 'Set Application's Network Security Group Name Variable'
