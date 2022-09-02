@@ -1,8 +1,6 @@
 parameters:
 - name: buildNumber
   type: string
-- name: buildSourceBranchName
-  type: string
 - name: componentNames
   type: object
   default:
@@ -11,7 +9,7 @@ parameters:
     - worker
 - name: containerRegistryConnection
   type: string
-- name: containerRepositoryBaseName
+- name: containerRepositoryRootName
   type: string
 
 steps:
@@ -21,10 +19,10 @@ steps:
     displayName: 'Build ${{ component }} container'
     inputs:
       containerRegistry: ${{ parameters.containerRegistryConnection }}
-      repository: '${{ parameters.containerRepositoryBaseName }}/${{ component }}'
+      repository: '${{ parameters.containerRepositoryRootName }}/${{ component }}'
       command: 'buildAndPush'
       Dockerfile: 'lp-opencast/docker/opencast-${{ component }}/Dockerfile'
       buildContext: 'lp-opencast'
       tags: |
-        'latest_${{ parameters.buildSourceBranchName }}'
-        '${{ parameters.buildNumber }}_${{ parameters.buildSourceBranchName }}'
+        latest
+        ${{ parameters.buildNumber }}
