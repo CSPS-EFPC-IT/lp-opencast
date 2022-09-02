@@ -47,8 +47,6 @@ function logger::debug() {
   # Parameters
   local message="$1"
 
-output_message_lines "forced: ${message}" "debug"
-
   # shellcheck disable=SC2154 # SYSTEM_DEBUG is an environment variable. Thus it is NOT defined in this script.
   if [[ -n "${SYSTEM_DEBUG}" && "${SYSTEM_DEBUG,,}" == "true" ]]; then
     output_message_lines "${message}" "debug"
