@@ -37,7 +37,7 @@ parameters:
 steps:
 # Setting Key Vault related resource names.
 - task: Bash@3
-  displayName: "Set Key Vaults Resource Name Variable"
+  displayName: "Set Key Vaults' Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -48,7 +48,7 @@ steps:
 
 # Setting Log Analytics Workspace related resource names.
 - task: Bash@3
-  displayName: "Set Key Vaults Resource Name Variable"
+  displayName: "Set Log Analytics Workspace's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -103,7 +103,7 @@ steps:
       --variable-name "${{ parameters.virtualNetworkNameVariableName }}"
 
 - task: Bash@3
-  displayName: "Set Application Gatway's VNet Subnet's Name Variable"
+  displayName: "Set Application Gateway's VNet Subnet's Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
