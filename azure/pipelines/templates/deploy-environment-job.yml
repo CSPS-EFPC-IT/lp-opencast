@@ -80,7 +80,7 @@ jobs:
             displayName: 'Deploy Virtual Network'
             inputs:
               deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(variables.lp-opencast-dev-public.serviceConnectionName)'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
