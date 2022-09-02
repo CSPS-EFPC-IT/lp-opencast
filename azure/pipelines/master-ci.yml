@@ -25,14 +25,14 @@ steps:
 
 - task: Bash@3
   displayName: 'Set Build Repository Base Name Variable'
-  inputs:
-    targetType: 'inline'
   env:
     BUILD_REPOSITORY_NAME: $(Build.Repository.Name)
     IS_OUTPUT: 'false'
     NAME: 'buildRepositoryBaseName'
-  script: |
-    echo "##vso[task.setvariable variable=${NAME};isOutput=${IS_OUTPUT}]$(basename ${BUILD_REPOSITORY_NAME})"
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo "##vso[task.setvariable variable=${NAME};isOutput=${IS_OUTPUT}]$(basename ${BUILD_REPOSITORY_NAME})"
 
 - template: templates/build-steps.yml
   parameters:
