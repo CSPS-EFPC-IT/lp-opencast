@@ -25,7 +25,7 @@ steps:
 
 - task: Bash@3
   displayName: 'Set Build Repository Base Name Variable'
-  input:
+  inputs:
     targetType: 'inline'
   env:
     BUILD_REPOSITORY_NAME: $(Build.Repository.Name)
