@@ -73,35 +73,35 @@ jobs:
           #   env:
           #     MYSECRET: $(applicationGatewayNetworkSecurityGroupName)
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Virtual Network'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(lp-opencast-dev-public.serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(location)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
-              overrideParameters: >-
-                -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
-                -applicationGatewaySubnetAddressRange "$(applicationGatewaySubnetAddressRange)"
-                -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
-                -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
-                -applicationSubnetAddressRange "$(applicationSubnetAddressRange)"
-                -applicationSubnetName "$(applicationSubnetName)"
-                -bastionHostSubnetAddressRange "$(bastionHostSubnetAddressRange)"
-                -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
-                -dataSubnetName "$(dataSubnetName)"
-                -dataSubnetAddressRange "$(dataSubnetAddressRange)"
-                -deniedIpAddressList "$(deniedIpAddressList)"
-                -location "$(location)"
-                -resourceTags "$(resourceTags)"
-                -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
-                -virtualNetworkName "$(virtualNetworkName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Virtual Network'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(variables.lp-opencast-dev-public.serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(location)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
+          #     overrideParameters: >-
+          #       -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
+          #       -applicationGatewaySubnetAddressRange "$(applicationGatewaySubnetAddressRange)"
+          #       -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
+          #       -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
+          #       -applicationSubnetAddressRange "$(applicationSubnetAddressRange)"
+          #       -applicationSubnetName "$(applicationSubnetName)"
+          #       -bastionHostSubnetAddressRange "$(bastionHostSubnetAddressRange)"
+          #       -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
+          #       -dataSubnetName "$(dataSubnetName)"
+          #       -dataSubnetAddressRange "$(dataSubnetAddressRange)"
+          #       -deniedIpAddressList "$(deniedIpAddressList)"
+          #       -location "$(location)"
+          #       -resourceTags "$(resourceTags)"
+          #       -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(componentName)-virtual-network_$(Build.BuildNumber)'
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy Blob Service'
