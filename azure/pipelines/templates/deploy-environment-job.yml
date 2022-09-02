@@ -148,7 +148,7 @@ jobs:
                 -virtualNetworkSubnetName "$(applicationGatewaySubnetName)"
                 -resourceTags "$(resourceTags)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_virtual-network_$(Build.BuildNumber)'
+              deploymentName: '$(solutionName)_application-gateway_$(Build.BuildNumber)'
 
 
           # - task: AzureCLI@2
