@@ -44,7 +44,7 @@ jobs:
 
           - template: set-resource-names-steps.yml
             parameters:
-              applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
+              variableName: 'applicationGatewayNetworkSecurityGroupName'
               environmentName: '$(environmentName)'
               solutionName: '$(solutionName)'
 
