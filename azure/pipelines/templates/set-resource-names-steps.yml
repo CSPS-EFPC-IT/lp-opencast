@@ -6,9 +6,6 @@ parameters:
 - name: solutionName
   type: string
 
-variables:
-- myname: 'bonjour'
-
 steps:
 - task: Bash@3
   displayName: "Set Application Gateway's Network Security Group's Resource Name Variable"
