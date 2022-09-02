@@ -141,7 +141,6 @@ jobs:
                 -keyVaultCertificateName "$(applicationGatewayKeyVaultCertificateName)"
                 -keyVaultName "$(keyVaultName)"
                 -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-                -publicIpAddressDomainNameLabel "OpenCast-dev"
                 -publicIpAddressName "$(applicationGatewayPublicIpAddressName)"
                 -userAssignedIdentityName "$(applicationGatewayUserAssignedIdentityName)"
                 -virtualNetworkName "$(virtualNetworkName)"
