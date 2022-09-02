@@ -7,6 +7,10 @@ parameters:
   type: string
 - name: applicationSubnetNameVariableName
   type: string
+- name: bastionHostNameVariableName
+  type: string
+- name: bastionHostPublicIpAddressNameVariableName
+  type: string
 - name: dataNetworkSecurityGroupNameVariableName
   type: string
 - name: dataSubnetNameVariableName
@@ -161,3 +165,26 @@ steps:
       --resource-type "Microsoft.ManagedIdentity/userAssignedIdentities"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.applicationGatewayUserAssignedIdentityNameVariableName }}"
+
+# Setting Bastion Host related resource names.
+- task: Bash@3
+  displayName: "Set Bastion Host's Public IP Address' Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "BH"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Network/publicIPAddresses"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.bastionHostPublicIpAddressNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Bastion Host's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Network/bastionHosts"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.bastionHostNameVariableName }}"
+
