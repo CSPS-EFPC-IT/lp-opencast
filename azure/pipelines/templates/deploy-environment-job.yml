@@ -71,12 +71,12 @@ jobs:
               echo "applicationSubnetName = $(applicationSubnetName)"
               echo "dataSubnetName = $(dataSubnetName)"
 
-              # echo "keyVaultName = $(keyVaultName)"
-              # echo "logAnalyticsWorkspaceName = $(logAnalyticsWorkspaceName)"
+              echo "keyVaultName = $(keyVaultName)"
+              echo "logAnalyticsWorkspaceName = $(logAnalyticsWorkspaceName)"
 
-              # echo "applicationGatewayName = $(applicationGatewayName)"
-              # echo "applicationGatewayPublicIpAddressName = $(applicationGatewayPublicIpAddressName)"
-              # echo "applicationGatewayUserAssignedIdentityName = $(applicationGatewayUserAssignedIdentityName)"
+              echo "applicationGatewayName = $(applicationGatewayName)"
+              echo "applicationGatewayPublicIpAddressName = $(applicationGatewayPublicIpAddressName)"
+              echo "applicationGatewayUserAssignedIdentityName = $(applicationGatewayUserAssignedIdentityName)"
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Log Analytics Workspace Resource'
@@ -86,6 +86,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-log-analytics-workspace.json'
               overrideParameters: >-
@@ -103,6 +104,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
               overrideParameters: >-
@@ -131,6 +133,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-opencast/azure/arm-templates/deploy-application-gateway.json'
               overrideParameters: >-
