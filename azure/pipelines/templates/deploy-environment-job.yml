@@ -244,7 +244,7 @@ jobs:
             displayName: 'Set Alternate Container Repository Tag Variable'
             condition: eq(variables['containerRepositoryTag'], 'latest')
             inputs:
-              azureSubscription: '$(serviceConnectionName)'
+              azureSubscription: '$(AppDevServiceConnectionName)'
               scriptType: 'bash'
               scriptLocation: 'scriptPath'
               scriptPath: 'lp-common/azure/scripts/set_alternate_container_repository_tag_variable.sh'
