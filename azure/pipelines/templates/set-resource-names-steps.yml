@@ -33,6 +33,12 @@ parameters:
   type: string
 - name: databaseServerNameVariableName
   type: string
+- name: virtualMachineNetworkInterfaceCardNameVariableName
+  type: string
+- name: virtualMachineNameVariableName
+  type: string
+- name: virtualMachineOsDiskNameVariableName
+  type: string
 
 steps:
 # Setting Key Vault related resource names.
@@ -192,7 +198,7 @@ steps:
 
 # Setting DB for MariaDB Server related resource names.
 - task: Bash@3
-  displayName: "Set DB for MariaDB Server Resource Name Variable"
+  displayName: "Set DB for MariaDB Server's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -200,3 +206,37 @@ steps:
       --resource-type "Microsoft.DBforMariaDB/servers"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.databaseServerNameVariableName }}"
+
+# Setting Virtual Machine related resource names.
+- task: Bash@3
+  displayName: "Set Virtual Machine's Network Interface Card's Resourece Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Admin-VM"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Network/networkInterfaces"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.virtualMachineNetworkInterfaceCardNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Virtual Machine's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Admin"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Compute/virtualMachines"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.virtualMachineNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Virtual Machine's OS Disk's Resourece Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Admin-VM"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Compute/disks"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.virtualMachineOsDiskNameVariableName }}"
