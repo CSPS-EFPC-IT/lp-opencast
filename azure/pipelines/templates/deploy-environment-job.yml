@@ -106,7 +106,7 @@ jobs:
           #     overrideParameters: >-
           #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
           #       -logAnalyticsWorkspaceRetentionDays "$(logAnalyticsWorkspaceRetentionDays)"
-          #       -resourceTags "$(resourceTags)"
+          #       -resourceTags $(resourceTags)
           #     deploymentMode: 'Incremental'
           #     deploymentName: '$(solutionName)_log-analytics-workspace_$(Build.BuildNumber)'
 
@@ -133,7 +133,7 @@ jobs:
           #       -dataSubnetName "$(dataSubnetName)"
           #       -dataSubnetAddressRange "$(dataSubnetAddressRange)"
           #       -deniedIpAddressList "$(deniedIpAddressList)"
-          #       -resourceTags "$(resourceTags)"
+          #       -resourceTags $(resourceTags)
           #       -virtualNetworkAddressRange "$(virtualNetworkAddressRange)"
           #       -virtualNetworkName "$(virtualNetworkName)"
           #     deploymentMode: 'Incremental'
@@ -159,7 +159,7 @@ jobs:
           #       -userAssignedIdentityName "$(applicationGatewayUserAssignedIdentityName)"
           #       -virtualNetworkName "$(virtualNetworkName)"
           #       -virtualNetworkSubnetName "$(applicationGatewaySubnetName)"
-          #       -resourceTags "$(resourceTags)"
+          #       -resourceTags $(resourceTags)
           #     deploymentMode: 'Incremental'
           #     deploymentName: '$(solutionName)_application-gateway_$(Build.BuildNumber)'
 
@@ -178,7 +178,7 @@ jobs:
           #       -bastionHostName "$(bastionHostName)"
           #       -publicIpAddressName "$(bastionHostPublicIpAddressName)"
           #       -virtualNetworkName "$(virtualNetworkName)"
-          #       -resourceTags "$(resourceTags)"
+          #       -resourceTags $(resourceTags)
           #     deploymentMode: 'Incremental'
           #     deploymentName: '$(solutionName)_bastion-host_$(Build.BuildNumber)'
 
@@ -201,7 +201,7 @@ jobs:
           #       -databaseServerName "$(databaseServerName)"
           #       -databaseServerStorageMb "$(databaseServerStorageMb)"
           #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-          #       -resourceTags "$(resourceTags)"
+          #       -resourceTags $(resourceTags)
           #       -virtualNetworkName "$(virtualNetworkName)"
           #       -virtualNetworkSubnetName "$(applicationSubnetName)"
           #     deploymentMode: 'Incremental'
@@ -243,7 +243,7 @@ jobs:
                 -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
                 -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
                 -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)"
-                -resourceTags "$(resourceTags)"
+                -resourceTags $(resourceTags)
                 -smtpServerFqdn "$(smtpServerFqdn)"
                 -smtpServerFromAddress "$(smtpServerFromAddress)"
                 -smtpServerPassword "$(smtpServerPassword)"
@@ -255,7 +255,7 @@ jobs:
                 -virtualMachineName "$(virtualMachineName)"
                 -virtualMachineOsDiskName "$(virtualMachineOsDiskName)"
                 -virtualMachineSize "$(virtualMachineSize)"
-                -virtualMachineTags "$(virtualMachineTags)"
+                -virtualMachineTags $(virtualMachineTags)
                 -virtualNetworkName "$(virtualNetworkName)"
                 -virtualNetworkSubnetName "$(applicationSubnetName)"
               deploymentMode: 'Incremental'
