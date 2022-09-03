@@ -1,7 +1,13 @@
 parameters:
+- name: applicationGatewayNameVariableName
+  type: string
 - name: applicationGatewayNetworkSecurityGroupNameVariableName
   type: string
+- name: applicationGatewayPublicIpAddressNameVariableName
+  type: string
 - name: applicationGatewaySubnetNameVariableName
+  type: string
+- name: applicationGatewayUserAssignedIdentityNameVariableName
   type: string
 - name: applicationNetworkSecurityGroupNameVariableName
   type: string
@@ -15,31 +21,25 @@ parameters:
   type: string
 - name: dataSubnetNameVariableName
   type: string
+- name: databaseServerNameVariableName
+  type: string
 - name: environmentName
-  type: string
-- name: solutionName
-  type: string
-- name: virtualNetworkNameVariableName
-  type: string
-- name: applicationGatewayNameVariableName
   type: string
 - name: keyVaultNameVariableName
   type: string
 - name: logAnalyticsWorkspaceNameVariableName
   type: string
-- name: applicationGatewayPublicIpAddressNameVariableName
+- name: solutionName
   type: string
-- name: applicationGatewayUserAssignedIdentityNameVariableName
-  type: string
-- name: databaseServerNameVariableName
-  type: string
-- name: virtualMachineNetworkInterfaceCardNameVariableName
+- name: storageAccountNameVariableName
   type: string
 - name: virtualMachineNameVariableName
   type: string
+- name: virtualMachineNetworkInterfaceCardNameVariableName
+  type: string
 - name: virtualMachineOsDiskNameVariableName
   type: string
-- name: storageAccountNameVariableName
+- name: virtualNetworkNameVariableName
   type: string
 
 steps:

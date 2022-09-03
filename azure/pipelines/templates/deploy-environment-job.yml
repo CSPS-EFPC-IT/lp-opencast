@@ -55,45 +55,16 @@ jobs:
               bastionHostPublicIpAddressNameVariableName: 'bastionHostPublicIpAddressName'
               dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
               dataSubnetNameVariableName:  'dataSubnetName'
+              databaseServerNameVariableName: 'databaseServerName'
               environmentName: '$(environmentName)'
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
               solutionName: '$(solutionName)'
-              virtualNetworkNameVariableName: 'virtualNetworkName'
-              databaseServerNameVariableName: 'databaseServerName'
-              virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
-              virtualMachineNameVariableName: 'virtualMachineName'
-              virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
               storageAccountNameVariableName: 'storageAccountName'
-
-          - script: |
-              echo "applicationGatewayNetworkSecurityGroupName = $(applicationGatewayNetworkSecurityGroupName)"
-              echo "applicationNetworkSecurityGroupName = $(applicationNetworkSecurityGroupName)"
-              echo "dataNetworkSecurityGroupName = $(dataNetworkSecurityGroupName)"
-
-              echo "virtualNetworkName = $(virtualNetworkName)"
-
-              echo "applicationGatewaySubnetName = $(applicationGatewaySubnetName)"
-              echo "applicationSubnetName = $(applicationSubnetName)"
-              echo "dataSubnetName = $(dataSubnetName)"
-
-              echo "keyVaultName = $(keyVaultName)"
-              echo "logAnalyticsWorkspaceName = $(logAnalyticsWorkspaceName)"
-
-              echo "applicationGatewayName = $(applicationGatewayName)"
-              echo "applicationGatewayPublicIpAddressName = $(applicationGatewayPublicIpAddressName)"
-              echo "applicationGatewayUserAssignedIdentityName = $(applicationGatewayUserAssignedIdentityName)"
-
-              echo "bastionHostPublicIpAddressName = $(bastionHostPublicIpAddressName)"
-              echo "bastionHostName = $(bastionHostName)"
-
-              echo "databaseServerName = $(databaseServerName)"
-
-              echo "virtualMachineNetworkInterfaceCardName = $(virtualMachineNetworkInterfaceCardName)"
-              echo "virtualMachineName = $(virtualMachineName)"
-              echo "virtualMachineOsDiskName = $(virtualMachineOsDiskName)"
-
-              echo "storageAccountName = $(storageAccountName)"
+              virtualMachineNameVariableName: 'virtualMachineName'
+              virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
+              virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
+              virtualNetworkNameVariableName: 'virtualNetworkName'
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy Log Analytics Workspace Resource'
