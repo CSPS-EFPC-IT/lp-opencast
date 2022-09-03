@@ -116,6 +116,9 @@ function main() {
     "Microsoft.Compute/disks")
       set_variable_in_azure_context "${parameters[--variable-name]}" "${resource_name_prefix}-Disk" "${parameters[--is-output]}"
       ;;
+    "Microsoft.Compute/virtualMachines")
+      set_variable_in_azure_context "${parameters[--variable-name]}" "${resource_name_prefix}-VM" "${parameters[--is-output]}"
+      ;;
     "Microsoft.ContainerService/managedClusters")
       set_variable_in_azure_context "${parameters[--variable-name]}" "${resource_name_prefix}-K8S" "${parameters[--is-output]}"
       ;;
