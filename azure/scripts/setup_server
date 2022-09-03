@@ -20,6 +20,8 @@ declare -A parameters=( \
   [app_org_opencastproject_server_url_worker]="" \
   [app_prop_org_opencastproject_admin_ui_url]=""\
   [app_prop_org_opencastproject_engage_ui_url]=""\
+  [containerRepositoryRootName]=""\
+  [containerRepositoryTag]=""\
   [db_server_admin_password]="" \
   [db_server_admin_username]="" \
   [db_server_db_name]="" \
@@ -40,6 +42,8 @@ declare -A parameters=( \
 # All libraries not available at build time.
 # shellcheck source=/dev/null
 source ./logger.sh
+# shellcheck source=/dev/null
+source ./mysql.sh
 # shellcheck source=/dev/null
 source ./utils.sh
 
@@ -75,11 +79,11 @@ function main() {
 
   logger::title "Create Database and credentials"
   mysql::create_database_and_credentials \
-      "${parameters[db_server_fqdn]}" \ # $1 - database_server_fqdn
-      "${parameters[db_server_admin_username]}" \ # $2 - database_server_admin_username
-      "${parameters[db_server_admin_password]}" \ # $3 - database_server_admin_password
-      "${parameters[app_org_opencastproject_db_jdbc_user]}" \ # $4 - database_server_new_credentials_username
-      "${parameters[app_org_opencastproject_db_jdbc_pass]}" \ # $5 - database_server_new_credentials_password
+      "${parameters[db_server_fqdn]}" \ # Parm. 1 - database_server_fqdn
+      "${parameters[db_server_admin_username]}" \ # Parm. 2 - database_server_admin_username
+      "${parameters[db_server_admin_password]}" \ # Parm. 3 - database_server_admin_password
+      "${parameters[app_org_opencastproject_db_jdbc_user]}" \ # Parm. 4 - database_server_new_credentials_username
+      "${parameters[app_org_opencastproject_db_jdbc_pass]}" \ # Parm. 5 - database_server_new_credentials_password
 
   logger::title "Configure File Shares"
   # Configurer le "file services share". (2)
