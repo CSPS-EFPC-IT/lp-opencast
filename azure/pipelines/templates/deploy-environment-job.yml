@@ -285,7 +285,7 @@ jobs:
                 -containerRepositoryRootName "$(containerRepositoryRootName)"
                 -containerRepositoryTag "$(containerRepositoryTag)"
                 -databaseServerAdminPassword "$(databaseServerAdminPassword)"
-                -databaseServerAdminUsername "$(databaseServerAdminUsername)"
+                -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
                 -databaseServerDatabaseName "$(containerRepositoryRootName)"
                 -databaseServerName "$(databaseServerName)"
                 -databaseServerType "$(databaseServerType)"
