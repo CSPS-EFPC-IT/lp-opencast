@@ -235,7 +235,7 @@ steps:
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
-      --component-name "Admin-VM"
+      --component-name "Admin-VM-OS"
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Compute/disks"
       --solution-name "${{ parameters.solutionName }}"
