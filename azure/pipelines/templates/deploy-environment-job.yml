@@ -93,7 +93,7 @@ jobs:
               echo "virtualMachineName = $(virtualMachineName)"
               echo "virtualMachineOsDiskName = $(virtualMachineOsDiskName)"
 
-              echo "storageAccountName = ${storageAccountName}"
+              echo "storageAccountName = $(storageAccountName)"
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy Log Analytics Workspace Resource'
