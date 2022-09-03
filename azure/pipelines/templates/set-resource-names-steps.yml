@@ -39,9 +39,22 @@ parameters:
   type: string
 - name: virtualMachineOsDiskNameVariableName
   type: string
+- name: storageAccountNameVariableName
+  type: string
 
 steps:
 # Setting Key Vault related resource names.
+- task: Bash@3
+  displayName: "Set Application Gateway's User Assigned Identity's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name 'AG'
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.ManagedIdentity/userAssignedIdentities"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.applicationGatewayUserAssignedIdentityNameVariableName }}"
+
 - task: Bash@3
   displayName: "Set Key Vaults' Resource Name Variable"
   inputs:
@@ -63,7 +76,7 @@ steps:
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.logAnalyticsWorkspaceNameVariableName }}"
 
-# Setting Network Security Group related resource names.
+# Setting Virtual Network related resource names.
 - task: Bash@3
   displayName: "Set Application Gateway's Network Security Group's Resource Name Variable"
   inputs:
@@ -97,7 +110,6 @@ steps:
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.dataNetworkSecurityGroupNameVariableName }}"
 
-# Setting Virtual Network related resource names.
 - task: Bash@3
   displayName: "Set Virtual Network's Resource Name Variable"
   inputs:
@@ -163,17 +175,6 @@ steps:
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.applicationGatewayNameVariableName }}"
 
-- task: Bash@3
-  displayName: "Set Application Gateway's User Assigned Identity's Resource Name Variable"
-  inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-    arguments: >-
-      --component-name 'AG'
-      --environment-name "${{ parameters.environmentName }}"
-      --resource-type "Microsoft.ManagedIdentity/userAssignedIdentities"
-      --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.applicationGatewayUserAssignedIdentityNameVariableName }}"
-
 # Setting Bastion Host related resource names.
 - task: Bash@3
   displayName: "Set Bastion Host's Public IP Address' Resource Name Variable"
@@ -206,6 +207,18 @@ steps:
       --resource-type "Microsoft.DBforMariaDB/servers"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.databaseServerNameVariableName }}"
+
+# Setting File Service Share related resource names.
+- task: Bash@3
+  displayName: "Set Storage Account's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "data"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Storage/storageAccounts"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.storageAccountNameVariableName }}"
 
 # Setting Virtual Machine related resource names.
 - task: Bash@3
