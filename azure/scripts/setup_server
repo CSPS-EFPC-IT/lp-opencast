@@ -82,6 +82,10 @@ function main() {
   cd "${HOME}"
   logger::debug "After - pwd = $(pwd)"
 
+  if [[ -n "${HOME}" ]]; then
+    HOME="/root"
+  fi
+
   logger::title "Create Database and credentials"
   # mysql::create_database_and_credentials \
   #   "${parameters[db_server_fqdn]}" \
