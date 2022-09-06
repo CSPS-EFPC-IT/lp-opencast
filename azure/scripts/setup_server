@@ -42,24 +42,6 @@ declare -A parameters=( \
 # All libraries not available at build time.
 # shellcheck source=/dev/null
 source ./logger.sh
-
-logger::info "whoami = $(whoami)"
-logger::info "BEFORE - \$HOME = \"${HOME}\""
-if [[ -v HOME ]]; then
-  logger::info "Inside IF - \$HOME is set"
-  HOME="/root"
-  PATATE="pomme"
-else
-  logger::info "Inside ELSE - \$HOME is unset"
-  HOME="/root"
-  PATATE="pilée"
-fi
-
-logger::info "AFTER - \$HOME = \"${HOME}\""
-logger::info "AFTER - \$PATATE = \"${PATATE}\""
-
-# shellcheck source=/dev/null
-source ./mysql.sh
 # shellcheck source=/dev/null
 source ./utils.sh
 
@@ -87,52 +69,24 @@ function main() {
     --smtp_server_port "${parameters[smtp_server_port]}" \
     --smtp_server_username "${parameters[smtp_server_username]}"
 
-  logger::title "Install Application Dependencies"
-  apt update
-  apt install -y \
-    docker-compose \
-    mysql-client
-
-  logger::title "Create Database and credentials"
-  # mysql::create_database_and_credentials \
-  #   "${parameters[db_server_fqdn]}" \
-  #   "${parameters[db_server_admin_username]}" \
-  #   "${parameters[db_server_admin_password]}" \
-  #   "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-  #   "${parameters[app_org_opencastproject_db_jdbc_pass]}"
-
- mysql::create_user_options_file \
-    "${parameters[db_server_admin_username]}" \
-    "${parameters[db_server_admin_password]}" \
-    "${parameters[db_server_fqdn]}" \
-    "3306" \
-    "mysql"
-
-  mysql::create_database_if_not_exists \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}"
-
-  mysql::create_user_if_not_exists \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_pass]}"
-
-  mysql::set_user_password \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_pass]}"
-
-  mysql::grant_all_privileges \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}"
-
-  # mysql::delete_user_options_file
-
-  logger::title "Configure File Shares"
-  # Configurer le "file services share". (2)
-
-  logger::title "Create docker-compose environment file"
-  ## Créer le fichier d'environnement pour l'application.
-
-  logger::title "Launch the application"
-  ## Lancer l'application en arrière plan
+  logger::title "Install OpenCast"
+  ./install_opencast \
+    --app_opensearch_java_opts "${parameters[app_opensearch_java_opts]}" \
+    --app_org_opencastproject_db_jdbc_pass "${parameters[app_org_opencastproject_db_jdbc_pass]}"\
+    --app_org_opencastproject_db_jdbc_url "${parameters[app_org_opencastproject_db_jdbc_url]}" \
+    --app_org_opencastproject_db_jdbc_user "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    --app_org_opencastproject_download_url "${parameters[app_org_opencastproject_download_url]}" \
+    --app_org_opencastproject_security_admin_pass "${parameters[app_org_opencastproject_security_admin_pass]}" \
+    --app_org_opencastproject_security_admin_user "${parameters[app_org_opencastproject_security_admin_user]}" \
+    --app_org_opencastproject_security_digest_pass "${parameters[app_org_opencastproject_security_digest_pass]}" \
+    --app_org_opencastproject_security_digest_user "${parameters[app_org_opencastproject_security_digest_user]}" \
+    --app_org_opencastproject_server_url_admin "${parameters[app_org_opencastproject_server_url_admin]}" \
+    --app_org_opencastproject_server_url_presentation "${parameters[app_org_opencastproject_server_url_presentation]}" \
+    --app_org_opencastproject_server_url_worker "${parameters[app_org_opencastproject_server_url_worker]}" \
+    --app_prop_org_opencastproject_admin_ui_url "${parameters[app_prop_org_opencastproject_admin_ui_url]}"\
+    --app_prop_org_opencastproject_engage_ui_url "${parameters[app_prop_org_opencastproject_engage_ui_url]}"\
+    --containerRepositoryRootName "${parameters[containerRepositoryRootName]}"\
+    --containerRepositoryTag "${parameters[containerRepositoryTag]}"
 
   #############################################################################
 

@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# Install and launch OpenCast.
+# This script must be run as root (ex.: sudo sh ./[script_name])
+# Style Guide: https://google.github.io/styleguide/shellguide.html
+
+# Parameters: all manadatory and must be prefixed with "--" on command line.
+declare -A parameters=( \
+  [app_opensearch_java_opts]="" \
+  [app_org_opencastproject_db_jdbc_pass]="" \
+  [app_org_opencastproject_db_jdbc_url]="" \
+  [app_org_opencastproject_db_jdbc_user]="" \
+  [app_org_opencastproject_download_url]="" \
+  [app_org_opencastproject_security_admin_pass]="" \
+  [app_org_opencastproject_security_admin_user]="" \
+  [app_org_opencastproject_security_digest_pass]="" \
+  [app_org_opencastproject_security_digest_user]="" \
+  [app_org_opencastproject_server_url_admin]="" \
+  [app_org_opencastproject_server_url_presentation]="" \
+  [app_org_opencastproject_server_url_worker]="" \
+  [app_prop_org_opencastproject_admin_ui_url]=""\
+  [app_prop_org_opencastproject_engage_ui_url]=""\
+  [containerRepositoryRootName]=""\
+  [containerRepositoryTag]=""\
+)
+
+# Functions
+
+# All libraries not available at build time.
+# shellcheck source=/dev/null
+source ./logger.sh
+#shellcheck source=/dev/null
+source ./mysql.sh
+
+function main() {
+  utils::set_exit_trap
+  logger::title "Start of $0"
+
+  #############################################################################
+
+  logger::title "Parse Input Parameters"
+  utils::parse_parameters "$@"
+
+  logger::title "Install Application Dependencies"
+  apt-get update
+  apt-get install -y \
+    docker-compose \
+    mysql-client
+
+  logger::title "Create Database and credentials"
+  mysql::create_database_and_credentials \
+    "${parameters[db_server_fqdn]}" \
+    "${parameters[db_server_admin_username]}" \
+    "${parameters[db_server_admin_password]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
+    "${parameters[db_server_db_name]}"
+
+  logger::title "Configure File Shares"
+  # Configurer le "file services share". (2)
+
+  logger::title "Create docker-compose environment file"
+  ## Créer le fichier d'environnement pour l'application.
+
+  logger::title "Launch the application"
+  ## Lancer l'application en arrière plan
+
+  #############################################################################
+
+  logger::title "End of $0"
+  utils::unset_exit_trap
+}
+
+main "$@"
