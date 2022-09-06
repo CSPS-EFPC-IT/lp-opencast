@@ -78,12 +78,36 @@ function main() {
     mysql-client
 
   logger::title "Create Database and credentials"
-  mysql::create_database_and_credentials \
-    "${parameters[db_server_fqdn]}" \
+  # mysql::create_database_and_credentials \
+  #   "${parameters[db_server_fqdn]}" \
+  #   "${parameters[db_server_admin_username]}" \
+  #   "${parameters[db_server_admin_password]}" \
+  #   "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+  #   "${parameters[app_org_opencastproject_db_jdbc_pass]}"
+
+ mysql::create_user_options_file \
     "${parameters[db_server_admin_username]}" \
     "${parameters[db_server_admin_password]}" \
+    "${parameters[db_server_fqdn]}" \
+    "3306" \
+    "mysql"
+
+  mysql::create_database_if_not_exists \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}"
+
+  mysql::create_user_if_not_exists \
     "${parameters[app_org_opencastproject_db_jdbc_user]}" \
     "${parameters[app_org_opencastproject_db_jdbc_pass]}"
+
+  mysql::set_user_password \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_pass]}"
+
+  mysql::grant_all_privileges \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}"
+
+  # mysql::delete_user_options_file
 
   logger::title "Configure File Shares"
   # Configurer le "file services share". (2)
