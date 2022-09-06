@@ -20,8 +20,8 @@ declare -A parameters=( \
   [app_org_opencastproject_server_url_worker]="" \
   [app_prop_org_opencastproject_admin_ui_url]=""\
   [app_prop_org_opencastproject_engage_ui_url]=""\
-  [containerRepositoryRootName]=""\
-  [containerRepositoryTag]=""\
+  [container_repository_root_name]=""\
+  [container_repository_tag]=""\
   [db_server_admin_password]="" \
   [db_server_admin_username]="" \
   [db_server_db_name]="" \
@@ -85,8 +85,8 @@ function main() {
     --app_org_opencastproject_server_url_worker "${parameters[app_org_opencastproject_server_url_worker]}" \
     --app_prop_org_opencastproject_admin_ui_url "${parameters[app_prop_org_opencastproject_admin_ui_url]}"\
     --app_prop_org_opencastproject_engage_ui_url "${parameters[app_prop_org_opencastproject_engage_ui_url]}"\
-    --containerRepositoryRootName "${parameters[containerRepositoryRootName]}"\
-    --containerRepositoryTag "${parameters[containerRepositoryTag]}"
+    --container_repository_root_name "${parameters[container_repository_root_name]}"\
+    --container_repository_tag "${parameters[container_repository_tag]}"
 
   #############################################################################
 

@@ -20,8 +20,12 @@ declare -A parameters=( \
   [app_org_opencastproject_server_url_worker]="" \
   [app_prop_org_opencastproject_admin_ui_url]=""\
   [app_prop_org_opencastproject_engage_ui_url]=""\
-  [containerRepositoryRootName]=""\
-  [containerRepositoryTag]=""\
+  [container_repository_root_name]=""\
+  [container_repository_tag]=""\
+  [file_service_share_name]=""\
+  [file_service_share_url]=""\
+  [storage_account_key]=""\
+  [storage_account_name]=""\
 )
 
 # Functions
@@ -34,6 +38,47 @@ HOME='/root'
 source ./mysql.sh
 #shellcheck source=/dev/null
 source ./utils.sh
+
+
+#######################################
+# Create and mount a File Service Share.
+# Arguments:
+#   The Storage Account name, a string.
+#   The Storage Account ney, a string.
+#   The File Service Share name, a string.
+#   The File Service Share URL, a string.
+# Outputs:
+#   Writes message to STDOUT.
+#######################################
+function mount_file_service_share() {
+
+  # Parameters
+  local storage_account_name="$1"
+  local storage_account_key="$2"
+  local file_service_share_name="$3"
+  local file_service_share_url="$4"
+  local mount_point="$5"
+
+  # CONSTANTS
+  CREDENTIALS_PATH="/etc/smbcredentials/${storage_account_name}.cred"
+
+  logger::info "Creating credentials file..."
+  mkdir -p "${mount_point}"
+  if [ ! -d "/etc/smbcredentials" ]; then
+    mkdir /etc/smbcredentials
+  fi
+  if [ ! -f "${CREDENTIALS_PATH}" ]; then
+    echo "username=${storage_account_name}" > "${CREDENTIALS_PATH}"
+    echo "password=${storage_account_key}" >> "${CREDENTIALS_PATH}"
+  fi
+  chmod 600 "${CREDENTIALS_PATH}"
+
+  logger::info "Saving mount point configuration..."
+  echo "//${file_service_share_url}/${file_service_share_name} ${mount_point} cifs nofail,credentials=${CREDENTIALS_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab
+
+  logger::info "Mounting all drives defined in fstab file..."
+  mount -a
+}
 
 function main() {
   utils::set_exit_trap
@@ -62,7 +107,12 @@ function main() {
     "${parameters[db_server_db_name]}"
 
   logger::title "Configure File Shares"
-  # Configurer le "file services share". (2)
+  mount_file_service_share \
+    "${parameters[storage_account_name]}" \
+    "${parameters[storage_account_key]}" \
+    "${parameters[file_service_share_name]}" \
+    "${parameters[file_service_share_url]}" \
+    "/mnt/${parameters[file_service_share_name]}"
 
   logger::title "Create docker-compose environment file"
   ## Créer le fichier d'environnement pour l'application.
