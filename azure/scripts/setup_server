@@ -44,12 +44,12 @@ declare -A parameters=( \
 source ./logger.sh
 
 logger::info "whoami = $(whoami)"
-logger::info "BEFORE - \$HOME = \"$(HOME)\""
+logger::info "BEFORE - \$HOME = \"${HOME}\""
 if [[ -n "${HOME}" ]]; then
   logger::info "Inside IF "
   HOME="/root"
 fi
-logger::info "AFTER - \$HOME = \"$(HOME)\""
+logger::info "AFTER - \$HOME = \"${HOME}\""
 
 # shellcheck source=/dev/null
 source ./mysql.sh
