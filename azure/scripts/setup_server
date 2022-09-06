@@ -26,6 +26,8 @@ declare -A parameters=( \
   [db_server_admin_username]="" \
   [db_server_db_name]="" \
   [db_server_fqdn]="" \
+  [file_service_share_name]=""\
+  [file_service_share_url]=""\
   [server_admin_email]="" \
   [server_fqdn]="" \
   [server_reboot_utc_time]="" \
@@ -35,6 +37,8 @@ declare -A parameters=( \
   [smtp_server_password]="" \
   [smtp_server_port]="" \
   [smtp_server_username]="" \
+  [storage_account_key]=""\
+  [storage_account_name]=""\
 )
 
 # Functions
@@ -86,7 +90,11 @@ function main() {
     --app_prop_org_opencastproject_admin_ui_url "${parameters[app_prop_org_opencastproject_admin_ui_url]}"\
     --app_prop_org_opencastproject_engage_ui_url "${parameters[app_prop_org_opencastproject_engage_ui_url]}"\
     --container_repository_root_name "${parameters[container_repository_root_name]}"\
-    --container_repository_tag "${parameters[container_repository_tag]}"
+    --container_repository_tag "${parameters[container_repository_tag]}"\
+    --file_service_share_name "${parameters[file_service_share_name]}"\
+    --file_service_share_url "${parameters[file_service_share_url]}"\
+    --storage_account_key "${parameters[storage_account_key]}"\
+    --storage_account_name "${parameters[storage_account_name]}"
 
   #############################################################################
 
