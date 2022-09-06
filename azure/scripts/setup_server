@@ -46,6 +46,7 @@ source ./logger.sh
 logger::info "whoami = $(whoami)"
 logger::info "BEFORE - \$HOME = \"$(HOME)\""
 if [[ -n "${HOME}" ]]; then
+  logger::info "Inside IF "
   HOME="/root"
 fi
 logger::info "AFTER - \$HOME = \"$(HOME)\""
