@@ -135,7 +135,8 @@
         "httpRequestRoutingRuleName": "http-request-routing-rule",
         "httpsFrontendPortName": "https-frontend-port",
         "httpsHttpListenerName": "https-http-listener",
-        "httpsRequestRoutingRuleName": "https-request-routing-rule"
+        "httpsRequestRoutingRuleName": "https-request-routing-rule",
+        "httpsUrlPathMap": "http-url-path-map"
     },
     "resources": [
         {
@@ -279,25 +280,53 @@
                         }
                     }
                 ],
-                "urlPathMaps": [],
+                "urlPathMaps": [
+                    {
+                        "name": "[variables('httpsUrlPathMap')]",
+                        "properties": {
+                            "defaultBackendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendAddressPools/', variables('defaultBackendAddressPoolName'))]"
+                            },
+                            "defaultBackendHttpSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendHttpSettingsCollection/', variables('defaultBackendHttpSettingsCollectionName'))]"
+                            },
+                            "defaultRewriteRuleSet": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/rewriteRuleSets/', variables('defaultRewriteRuleSetName'))]"
+                            },
+                            "pathRules": [
+                                {
+                                    "name": "presentation",
+                                    "properties": {
+                                        "paths": [
+                                            "/presentation/*"
+                                        ],
+                                        "backendAddressPool": {
+                                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendAddressPools/', variables('defaultBackendAddressPoolName'))]"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendHttpSettingsCollection/', variables('engageBackendHttpSettingsCollectionName'))]"
+                                        },
+                                        "rewriteRuleSet": {
+                                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/rewriteRuleSets/', variables('defaultRewriteRuleSetName'))]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
                 "requestRoutingRules": [
                     {
                         "name": "[variables('httpsRequestRoutingRuleName')]",
                         "properties": {
-                            "backendAddressPool": {
-                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendAddressPools/', variables('defaultBackendAddressPoolName'))]"
-                            },
-                            "backendHttpSettings": {
-                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendHttpSettingsCollection/', variables('defaultBackendHttpSettingsCollectionName'))]"
-                            },
                             "httpListener": {
                                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/', variables('httpsHttpListenerName'))]"
                             },
                             "priority": 1,
-                            "rewriteRuleSet": {
-                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/rewriteRuleSets/', variables('defaultRewriteRuleSetName'))]"
-                            },
-                            "ruleType": "Basic"
+                            "ruleType": "PathBasedRouting",
+                            "urlPathMap": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/urlPathMaps/', variables('httpsUrlPathMap'))]"
+                            }
                         }
                     },
                     {
@@ -364,7 +393,7 @@
                             "includeQueryString": true,
                             "requestRoutingRules": [
                                 {
-                                    "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/requestRoutingRules/', variables('httpsRequestRoutingRuleName'))]"
+                                    "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/requestRoutingRules/', variables('httpRequestRoutingRuleName'))]"
                                 }
                             ]
                         }
