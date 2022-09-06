@@ -42,6 +42,14 @@ declare -A parameters=( \
 # All libraries not available at build time.
 # shellcheck source=/dev/null
 source ./logger.sh
+
+logger::info "whoami = $(whoami)"
+logger::info "BEFORE - \$HOME = \"$(HOME)\""
+if [[ -n "${HOME}" ]]; then
+  HOME="/root"
+fi
+logger::info "AFTER - \$HOME = \"$(HOME)\""
+
 # shellcheck source=/dev/null
 source ./mysql.sh
 # shellcheck source=/dev/null
@@ -76,15 +84,6 @@ function main() {
   apt install -y \
     docker-compose \
     mysql-client
-
-  logger::debug "whoami = $(whoami)"
-  logger::debug "Before - pwd = $(pwd)"
-  cd "${HOME}"
-  logger::debug "After - pwd = $(pwd)"
-
-  if [[ -n "${HOME}" ]]; then
-    HOME="/root"
-  fi
 
   logger::title "Create Database and credentials"
   # mysql::create_database_and_credentials \
