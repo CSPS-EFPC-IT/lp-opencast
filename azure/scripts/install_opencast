@@ -33,7 +33,6 @@ declare -A parameters=( \
 # All libraries not available at build time.
 # shellcheck source=/dev/null
 source ./logger.sh
-HOME='/root'
 #shellcheck source=/dev/null
 source ./mysql.sh
 #shellcheck source=/dev/null
@@ -96,9 +95,7 @@ function main() {
     mysql-client
 
   logger::title "Create Database and credentials"
-  echo "\$HOME = ${HOME}"
-  echo "env = $(env)"
-  mysql::create_database_and_credentials \
+  sudo mysql::create_database_and_credentials \
     "${parameters[db_server_fqdn]}" \
     "${parameters[db_server_admin_username]}" \
     "${parameters[db_server_admin_password]}" \
