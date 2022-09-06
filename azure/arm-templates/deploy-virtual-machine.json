@@ -333,7 +333,7 @@
     },
     "functions": [],
     "variables": {
-        "storageAccountId": "[resourceId(parameters('strorageAccountSubscriptionId'), parameters('strorageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')]"
+        "storageAccountId": "[resourceId(parameters('strorageAccountSubscriptionId'), parameters('strorageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName'))]"
     },
     "resources": [
         {
