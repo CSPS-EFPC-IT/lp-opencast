@@ -45,12 +45,14 @@ source ./logger.sh
 
 logger::info "whoami = $(whoami)"
 logger::info "BEFORE - \$HOME = \"${HOME}\""
-if [[ -n "${HOME}" ]]; then
-  logger::info "Inside IF - \$HOME is NOT null"
+if [[ -v HOME ]]; then
+  logger::info "Inside IF - \$HOME is set"
   HOME="/root"
   PATATE="pomme"
 else
-  logger::info "Inside ELSE - \$HOME is null"
+  logger::info "Inside ELSE - \$HOME is unset"
+  HOME="/root"
+  PATATE="pilée"
 fi
 
 logger::info "AFTER - \$HOME = \"${HOME}\""
