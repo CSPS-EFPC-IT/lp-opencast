@@ -56,24 +56,26 @@ function mount_file_service_share() {
   local storage_account_key="$2"
   local file_service_share_name="$3"
   local file_service_share_url="$4"
-  local mount_point="$5"
+  local mount_point_path="$5"
 
-  # CONSTANTS
-  CREDENTIALS_PATH="/etc/smbcredentials/${storage_account_name}.cred"
+  # Constants
+  CREDENTIALS_FOLDER_PATH="/etc/smbcredentials"
+  CREDENTIALS_FILE_PATH="${CREDENTIALS_ROOT_PATH}/${storage_account_name}.cred"
+  FILE_SERVICE_SHARE_FQDN=$(echo "$file_service_share_url" | awk -F[/:] '{print $4}')
+
+  logger::info "Creating mount point directory..."
+  mkdir -p "${mount_point_path}"
 
   logger::info "Creating credentials file..."
-  mkdir -p "${mount_point}"
-  if [ ! -d "/etc/smbcredentials" ]; then
-    mkdir /etc/smbcredentials
+  if [ ! -d "${CREDENTIALS_FOLDER_PATH}" ]; then
+    mkdir "${CREDENTIALS_FOLDER_PATH}"
   fi
-  if [ ! -f "${CREDENTIALS_PATH}" ]; then
-    echo "username=${storage_account_name}" > "${CREDENTIALS_PATH}"
-    echo "password=${storage_account_key}" >> "${CREDENTIALS_PATH}"
-  fi
-  chmod 600 "${CREDENTIALS_PATH}"
+  echo "username=${storage_account_name}" > "${CREDENTIALS_FILE_PATH}"
+  echo "password=${storage_account_key}" >> "${CREDENTIALS_FILE_PATH}"
+  chmod 600 "${CREDENTIALS_FILE_PATH}"
 
   logger::info "Saving mount point configuration..."
-  echo "//${file_service_share_url}/${file_service_share_name} ${mount_point} cifs nofail,credentials=${CREDENTIALS_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab
+  echo "//${FILE_SERVICE_SHARE_FQDN}/${file_service_share_name} ${mount_point_path} cifs nofail,credentials=${CREDENTIALS_FILE_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab
 
   logger::info "Mounting all drives defined in fstab file..."
   mount -a
@@ -95,13 +97,13 @@ function main() {
     mysql-client
 
   logger::title "Create Database and credentials"
-  sudo mysql::create_database_and_credentials \
-    "${parameters[db_server_fqdn]}" \
-    "${parameters[db_server_admin_username]}" \
-    "${parameters[db_server_admin_password]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-    "${parameters[db_server_db_name]}"
+  # mysql::create_database_and_credentials \
+  #   "${parameters[db_server_fqdn]}" \
+  #   "${parameters[db_server_admin_username]}" \
+  #   "${parameters[db_server_admin_password]}" \
+  #   "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+  #   "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
+  #   "${parameters[db_server_db_name]}"
 
   logger::title "Configure File Shares"
   mount_file_service_share \
