@@ -77,6 +77,11 @@ function main() {
     docker-compose \
     mysql-client
 
+  logger::debug "whoami = $(whoami)"
+  logger::debug "Before - pwd = $(pwd)"
+  cd "${HOME}"
+  logger::debug "After - pwd = $(pwd)"
+
   logger::title "Create Database and credentials"
   # mysql::create_database_and_credentials \
   #   "${parameters[db_server_fqdn]}" \
