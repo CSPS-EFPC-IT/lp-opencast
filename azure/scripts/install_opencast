@@ -103,14 +103,50 @@ function main() {
     docker-compose \
     mysql-client
 
+
+echo "DEBUG - whoami = $(whoami)"
+echo "DEBUG - \$HOME = ${HOME}"
+echo "DEBUG - pwd = $(pwd)"
+
   logger::title "Create Database and credentials"
-  mysql::create_database_and_credentials \
-    "${parameters[db_server_fqdn]}" \
+  mysql::create_user_options_file \
     "${parameters[db_server_admin_username]}" \
     "${parameters[db_server_admin_password]}" \
+    "${parameters[db_server_fqdn]}" \
+    "3306" \
+    "mysql"
+
+echo "DEBUG - ls -al"
+ls -al "${HOME}"/.my.cnf
+
+echo "DEBUG - DEBUT - cat .my.cnf"
+cat "${HOME}"/.my.cnf
+echo "DEBUG - FIN -cat .my.cnf"
+
+  mysql::create_database_if_not_exists \
+    "${parameters[db_server_db_name]}"
+
+  mysql::create_user_if_not_exists \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_pass]}"
+
+  mysql::set_user_password \
     "${parameters[app_org_opencastproject_db_jdbc_user]}" \
     "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-    "${parameters[db_server_db_name]}"
+
+  mysql::grant_all_privileges \
+    "${parameters[db_server_db_name]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+
+  # mysql::delete_user_options_file
+
+  # mysql::create_database_and_credentials \
+  #   "${parameters[db_server_fqdn]}" \
+  #   "${parameters[db_server_admin_username]}" \
+  #   "${parameters[db_server_admin_password]}" \
+  #   "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+  #   "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
+  #   "${parameters[db_server_db_name]}"
 
   logger::title "Configure File Shares"
   mount_file_service_share \
