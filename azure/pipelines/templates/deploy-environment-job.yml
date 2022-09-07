@@ -206,6 +206,19 @@ jobs:
                 --variable-name "containerRepositoryTag"
               failOnStandardError: true
 
+          - task: AzureCLI@2
+            displayName: 'Set Database Server FQDN Variable'
+            inputs:
+              azureSubscription: '$(serviceConnectionName)'
+              scriptType: 'bash'
+              scriptLocation: 'scriptPath'
+              scriptPath: 'lp-common/azure/scripts/set_database_server_fqdn_variable_v2.sh'
+              arguments: >-
+                --database-server-name "$(databaseServerName)"
+                --resource-group-name "$(resourceGroupName)"
+                --subscription-name "$(subscriptionName)"
+                --variable-name "databaseServerFqdn"
+
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Virtual Machine Resource'
             inputs:
@@ -220,7 +233,7 @@ jobs:
               overrideParameters: >-
                 -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
                 -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
-                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://mariadb/$(containerRepositoryRootName)?useMysqlMetadata=true"
+                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true"
                 -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
                 -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
                 -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
@@ -238,7 +251,7 @@ jobs:
                 -databaseServerAdminPassword "$(databaseServerAdminPassword)"
                 -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
                 -databaseServerDatabaseName "$(containerRepositoryRootName)"
-                -databaseServerName "$(databaseServerName)"
+                -databaseServerFqdn "$(databaseServerFqdn)"
                 -fileServiceShareName "$(fileServiceShareName)"
                 -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
                 -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
