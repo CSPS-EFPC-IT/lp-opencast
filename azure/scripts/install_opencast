@@ -22,10 +22,10 @@ declare -A parameters=( \
   [app_prop_org_opencastproject_engage_ui_url]=""\
   [container_repository_root_name]=""\
   [container_repository_tag]=""\
-  [db_server_admin_password]="" \
-  [db_server_admin_username]="" \
-  [db_server_db_name]="" \
-  [db_server_fqdn]="" \
+  [database_server_admin_password]="" \
+  [database_server_admin_username]="" \
+  [database_server_database_name]="" \
+  [database_server_fqdn]="" \
   [file_service_share_name]=""\
   [file_service_share_url]=""\
   [storage_account_key]=""\
@@ -62,33 +62,31 @@ function mount_file_service_share() {
   local mount_point_path="$5"
 
   # Constants
-  CREDENTIALS_FOLDER_PATH="/etc/smbcredentials"
-  CREDENTIALS_FILE_PATH="${CREDENTIALS_ROOT_PATH}/${storage_account_name}.cred"
+  SMB_CREDENTIALS_FOLDER_PATH="/etc/smbcredentials"
+  SMB_CREDENTIALS_FILE_PATH="${SMB_CREDENTIALS_FOLDER_PATH}/${storage_account_name}.cred"
   FILE_SERVICE_SHARE_FQDN="$(echo "$file_service_share_url" | awk -F[/:] '{print $4}')"
 
-  # If the file system has already been mounted, the mount point directory will not be empty.
-  # Thus the "mkdir -p" command cannot be used to optionnaly create the directory.
-  if [ ! -d "${mount_point_path}" ]; then
-    logger::info "Creating mount point directory..."
-    mkdir "${mount_point_path}"
-  fi;
+  logger::info "Creating mount point directory..."
+  mkdir -p "${mount_point_path}"
 
   logger::info "Creating credentials file..."
-  if [ ! -d "${CREDENTIALS_FOLDER_PATH}" ]; then
-    mkdir "${CREDENTIALS_FOLDER_PATH}"
-  fi
-  echo "username=${storage_account_name}" > "${CREDENTIALS_FILE_PATH}"
-  echo "password=${storage_account_key}" >> "${CREDENTIALS_FILE_PATH}"
-  chmod 600 "${CREDENTIALS_FILE_PATH}"
+  mkdir -p "${SMB_CREDENTIALS_FOLDER_PATH}"
+  echo "username=${storage_account_name}" > "${SMB_CREDENTIALS_FILE_PATH}"
+  echo "password=${storage_account_key}" >> "${SMB_CREDENTIALS_FILE_PATH}"
+  chmod 600 "${SMB_CREDENTIALS_FILE_PATH}"
 
   logger::info "Saving mount point configuration..."
-  echo "//${FILE_SERVICE_SHARE_FQDN}/${file_service_share_name} ${mount_point_path} cifs nofail,credentials=${CREDENTIALS_FILE_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab
+  echo "//${FILE_SERVICE_SHARE_FQDN}/${file_service_share_name} ${mount_point_path} cifs nofail,credentials=${SMB_CREDENTIALS_FILE_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab
 
   logger::info "Mounting all file system defined in fstab file..."
   mount -a
 }
 
 function main() {
+
+  # Constants
+  FILE_SERVICE_SHARE_MOUNT_POINT_PATH="/mnt/${parameters[file_service_share_name]}"
+
   utils::set_exit_trap
   logger::title "Start of $0"
 
@@ -104,12 +102,12 @@ function main() {
 
   logger::title "Create Database and credentials"
   mysql::create_database_and_credentials \
-    "${parameters[db_server_fqdn]}" \
-    "${parameters[db_server_admin_username]}" \
-    "${parameters[db_server_admin_password]}" \
+    "${parameters[database_server_fqdn]}" \
+    "${parameters[database_server_admin_username]}" \
+    "${parameters[database_server_admin_password]}" \
     "${parameters[app_org_opencastproject_db_jdbc_user]}" \
     "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-    "${parameters[db_server_db_name]}"
+    "${parameters[database_server_database_name]}"
 
   logger::title "Configure File Shares"
   mount_file_service_share \
@@ -117,13 +115,21 @@ function main() {
     "${parameters[storage_account_key]}" \
     "${parameters[file_service_share_name]}" \
     "${parameters[file_service_share_url]}" \
-    "/mnt/${parameters[file_service_share_name]}"
+    "${FILE_SERVICE_SHARE_MOUNT_POINT_PATH}"
+
+  logger::title "Create required folder structure"
+  mkdir -p "${FILE_SERVICE_SHARE_MOUNT_POINT_PATH}/data"
+  mkdir -p "${FILE_SERVICE_SHARE_MOUNT_POINT_PATH}/opensearch"
 
   logger::title "Create docker-compose environment file"
   ## Créer le fichier d'environnement pour l'application.
+  cat <<EOF > config.env
+app_opensearch_java_opts=${parameters[app_opensearch_java_opts]}
+EOF
 
   logger::title "Launch the application"
   ## Lancer l'application en arrière plan
+  ## docker-compose --env-file=config.env -f docker-compose.yml up -d
 
   #############################################################################
 
