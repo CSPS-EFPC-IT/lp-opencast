@@ -53,6 +53,18 @@ function main() {
   utils::set_exit_trap
   logger::title "Start of $0"
 
+echo "DEBUG - whoami = $(whoami)"
+echo "DEBUG - pwd = $(pwd)"
+
+if [ -v HOME ]; then
+  echo "DEBUG - HOME is set"
+  echo "DEBUG - \$HOME = ${HOME}"
+else
+  echo "DEBUG - HOME is NOT set."
+  HOME='/root'
+  echo "DEBUG - \$HOME = ${HOME}"
+fi
+
   #############################################################################
 
   logger::title "Parse Input Parameters"
