@@ -105,8 +105,15 @@ function main() {
 
 
 echo "DEBUG - whoami = $(whoami)"
-echo "DEBUG - \$HOME = ${HOME}"
 echo "DEBUG - pwd = $(pwd)"
+
+echo
+if [ -v HOME ]; then
+  echo "DEBUG - HOME is set"
+  echo "DEBUG - \$HOME = ${HOME}"
+else
+  echo "DEBUG - HOME is NOT set."
+fi
 
   logger::title "Create Database and credentials"
   mysql::create_user_options_file \
@@ -124,7 +131,7 @@ cat "${HOME}"/.my.cnf
 echo "DEBUG - FIN -cat .my.cnf"
 
 echo "DEBUG - Before - mv"
-mv "${HOME}"/.my.cnf /root/.my.cnf
+mv "${HOME}"/.my.cnf /etc/my.cnf
 echo "DEBUG - After - mv"
 
 echo "DEBUG - Before - id"
