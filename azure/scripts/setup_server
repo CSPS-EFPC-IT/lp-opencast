@@ -91,6 +91,10 @@ function main() {
     --app_prop_org_opencastproject_engage_ui_url "${parameters[app_prop_org_opencastproject_engage_ui_url]}"\
     --container_repository_root_name "${parameters[container_repository_root_name]}"\
     --container_repository_tag "${parameters[container_repository_tag]}"\
+    --db_server_admin_password "${parameters[db_server_admin_password]}" \
+    --db_server_admin_username "${parameters[db_server_admin_username]}" \
+    --db_server_db_name "${parameters[db_server_db_name]}" \
+    --db_server_fqdn "${parameters[db_server_fqdn]}" \
     --file_service_share_name "${parameters[file_service_share_name]}"\
     --file_service_share_url "${parameters[file_service_share_url]}"\
     --storage_account_key "${parameters[storage_account_key]}"\

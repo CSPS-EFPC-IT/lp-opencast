@@ -22,6 +22,10 @@ declare -A parameters=( \
   [app_prop_org_opencastproject_engage_ui_url]=""\
   [container_repository_root_name]=""\
   [container_repository_tag]=""\
+  [db_server_admin_password]="" \
+  [db_server_admin_username]="" \
+  [db_server_db_name]="" \
+  [db_server_fqdn]="" \
   [file_service_share_name]=""\
   [file_service_share_url]=""\
   [storage_account_key]=""\
@@ -37,7 +41,6 @@ source ./logger.sh
 source ./mysql.sh
 #shellcheck source=/dev/null
 source ./utils.sh
-
 
 #######################################
 # Create and mount a File Service Share.
@@ -101,13 +104,13 @@ function main() {
     mysql-client
 
   logger::title "Create Database and credentials"
-  # mysql::create_database_and_credentials \
-  #   "${parameters[db_server_fqdn]}" \
-  #   "${parameters[db_server_admin_username]}" \
-  #   "${parameters[db_server_admin_password]}" \
-  #   "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-  #   "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-  #   "${parameters[db_server_db_name]}"
+  mysql::create_database_and_credentials \
+    "${parameters[db_server_fqdn]}" \
+    "${parameters[db_server_admin_username]}" \
+    "${parameters[db_server_admin_password]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
+    "${parameters[db_server_db_name]}"
 
   logger::title "Configure File Shares"
   mount_file_service_share \
