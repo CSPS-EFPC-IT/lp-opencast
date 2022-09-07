@@ -276,5 +276,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "databaseServerFqdn": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.DBforMariaDB/servers', parameters('databaseServerName')), '2018-06-01').fullyQualifiedDomainName]"
+        }
+    }
 }

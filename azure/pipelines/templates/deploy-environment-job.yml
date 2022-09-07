@@ -144,30 +144,31 @@ jobs:
           #     deploymentMode: 'Incremental'
           #     deploymentName: '$(solutionName)_bastion-host_$(Build.BuildNumber)'
 
-          # - task: AzureResourceManagerTemplateDeployment@3
-          #   displayName: 'Deploy DB for MariaDB Server Resource'
-          #   inputs:
-          #     deploymentScope: 'Resource Group'
-          #     azureResourceManagerConnection: '$(serviceConnectionName)'
-          #     subscriptionId: '$(subscriptionId)'
-          #     action: 'Create Or Update Resource Group'
-          #     resourceGroupName: '$(resourceGroupName)'
-          #     location: '$(locationName)'
-          #     templateLocation: 'Linked artifact'
-          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-db-for-mariadb.json'
-          #     overrideParameters: >-
-          #       -databaseServerAdminPassword "$(databaseServerAdminPassword)"
-          #       -databaseServerAdminUsername "$(databaseServerAdminUsername)"
-          #       -databaseServerBackupRetentionDays "$(databaseServerBackupRetentionDays)"
-          #       -databaseServerCapacity "$(databaseServerCapacity)"
-          #       -databaseServerName "$(databaseServerName)"
-          #       -databaseServerStorageMb "$(databaseServerStorageMb)"
-          #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-          #       -resourceTags $(resourceTags)
-          #       -virtualNetworkName "$(virtualNetworkName)"
-          #       -virtualNetworkSubnetName "$(applicationSubnetName)"
-          #     deploymentMode: 'Incremental'
-          #     deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
+          - task: AzureResourceManagerTemplateDeployment@3
+            name: deployDbForMariaDbServerResource
+            displayName: 'Deploy DB for MariaDB Server Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-db-for-mariadb.json'
+              overrideParameters: >-
+                -databaseServerAdminPassword "$(databaseServerAdminPassword)"
+                -databaseServerAdminUsername "$(databaseServerAdminUsername)"
+                -databaseServerBackupRetentionDays "$(databaseServerBackupRetentionDays)"
+                -databaseServerCapacity "$(databaseServerCapacity)"
+                -databaseServerName "$(databaseServerName)"
+                -databaseServerStorageMb "$(databaseServerStorageMb)"
+                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+                -resourceTags $(resourceTags)
+                -virtualNetworkName "$(virtualNetworkName)"
+                -virtualNetworkSubnetName "$(applicationSubnetName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy File Service Share Resource'
@@ -206,18 +207,18 @@ jobs:
                 --variable-name "containerRepositoryTag"
               failOnStandardError: true
 
-          - task: AzureCLI@2
-            displayName: 'Set Database Server FQDN Variable'
-            inputs:
-              azureSubscription: '$(serviceConnectionName)'
-              scriptType: 'bash'
-              scriptLocation: 'scriptPath'
-              scriptPath: 'lp-common/azure/scripts/set_database_server_fqdn_variable_v2.sh'
-              arguments: >-
-                --database-server-name "$(databaseServerName)"
-                --resource-group-name "$(resourceGroupName)"
-                --subscription-name "$(subscriptionName)"
-                --variable-name "databaseServerFqdn"
+          # - task: AzureCLI@2
+          #   displayName: 'Set Database Server FQDN Variable'
+          #   inputs:
+          #     azureSubscription: '$(serviceConnectionName)'
+          #     scriptType: 'bash'
+          #     scriptLocation: 'scriptPath'
+          #     scriptPath: 'lp-common/azure/scripts/set_database_server_fqdn_variable_v2.sh'
+          #     arguments: >-
+          #       --database-server-name "$(databaseServerName)"
+          #       --resource-group-name "$(resourceGroupName)"
+          #       --subscription-name "$(subscriptionName)"
+          #       --variable-name "databaseServerFqdn"
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Virtual Machine Resource'
@@ -233,7 +234,7 @@ jobs:
               overrideParameters: >-
                 -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
                 -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
-                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true"
+                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(deployDbForMariaDbServerResource.databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true"
                 -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
                 -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
                 -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
@@ -251,7 +252,7 @@ jobs:
                 -databaseServerAdminPassword "$(databaseServerAdminPassword)"
                 -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
                 -databaseServerDatabaseName "$(containerRepositoryRootName)"
-                -databaseServerFqdn "$(databaseServerFqdn)"
+                -databaseServerFqdn "$(deployDbForMariaDbServerResource.databaseServerFqdn)"
                 -fileServiceShareName "$(fileServiceShareName)"
                 -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
                 -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
