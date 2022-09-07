@@ -99,7 +99,7 @@ function main() {
 
   logger::title "Install Application Dependencies"
   apt-get update
-  apt-get install -y \
+  apt-get install -yes --quiet \
     docker-compose \
     mysql-client
 
