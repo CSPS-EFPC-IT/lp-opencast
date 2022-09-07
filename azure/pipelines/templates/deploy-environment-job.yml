@@ -169,6 +169,7 @@ jobs:
                 -virtualNetworkSubnetName "$(applicationSubnetName)"
               deploymentMode: 'Incremental'
               deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
+              deploymentOutputs: 'output'
 
           # - task: AzureResourceManagerTemplateDeployment@3
           #   displayName: 'Deploy File Service Share Resource'
@@ -234,7 +235,7 @@ jobs:
               overrideParameters: >-
                 -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
                 -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
-                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(deployDbForMariaDbServerResource.databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true"
+                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(deployDbForMariaDbServerResource.output.databaseServerFqdn.value)/$(containerRepositoryRootName)?useMysqlMetadata=true"
                 -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
                 -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
                 -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
@@ -252,7 +253,7 @@ jobs:
                 -databaseServerAdminPassword "$(databaseServerAdminPassword)"
                 -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
                 -databaseServerDatabaseName "$(containerRepositoryRootName)"
-                -databaseServerFqdn "$(deployDbForMariaDbServerResource.databaseServerFqdn)"
+                -databaseServerFqdn "$(deployDbForMariaDbServerResource.output)"
                 -fileServiceShareName "$(fileServiceShareName)"
                 -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
                 -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
