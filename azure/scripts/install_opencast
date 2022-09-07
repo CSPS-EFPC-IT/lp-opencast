@@ -123,6 +123,8 @@ echo "DEBUG - DEBUT - cat .my.cnf"
 cat "${HOME}"/.my.cnf
 echo "DEBUG - FIN -cat .my.cnf"
 
+mv "${HOME}"/.my.cnf /root/.my.cnf
+
   mysql::create_database_if_not_exists \
     "${parameters[db_server_db_name]}"
 
