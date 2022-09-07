@@ -7,7 +7,6 @@ resources:
   - repository: lp-common
     type: git
     name: learning-platform/lp-common
-    ref: issue-1639
 
 variables:
 - group: appDev-pb-public
