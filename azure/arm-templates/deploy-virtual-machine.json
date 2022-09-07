@@ -251,7 +251,7 @@
             }
         },
         "virtualMachineAdminUsername": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The username of the Virtual Machine's Administrator."
             }

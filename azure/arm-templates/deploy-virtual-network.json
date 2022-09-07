@@ -9,7 +9,7 @@
             }
         },
         "applicationGatewaySubnetAddressRange": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The Application Gateway's subnet address range in CIDR notation."
             }
@@ -27,7 +27,7 @@
             }
         },
         "applicationSubnetAddressRange": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The Application Gateway subnet's address range in CIDR notation."
             }
@@ -39,7 +39,7 @@
             }
         },
         "bastionHostSubnetAddressRange": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The Bastion Host subnet's address range in CIDR notation."
             }
@@ -57,7 +57,7 @@
             }
         },
         "dataSubnetAddressRange": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The Application Gateway subnet's address range in CIDR notation."
             }
@@ -84,7 +84,7 @@
             }
         },
         "virtualNetworkAddressRange": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The virtual Network's address range in CIDR notation."
             }
