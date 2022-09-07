@@ -61,10 +61,14 @@ function mount_file_service_share() {
   # Constants
   CREDENTIALS_FOLDER_PATH="/etc/smbcredentials"
   CREDENTIALS_FILE_PATH="${CREDENTIALS_ROOT_PATH}/${storage_account_name}.cred"
-  FILE_SERVICE_SHARE_FQDN=$(echo "$file_service_share_url" | awk -F[/:] '{print $4}')
+  FILE_SERVICE_SHARE_FQDN="$(echo "$file_service_share_url" | awk -F[/:] '{print $4}')"
 
-  logger::info "Creating mount point directory..."
-  mkdir -p "${mount_point_path}"
+  # If the file system has already been mounted, the mount point directory will not be empty.
+  # Thus the "mkdir -p" command cannot be used to optionnaly create the directory.
+  if [ ! -d "${mount_point_path}" ]; then
+    logger::info "Creating mount point directory..."
+    mkdir "${mount_point_path}"
+  fi;
 
   logger::info "Creating credentials file..."
   if [ ! -d "${CREDENTIALS_FOLDER_PATH}" ]; then
@@ -77,7 +81,7 @@ function mount_file_service_share() {
   logger::info "Saving mount point configuration..."
   echo "//${FILE_SERVICE_SHARE_FQDN}/${file_service_share_name} ${mount_point_path} cifs nofail,credentials=${CREDENTIALS_FILE_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab
 
-  logger::info "Mounting all drives defined in fstab file..."
+  logger::info "Mounting all file system defined in fstab file..."
   mount -a
 }
 
