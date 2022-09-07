@@ -123,7 +123,17 @@ echo "DEBUG - DEBUT - cat .my.cnf"
 cat "${HOME}"/.my.cnf
 echo "DEBUG - FIN -cat .my.cnf"
 
+echo "DEBUG - Before - mv"
 mv "${HOME}"/.my.cnf /root/.my.cnf
+echo "DEBUG - After - mv"
+
+echo "DEBUG - Before - id"
+id
+echo "DEBUG - After - id"
+
+echo "DEBUG - Before - printenv"
+printenv | sort
+echo "DEBUG - After - printenv"
 
   mysql::create_database_if_not_exists \
     "${parameters[db_server_db_name]}"
