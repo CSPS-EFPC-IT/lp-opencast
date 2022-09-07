@@ -98,76 +98,18 @@ function main() {
   utils::parse_parameters "$@"
 
   logger::title "Install Application Dependencies"
-  apt-get update
   apt-get install --yes --quiet \
     docker-compose \
     mysql-client
 
-
-echo "DEBUG - whoami = $(whoami)"
-echo "DEBUG - pwd = $(pwd)"
-
-echo
-if [ -v HOME ]; then
-  echo "DEBUG - HOME is set"
-  echo "DEBUG - \$HOME = ${HOME}"
-else
-  echo "DEBUG - HOME is NOT set."
-  HOME='/root'
-  echo "DEBUG - \$HOME = ${HOME}"
-fi
-
   logger::title "Create Database and credentials"
-  mysql::create_user_options_file \
+  mysql::create_database_and_credentials \
+    "${parameters[db_server_fqdn]}" \
     "${parameters[db_server_admin_username]}" \
     "${parameters[db_server_admin_password]}" \
-    "${parameters[db_server_fqdn]}" \
-    "3306" \
-    "mysql"
-
-echo "DEBUG - ls -al \$HOME/.my.cnf"
-ls -al "${HOME}"/.my.cnf
-
-echo "DEBUG - DEBUT - cat .my.cnf"
-cat "${HOME}"/.my.cnf
-echo "DEBUG - FIN -cat .my.cnf"
-
-# echo "DEBUG - Before - mv"
-# mv "${HOME}"/.my.cnf /etc/my.cnf
-# echo "DEBUG - After - mv"
-
-echo "DEBUG - Before - id"
-id
-echo "DEBUG - After - id"
-
-echo "DEBUG - Before - printenv"
-printenv | sort
-echo "DEBUG - After - printenv"
-
-  mysql::create_database_if_not_exists \
-    "${parameters[db_server_db_name]}"
-
-  mysql::create_user_if_not_exists \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_pass]}"
-
-  mysql::set_user_password \
     "${parameters[app_org_opencastproject_db_jdbc_user]}" \
     "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-
-  mysql::grant_all_privileges \
-    "${parameters[db_server_db_name]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-
-  # mysql::delete_user_options_file
-
-  # mysql::create_database_and_credentials \
-  #   "${parameters[db_server_fqdn]}" \
-  #   "${parameters[db_server_admin_username]}" \
-  #   "${parameters[db_server_admin_password]}" \
-  #   "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-  #   "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-  #   "${parameters[db_server_db_name]}"
+    "${parameters[db_server_db_name]}"
 
   logger::title "Configure File Shares"
   mount_file_service_share \
