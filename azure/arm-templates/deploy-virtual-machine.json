@@ -29,7 +29,7 @@
             }
         },
         "appOrgOpenCastProjectDbJdbcPass": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "See the project's README for details."
             }
@@ -41,7 +41,7 @@
             }
         },
         "appOrgOpenCastProjectDbJdbcUser": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "See the project's README for details."
             }
@@ -53,25 +53,25 @@
             }
         },
         "appOrgOpenCastProjectSecurityAdminPass": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "See the project's README for details."
             }
         },
         "appOrgOpenCastProjectSecurityAdminUser": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "See the project's README for details."
             }
         },
         "appOrgOpenCastProjectSecurityDigestPass": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "See the project's README for details."
             }
         },
         "appOrgOpenCastProjectSecurityDigestUser": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "See the project's README for details."
             }
