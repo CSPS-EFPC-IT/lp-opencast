@@ -1,0 +1,277 @@
+parameters:
+- name: env
+  type: string
+
+resources:
+  repositories:
+  - repository: lp-common
+    type: git
+    name: learning-platform/lp-common
+
+variables:
+- group: appDev-pb-public
+- group: lp-opencast-public
+- ${{ if eq(parameters.env, 'dev') }}:
+  - group: common-dev-secret
+  - group: lp-opencast-dev-public
+  - group: lp-opencast-dev-secret
+
+jobs:
+- deployment: deployResourcesJob
+  displayName: 'Deploy Environment Job'
+  pool:
+    vmImage: ubuntu-20.04
+  environment: '$(resourceGroupName)'
+  strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: self # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-opencast folder.
+          - checkout: lp-common # Multiple repos: files will be downloaded to ${Build.SourcesDirectory}/lp-common folder.
+
+          - template: set-resource-names-steps.yml
+            parameters:
+              applicationGatewayNameVariableName: 'applicationGatewayName'
+              applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
+              applicationGatewayPublicIpAddressNameVariableName: 'applicationGatewayPublicIpAddressName'
+              applicationGatewaySubnetNameVariableName: 'applicationGatewaySubnetName'
+              applicationGatewayUserAssignedIdentityNameVariableName: 'applicationGatewayUserAssignedIdentityName'
+              applicationNetworkSecurityGroupNameVariableName: 'applicationNetworkSecurityGroupName'
+              applicationSubnetNameVariableName: 'applicationSubnetName'
+              bastionHostNameVariableName: 'bastionHostName'
+              bastionHostPublicIpAddressNameVariableName: 'bastionHostPublicIpAddressName'
+              dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
+              dataSubnetNameVariableName:  'dataSubnetName'
+              databaseServerNameVariableName: 'databaseServerName'
+              environmentName: '$(environmentName)'
+              keyVaultNameVariableName: 'keyVaultName'
+              logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
+              solutionName: '$(solutionName)'
+              storageAccountNameVariableName: 'storageAccountName'
+              virtualMachineNameVariableName: 'virtualMachineName'
+              virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
+              virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
+              virtualNetworkNameVariableName: 'virtualNetworkName'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Log Analytics Workspace Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-common/azure/arm-templates/deploy-log-analytics-workspace.json'
+              overrideParameters: >-
+                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+                -logAnalyticsWorkspaceRetentionDays "$(logAnalyticsWorkspaceRetentionDays)"
+                -resourceTags $(resourceTags)
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_log-analytics-workspace_$(Build.BuildNumber)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Virtual Network Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
+              overrideParameters: >-
+                -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
+                -applicationGatewaySubnetAddressRange "$(virtualNetworkAddressRangePrefix).0/27"
+                -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
+                -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
+                -applicationSubnetAddressRange "$(virtualNetworkAddressRangePrefix).32/27"
+                -applicationSubnetName "$(applicationSubnetName)"
+                -bastionHostSubnetAddressRange "$(virtualNetworkAddressRangePrefix).96/27"
+                -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
+                -dataSubnetName "$(dataSubnetName)"
+                -dataSubnetAddressRange "$(virtualNetworkAddressRangePrefix).64/27"
+                -deniedIpAddressList "$(deniedIpAddressList)"
+                -resourceTags $(resourceTags)
+                -virtualNetworkAddressRange "$(virtualNetworkAddressRangePrefix).0/24"
+                -virtualNetworkName "$(virtualNetworkName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_virtual-network_$(Build.BuildNumber)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Application Gateway Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-application-gateway.json'
+              overrideParameters: >-
+                -applicationGatewayName "$(applicationGatewayName)"
+                -keyVaultCertificateName "$(applicationGatewayKeyVaultCertificateName)"
+                -keyVaultName "$(keyVaultName)"
+                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+                -publicIpAddressName "$(applicationGatewayPublicIpAddressName)"
+                -userAssignedIdentityName "$(applicationGatewayUserAssignedIdentityName)"
+                -virtualNetworkName "$(virtualNetworkName)"
+                -virtualNetworkSubnetName "$(applicationGatewaySubnetName)"
+                -resourceTags $(resourceTags)
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_application-gateway_$(Build.BuildNumber)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Bastion Host Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-bastion-host.json'
+              overrideParameters: >-
+                -bastionHostName "$(bastionHostName)"
+                -publicIpAddressName "$(bastionHostPublicIpAddressName)"
+                -virtualNetworkName "$(virtualNetworkName)"
+                -resourceTags $(resourceTags)
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_bastion-host_$(Build.BuildNumber)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            name: deployDbForMariaDbServerResource
+            displayName: 'Deploy DB for MariaDB Server Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-db-for-mariadb.json'
+              overrideParameters: >-
+                -databaseServerAdminPassword "$(databaseServerAdminPassword)"
+                -databaseServerAdminUsername "$(databaseServerAdminUsername)"
+                -databaseServerBackupRetentionDays "$(databaseServerBackupRetentionDays)"
+                -databaseServerCapacity "$(databaseServerCapacity)"
+                -databaseServerName "$(databaseServerName)"
+                -databaseServerStorageMb "$(databaseServerStorageMb)"
+                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+                -resourceTags $(resourceTags)
+                -virtualNetworkName "$(virtualNetworkName)"
+                -virtualNetworkSubnetName "$(applicationSubnetName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy File Service Share Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-file-service-share.json'
+              overrideParameters: >-
+                -allowedIpAddressList "$(corporateGatewayIpAddress)"
+                -fileServiceShareName "$(fileServiceShareName)"
+                -storageAccountName "$(storageAccountName)"
+                -virtualNetworkName "$(virtualNetworkName)"
+                -virtualNetworkSubnetName "$(applicationSubnetName)"
+                -resourceTags $(resourceTags)
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_file-service-share_$(Build.BuildNumber)'
+
+          # Overwrite library defined containerRepositoryTag variable if equal to "latest".
+          - task: AzureCLI@2
+            displayName: 'Set Alternate Container Repository Tag Variable'
+            condition: eq(variables['containerRepositoryTag'], 'latest')
+            inputs:
+              azureSubscription: '$(AppDevServiceConnectionName)'
+              scriptType: 'bash'
+              scriptLocation: 'scriptPath'
+              scriptPath: 'lp-common/azure/scripts/set_alternate_container_repository_tag_variable.sh'
+              arguments: >-
+                --container-registry-name "$(containerRegistryName)"
+                --container-repository-name "$(containerRepositoryRootName)/admin"
+                --container-repository-tag "$(containerRepositoryTag)"
+                --variable-name "containerRepositoryTag"
+              failOnStandardError: true
+
+          - task: AzureCLI@2
+            displayName: 'Set Database Server FQDN Variable'
+            inputs:
+              azureSubscription: '$(serviceConnectionName)'
+              scriptType: 'bash'
+              scriptLocation: 'scriptPath'
+              scriptPath: 'lp-common/azure/scripts/set_database_server_fqdn_variable_v2.sh'
+              arguments: >-
+                --database-server-name "$(databaseServerName)"
+                --resource-group-name "$(resourceGroupName)"
+                --subscription-name "$(subscriptionName)"
+                --variable-name "databaseServerFqdn"
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Virtual Machine Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-machine.json'
+              overrideParameters: >-
+                -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
+                -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
+                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true"
+                -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
+                -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
+                -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
+                -appOrgOpenCastProjectSecurityAdminUser "$(appOrgOpenCastProjectSecurityAdminUser)"
+                -appOrgOpenCastProjectSecurityDigestPass "$(appOrgOpenCastProjectSecurityDigestPass)"
+                -appOrgOpenCastProjectSecurityDigestUser "$(appOrgOpenCastProjectSecurityDigestUser)"
+                -appOrgOpenCastProjectServerUrlAdmin "$(appOrgOpenCastProjectServerUrlAdmin)"
+                -appOrgOpenCastProjectServerUrlPresentation "$(appOrgOpenCastProjectServerUrlPresentation)"
+                -appOrgOpenCastProjectServerUrlWorker "$(appOrgOpenCastProjectServerUrlWorker)"
+                -appPropOrgOpenCastProjectAdminUiUrl "$(appPropOrgOpenCastProjectAdminUiUrl)"
+                -appPropOrgOpenCastProjectEngageUiUrl "$(appPropOrgOpenCastProjectEngageUiUrl)"
+                -applicationGatewayName "$(applicationGatewayName)"
+                -containerRepositoryRootName "$(containerRepositoryRootName)"
+                -containerRepositoryTag "$(containerRepositoryTag)"
+                -databaseServerAdminPassword "$(databaseServerAdminPassword)"
+                -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
+                -databaseServerDatabaseName "$(containerRepositoryRootName)"
+                -databaseServerFqdn "$(databaseServerFqdn)"
+                -fileServiceShareName "$(fileServiceShareName)"
+                -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
+                -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
+                -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)"
+                -resourceTags $(resourceTags)
+                -smtpServerFqdn "$(smtpServerFqdn)"
+                -smtpServerFromAddress "$(smtpServerFromAddress)"
+                -smtpServerPassword "$(smtpServerPassword)"
+                -smtpServerPort "$(smtpServerPort)"
+                -smtpServerUsername "$(smtpServerUsername)"
+                -storageAccountName "$(storageAccountName)"
+                -virtualMachineAdminEmail "$(adminUserEmail)"
+                -virtualMachineAdminPassword "$(virtualMachineAdminPassword)"
+                -virtualMachineAdminUsername "$(virtualMachineAdminUsername)"
+                -virtualMachineName "$(virtualMachineName)"
+                -virtualMachineOsDiskName "$(virtualMachineOsDiskName)"
+                -virtualMachineSize "$(virtualMachineSize)"
+                -virtualMachineTags $(virtualMachineTags)
+                -virtualNetworkName "$(virtualNetworkName)"
+                -virtualNetworkSubnetName "$(applicationSubnetName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_virtual-machine_$(Build.BuildNumber)'

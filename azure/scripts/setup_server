@@ -1,0 +1,109 @@
+#!/bin/bash
+#
+# Setup OpenCast Server.
+# This script must be run as root (ex.: sudo sh ./[script_name])
+# Style Guide: https://google.github.io/styleguide/shellguide.html
+
+# Parameters: all manadatory and must be prefixed with "--" on command line.
+declare -A parameters=( \
+  [app_opensearch_java_opts]="" \
+  [app_org_opencastproject_db_jdbc_pass]="" \
+  [app_org_opencastproject_db_jdbc_url]="" \
+  [app_org_opencastproject_db_jdbc_user]="" \
+  [app_org_opencastproject_download_url]="" \
+  [app_org_opencastproject_security_admin_pass]="" \
+  [app_org_opencastproject_security_admin_user]="" \
+  [app_org_opencastproject_security_digest_pass]="" \
+  [app_org_opencastproject_security_digest_user]="" \
+  [app_org_opencastproject_server_url_admin]="" \
+  [app_org_opencastproject_server_url_presentation]="" \
+  [app_org_opencastproject_server_url_worker]="" \
+  [app_prop_org_opencastproject_admin_ui_url]=""\
+  [app_prop_org_opencastproject_engage_ui_url]=""\
+  [container_repository_root_name]=""\
+  [container_repository_tag]=""\
+  [database_server_admin_password]="" \
+  [database_server_admin_username]="" \
+  [database_server_database_name]="" \
+  [database_server_fqdn]="" \
+  [file_service_share_name]=""\
+  [file_service_share_url]=""\
+  [server_admin_email]="" \
+  [server_fqdn]="" \
+  [server_reboot_utc_time]="" \
+  [server_resource_name]="" \
+  [smtp_server_fqdn]="" \
+  [smtp_server_from_address]="" \
+  [smtp_server_password]="" \
+  [smtp_server_port]="" \
+  [smtp_server_username]="" \
+  [storage_account_key]=""\
+  [storage_account_name]=""\
+)
+
+# Functions
+
+# All libraries not available at build time.
+# shellcheck source=/dev/null
+source ./logger.sh
+# shellcheck source=/dev/null
+source ./utils.sh
+
+function main() {
+  utils::set_exit_trap
+  logger::title "Start of $0"
+
+  #############################################################################
+
+  logger::title "Parse Input Parameters"
+  utils::parse_parameters "$@"
+
+  logger::title "Upgrade Server and Remove Unused Packages"
+  ./upgrade_server
+
+  logger::title "Install Unattended Upgrade Tools"
+  ./install_unattended_upgrade_tools \
+    --server_admin_email "${parameters[server_admin_email]}" \
+    --server_fqdn "${parameters[server_fqdn]}" \
+    --server_reboot_utc_time "${parameters[server_reboot_utc_time]}" \
+    --server_resource_name "${parameters[server_resource_name]}" \
+    --smtp_server_fqdn "${parameters[smtp_server_fqdn]}" \
+    --smtp_server_from_address "${parameters[smtp_server_from_address]}" \
+    --smtp_server_password "${parameters[smtp_server_password]}" \
+    --smtp_server_port "${parameters[smtp_server_port]}" \
+    --smtp_server_username "${parameters[smtp_server_username]}"
+
+  logger::title "Install OpenCast"
+  ./install_opencast \
+    --app_opensearch_java_opts "${parameters[app_opensearch_java_opts]}" \
+    --app_org_opencastproject_db_jdbc_pass "${parameters[app_org_opencastproject_db_jdbc_pass]}"\
+    --app_org_opencastproject_db_jdbc_url "${parameters[app_org_opencastproject_db_jdbc_url]}" \
+    --app_org_opencastproject_db_jdbc_user "${parameters[app_org_opencastproject_db_jdbc_user]}" \
+    --app_org_opencastproject_download_url "${parameters[app_org_opencastproject_download_url]}" \
+    --app_org_opencastproject_security_admin_pass "${parameters[app_org_opencastproject_security_admin_pass]}" \
+    --app_org_opencastproject_security_admin_user "${parameters[app_org_opencastproject_security_admin_user]}" \
+    --app_org_opencastproject_security_digest_pass "${parameters[app_org_opencastproject_security_digest_pass]}" \
+    --app_org_opencastproject_security_digest_user "${parameters[app_org_opencastproject_security_digest_user]}" \
+    --app_org_opencastproject_server_url_admin "${parameters[app_org_opencastproject_server_url_admin]}" \
+    --app_org_opencastproject_server_url_presentation "${parameters[app_org_opencastproject_server_url_presentation]}" \
+    --app_org_opencastproject_server_url_worker "${parameters[app_org_opencastproject_server_url_worker]}" \
+    --app_prop_org_opencastproject_admin_ui_url "${parameters[app_prop_org_opencastproject_admin_ui_url]}"\
+    --app_prop_org_opencastproject_engage_ui_url "${parameters[app_prop_org_opencastproject_engage_ui_url]}"\
+    --container_repository_root_name "${parameters[container_repository_root_name]}"\
+    --container_repository_tag "${parameters[container_repository_tag]}"\
+    --database_server_admin_password "${parameters[database_server_admin_password]}" \
+    --database_server_admin_username "${parameters[database_server_admin_username]}" \
+    --database_server_database_name "${parameters[database_server_database_name]}" \
+    --database_server_fqdn "${parameters[database_server_fqdn]}" \
+    --file_service_share_name "${parameters[file_service_share_name]}"\
+    --file_service_share_url "${parameters[file_service_share_url]}"\
+    --storage_account_key "${parameters[storage_account_key]}"\
+    --storage_account_name "${parameters[storage_account_name]}"
+
+  #############################################################################
+
+  logger::title "End of $0"
+  utils::unset_exit_trap
+}
+
+main "$@"

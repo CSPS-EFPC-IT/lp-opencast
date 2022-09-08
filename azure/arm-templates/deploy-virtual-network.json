@@ -1,0 +1,377 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGatewayNetworkSecurityGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Application Gateway Subnet's Network Security Group."
+            }
+        },
+        "applicationGatewaySubnetAddressRange": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Application Gateway's subnet address range in CIDR notation."
+            }
+        },
+        "applicationGatewaySubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network Subnet dedicated to the Application Gateway."
+            }
+        },
+        "applicationNetworkSecurityGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the application Subnet's Network Security Group."
+            }
+        },
+        "applicationSubnetAddressRange": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Application Gateway subnet's address range in CIDR notation."
+            }
+        },
+        "applicationSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network Subnet dedicated to the application."
+            }
+        },
+        "bastionHostSubnetAddressRange": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Bastion Host subnet's address range in CIDR notation."
+            }
+        },
+        "dataNetworkSecurityGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Data Subnet Network Security Group."
+            }
+        },
+        "dataSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network Subnet dedicated to the data resources."
+            }
+        },
+        "dataSubnetAddressRange": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Application Gateway subnet's address range in CIDR notation."
+            }
+        },
+        "deniedIpAddressList": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "A comma separated list of source IP addresses (using CIDR notation, up to 500) that must be DENIED access to the application."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The name of the Azure Location where resources will be created."
+            }
+        },
+        "resourceTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional tags to add to each resource created."
+            }
+        },
+        "virtualNetworkAddressRange": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The virtual Network's address range in CIDR notation."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network resource."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "applicationGatewayNetworkSecurityGroupStaticRuleArray": [
+            {
+                "name": "Allow_PublicAccess_Any_80_443_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRanges": [
+                        "80",
+                        "443"
+                    ],
+                    "direction": "Inbound",
+                    "priority": 1000,
+                    "protocol": "*",
+                    "sourceAddressPrefix": "Internet",
+                    "sourcePortRange": "*"
+                }
+            },
+            {
+                "name": "Allow_GatewayManager_TCP_65200-65535_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "description": "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#network-security-groups-on-the-application-gateway-subnet",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "65200-65535",
+                    "direction": "Inbound",
+                    "priority": 1010,
+                    "protocol": "TCP",
+                    "sourceAddressPrefix": "GatewayManager",
+                    "sourcePortRange": "*"
+                }
+            },
+            {
+                "name": "Allow_AzureLoadBalancer_Any_Any_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "description": "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#network-security-groups-on-the-application-gateway-subnet",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "*",
+                    "direction": "Inbound",
+                    "priority": 1020,
+                    "protocol": "*",
+                    "sourceAddressPrefix": "AzureLoadBalancer",
+                    "sourcePortRange": "*"
+                }
+            }
+        ],
+        "applicationNetworkSecurityGroupStaticRuleArray": [
+            {
+                "name": "Allow_ApplicationGateway_TCP_8080-8081_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "8080-8081",
+                    "direction": "Inbound",
+                    "priority": 1000,
+                    "protocol": "TCP",
+                    "sourceAddressPrefix": "[parameters('applicationGatewaySubnetAddressRange')]",
+                    "sourcePortRange": "*"
+                }
+            },
+            {
+                "name": "Allow_BastionHost_TCP_22_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "22",
+                    "direction": "Inbound",
+                    "priority": 1010,
+                    "protocol": "TCP",
+                    "sourceAddressPrefix": "[parameters('bastionHostSubnetAddressRange')]",
+                    "sourcePortRange": "*"
+                }
+            }
+        ],
+        "dataNetworkSecurityGroupStaticRuleArray": [
+            {
+                "name": "Allow_Application_TCP_3306_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "3306",
+                    "direction": "Inbound",
+                    "priority": 1000,
+                    "protocol": "TCP",
+                    "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                    "sourcePortRange": "*"
+                }
+            },
+            {
+                "name": "Allow_Application_TCP_139-445_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRanges": [
+                        "139",
+                        "445"
+                    ],
+                    "direction": "Inbound",
+                    "priority": 1010,
+                    "protocol": "TCP",
+                    "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                    "sourcePortRange": "*"
+                }
+            }
+        ],
+        "deniedIpAddressArray": "[if(empty(parameters('deniedIpAddressList')), createArray(), split(parameters('deniedIpAddressList'), ','))]",
+        "copy": [
+            {
+                "name": "defaultNetworkSecurityGroupDynamicRuleArray",
+                "count": "[length(variables('deniedIpAddressArray'))]",
+                "input": {
+                    "name": "[concat('Deny_CustomRule', copyIndex('defaultNetworkSecurityGroupDynamicRuleArray', 1), '_Any_Any_Inbound')]",
+                    "properties": {
+                        "access": "Deny",
+                        "description": "[concat('Deny custom rule no. ', copyIndex('defaultNetworkSecurityGroupDynamicRuleArray', 1))]",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "*",
+                        "direction": "Inbound",
+                        "priority": "[copyIndex('defaultNetworkSecurityGroupDynamicRuleArray', 500)]",
+                        "protocol": "*",
+                        "sourceAddressPrefix": "[variables('deniedIpAddressArray')[copyIndex('defaultNetworkSecurityGroupDynamicRuleArray')]]",
+                        "sourcePortRange": "*"
+                    }
+                }
+            }
+        ],
+        "defaultNetworkSecurityGroupStaticRuleArray": [
+            {
+                "name": "Deny_AllOther_Inbound",
+                "properties": {
+                    "access": "Deny",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "*",
+                    "direction": "Inbound",
+                    "priority": 4096,
+                    "protocol": "*",
+                    "sourceAddressPrefix": "*",
+                    "sourcePortRange": "*"
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('applicationGatewayNetworkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('resourceTags')]",
+            "properties": {
+                "securityRules": "[concat(variables('defaultNetworkSecurityGroupDynamicRuleArray'), variables('applicationGatewayNetworkSecurityGroupStaticRuleArray'), variables('defaultNetworkSecurityGroupStaticRuleArray'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('applicationNetworkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('resourceTags')]",
+            "properties": {
+                "securityRules": "[concat(variables('defaultNetworkSecurityGroupDynamicRuleArray'), variables('applicationNetworkSecurityGroupStaticRuleArray'), variables('defaultNetworkSecurityGroupStaticRuleArray'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('dataNetworkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('resourceTags')]",
+            "properties": {
+                "securityRules": "[concat(variables('defaultNetworkSecurityGroupDynamicRuleArray'), variables('dataNetworkSecurityGroupStaticRuleArray'), variables('defaultNetworkSecurityGroupStaticRuleArray'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('virtualNetworkName')]",
+            "comments": "The Bastion Host Subnet name MUST be \"AzureBastionSubnet\". Ref.: https://docs.microsoft.com/en-us/azure/bastion/configuration-settings#subnet",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('applicationGatewayNetworkSecurityGroupName'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('applicationNetworkSecurityGroupName'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dataNetworkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('virtualNetworkAddressRange')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "AzureBastionSubnet",
+                        "properties": {
+                            "addressPrefix": "[parameters('bastionHostSubnetAddressRange')]",
+                            "serviceEndpoints": [],
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('applicationGatewaySubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('applicationGatewaySubnetAddressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('applicationGatewayNetworkSecurityGroupName'))]"
+                            },
+                            "serviceEndpoints": [],
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('applicationSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('applicationNetworkSecurityGroupName'))]"
+                            },
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Sql",
+                                    "locations": [
+                                        "[parameters('location')]"
+                                    ]
+                                },
+                                {
+                                    "service": "Microsoft.Storage",
+                                    "locations": [
+                                        "[parameters('location')]"
+                                    ]
+                                }
+                            ],
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('dataSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('dataSubnetAddressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dataNetworkSecurityGroupName'))]"
+                            },
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Sql",
+                                    "locations": [
+                                        "[parameters('location')]"
+                                    ]
+                                },
+                                {
+                                    "service": "Microsoft.Storage",
+                                    "locations": [
+                                        "[parameters('location')]"
+                                    ]
+                                }
+                            ],
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        }
+
+    ],
+    "outputs": {}
+}

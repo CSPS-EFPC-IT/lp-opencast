@@ -1,0 +1,461 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Application Gateway resource."
+            }
+        },
+        "keyVaultCertificateName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Key Vault Certificate used by the Application Gateway."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name Key Vault resource used by the Application Gateway."
+            }
+        },
+        "keyVaultResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Key Vault used by the Application Gateway."
+            }
+        },
+        "keyVaultSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription Id of the Key Vault used by the Application Gateway."
+            }
+        },
+        "locationName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The name of the Azure Location where resources will be created."
+            }
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Log Analytics Workspace resource used by the Application Gateway."
+            }
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Log Analytics Workspace resource used by the Application Gateway."
+            }
+        },
+        "logAnalyticsWorkspaceSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription ID of the Log Analytics Workspace resource used by the Application Gateway."
+            }
+        },
+        "publicIpAddressName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Public IP Address resource assigned to the Application Gateway."
+            }
+        },
+        "resourceTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional tags to add to each resource created."
+            }
+        },
+        "userAssignedIdentityName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of User Assigned Managed Identity resource assigned to the Application Gateway."
+            }
+        },
+        "userAssignedIdentityResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the User Assigned Managed Identity ressource assigned to the Application Gateway."
+            }
+        },
+        "userAssignedIdentitySubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription ID of the User Assigned Managed Identity resource assigned to the Application Gateway."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network used by the Application Gateway."
+            }
+        },
+        "virtualNetworkResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Virtual Network used by the Application Gateway."
+            }
+        },
+        "virtualNetworkSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network Subnet used by the Application Gateway."
+            }
+        },
+        "virtualNetworkSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription ID of the Virtual Network used by the Application Gateway."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "defaultBackendAddressPoolName": "default-backend-address-pool",
+        "defaultBackendHttpSettingsCollectionName": "default-backend-http-settings-collection",
+        "defaultFrontendIPConfigurationName": "default-frontend-ip-configuration",
+        "defaultGatewayIPConfigurationName": "default-gateway-ip-configuration",
+        "defaultRewriteRuleSetName": "default-rewrite-rule-set",
+        "engageBackendHttpSettingsCollectionName": "engage-backend-http-settings-collection",
+        "httpFrontendPortName": "http-frontend-port",
+        "httpHttpListenerName" : "http-http-listener",
+        "httpRedirectConfigurationName": "http-redirect-configuration-name",
+        "httpRequestRoutingRuleName": "http-request-routing-rule",
+        "httpsFrontendPortName": "https-frontend-port",
+        "httpsHttpListenerName": "https-http-listener",
+        "httpsRequestRoutingRuleName": "https-request-routing-rule",
+        "httpsUrlPathMap": "http-url-path-map"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('publicIpAddressName')]",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('locationName')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "apiVersion": "2022-01-01",
+            "name": "[parameters('applicationGatewayName')]",
+            "comments": "List of recommended Cipher Suites: https://cyber.gc.ca/en/guidance/guidance-securely-configuring-network-protocols-itsp40062#a31. List of available cipher suites: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2022-01-01/applicationgateways?pivots=deployment-language-arm-template#applicationgatewaysslpolicy-1",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('locationName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName'))]"
+            ],
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": "[createObject(resourceId(parameters('userAssignedIdentitySubscriptionId'), parameters('userAssignedIdentityResourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName')), createObject())]"
+            },
+            "properties": {
+                "sku": {
+                    "name": "Standard_v2",
+                    "tier": "Standard_v2"
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "[variables('defaultGatewayIPConfigurationName')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId(parameters('virtualNetworkSubscriptionId'), parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('virtualNetworkSubnetName'))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('defaultFrontendIPConfigurationName')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "[variables('httpFrontendPortName')]",
+                        "properties": {
+                            "port": 80
+                        }
+                    },
+                    {
+                        "name": "[variables('httpsFrontendPortName')]",
+                        "properties": {
+                            "port": 443
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('defaultBackendAddressPoolName')]",
+                        "properties": {
+                            "backendAddresses": []
+                        }
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "[variables('defaultBackendHttpSettingsCollectionName')]",
+                        "properties": {
+                            "port": 8080,
+                            "protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "pickHostNameFromBackendAddress": false,
+                            "requestTimeout": 60
+                        }
+                    },
+                    {
+                        "name": "[variables('engageBackendHttpSettingsCollectionName')]",
+                        "properties": {
+                            "port": 8081,
+                            "protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "pickHostNameFromBackendAddress": false,
+                            "requestTimeout": 60
+                        }
+                    }
+                ],
+                "sslCertificates": [
+                    {
+                        "name": "[parameters('keyVaultCertificateName')]",
+                        "properties": {
+                            "keyVaultSecretId": "[reference(resourceId(parameters('keyVaultSubscriptionId'), parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('keyVaultCertificateName')), '2022-07-01').secretUriWithVersion]"
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "[variables('httpsHttpListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/frontendIPConfigurations/', variables('defaultFrontendIPConfigurationName'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/frontendPorts/', variables('httpsFrontendPortName'))]"
+                            },
+                            "protocol": "Https",
+                            "sslCertificate": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/sslCertificates/', parameters('keyVaultCertificateName'))]"
+                            },
+                            "hostNames": [],
+                            "requireServerNameIndication": false
+                        }
+                    },
+                    {
+                        "name": "[variables('httpHttpListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/frontendIPConfigurations/', variables('defaultFrontendIPConfigurationName'))]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/frontendPorts/', variables('httpFrontendPortName'))]"
+                            },
+                            "protocol": "Http",
+                            "hostNames": [],
+                            "requireServerNameIndication": false
+                        }
+                    }
+                ],
+                "urlPathMaps": [
+                    {
+                        "name": "[variables('httpsUrlPathMap')]",
+                        "properties": {
+                            "defaultBackendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendAddressPools/', variables('defaultBackendAddressPoolName'))]"
+                            },
+                            "defaultBackendHttpSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendHttpSettingsCollection/', variables('defaultBackendHttpSettingsCollectionName'))]"
+                            },
+                            "defaultRewriteRuleSet": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/rewriteRuleSets/', variables('defaultRewriteRuleSetName'))]"
+                            },
+                            "pathRules": [
+                                {
+                                    "name": "presentation",
+                                    "properties": {
+                                        "paths": [
+                                            "/presentation/*"
+                                        ],
+                                        "backendAddressPool": {
+                                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendAddressPools/', variables('defaultBackendAddressPoolName'))]"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendHttpSettingsCollection/', variables('engageBackendHttpSettingsCollectionName'))]"
+                                        },
+                                        "rewriteRuleSet": {
+                                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/rewriteRuleSets/', variables('defaultRewriteRuleSetName'))]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "name": "[variables('httpsRequestRoutingRuleName')]",
+                        "properties": {
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/', variables('httpsHttpListenerName'))]"
+                            },
+                            "priority": 1,
+                            "ruleType": "PathBasedRouting",
+                            "urlPathMap": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/urlPathMaps/', variables('httpsUrlPathMap'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('httpRequestRoutingRuleName')]",
+                        "properties": {
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/', variables('httpHttpListenerName'))]"
+                            },
+                            "priority": 2,
+                            "redirectConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/redirectConfigurations/', variables('httpRedirectConfigurationName'))]"
+                            },
+                            "ruleType": "Basic"
+                        }
+                    }
+                ],
+                "probes": [],
+                "rewriteRuleSets": [
+                    {
+                        "name": "[variables('defaultRewriteRuleSetName')]",
+                        "properties": {
+                            "rewriteRules": [
+                                {
+                                    "ruleSequence": 100,
+                                    "conditions": [],
+                                    "name": "StrictTransportSecurity",
+                                    "actionSet": {
+                                        "requestHeaderConfigurations": [],
+                                        "responseHeaderConfigurations": [
+                                            {
+                                                "headerName": "Strict-Transport-Security",
+                                                "headerValue": "max-age=63072000"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "ruleSequence": 100,
+                                    "conditions": [],
+                                    "name": "add_x_forwarded_for_proxy",
+                                    "actionSet": {
+                                        "requestHeaderConfigurations": [
+                                            {
+                                                "headerName": "X-Forwarded-For",
+                                                "headerValue": "{var_add_x_forwarded_for_proxy}"
+                                            }
+                                        ],
+                                        "responseHeaderConfigurations": []
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "redirectConfigurations": [
+                    {
+                        "name": "[variables('httpRedirectConfigurationName')]",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/', variables('httpsHttpListenerName'))]"
+                            },
+                            "includePath": true,
+                            "includeQueryString": true,
+                            "requestRoutingRules": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/requestRoutingRules/', variables('httpRequestRoutingRuleName'))]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "sslPolicy": {
+                    "policyType": "Custom",
+                    "minProtocolVersion": "TLSv1_2",
+                    "cipherSuites": [
+                        "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+                        "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",
+                        "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+                        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+                        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+                        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+                        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+                        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_RSA_WITH_AES_128_CBC_SHA",
+                        "TLS_RSA_WITH_AES_128_CBC_SHA256",
+                        "TLS_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_RSA_WITH_AES_256_CBC_SHA",
+                        "TLS_RSA_WITH_AES_256_CBC_SHA256",
+                        "TLS_RSA_WITH_AES_256_GCM_SHA384"
+                    ]
+                },
+                "enableHttp2": false,
+                "autoscaleConfiguration": {
+                    "minCapacity": 1,
+                    "maxCapacity": 10
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Insights/diagnosticSettings",
+            "apiVersion": "2021-05-01-preview",
+            "name": "local-logging",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName'))]"
+            ],
+            "scope": "[concat('Microsoft.Network/applicationGateways', '/', parameters('applicationGatewayName'))]",
+            "properties": {
+                "logs": [
+                    {
+                        "categoryGroup": "AllLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        }
+                    }
+                ],
+                "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceSubscriptionId'), parameters('logAnalyticsWorkspaceResourceGroupName'), 'microsoft.operationalinsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+            }
+        }
+     ],
+    "outputs": {}
+}
