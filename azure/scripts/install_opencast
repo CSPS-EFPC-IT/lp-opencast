@@ -49,6 +49,7 @@ source ./utils.sh
 #   The Storage Account ney, a string.
 #   The File Service Share name, a string.
 #   The File Service Share URL, a string.
+#   The Path where the File Service Share must be mounted, a string.
 # Outputs:
 #   Writes message to STDOUT.
 #######################################
