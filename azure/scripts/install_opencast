@@ -134,14 +134,35 @@ function main() {
   mkdir -p "${file_service_share_mount_point_path}/opensearch"
 
   logger::title "Create docker-compose environment file"
-  ## Créer le fichier d'environnement pour l'application.
   cat <<EOF > config.env
-app_opensearch_java_opts=${parameters[app_opensearch_java_opts]}
+ELASTICSEARCH_SERVER_HOST=opensearch
+ORG_OPENCASTPROJECT_DB_JDBC_PASS=${parameters[app_org_opencastproject_db_jdbc_pass]}
+ORG_OPENCASTPROJECT_DB_JDBC_URL=${parameters[app_org_opencastproject_db_jdbc_url]}
+ORG_OPENCASTPROJECT_DB_JDBC_USER=${parameters[app_org_opencastproject_db_jdbc_user]}
+ORG_OPENCASTPROJECT_DB_VENDOR=MariaDB
+ORG_OPENCASTPROJECT_DOWNLOAD_URL=${parameters[app_org_opencastproject_download_url]}
+ORG_OPENCASTPROJECT_SECURITY_ADMIN_PASS=${parameters[app_org_opencastproject_security_admin_pass]}
+ORG_OPENCASTPROJECT_SECURITY_ADMIN_USER=${parameters[app_org_opencastproject_security_admin_user]}
+ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS=${parameters[app_org_opencastproject_security_digest_pass]}
+ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER=${parameters[app_org_opencastproject_security_digest_user]}
+PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL=${parameters[app_prop_org_opencastproject_admin_ui_url]}
+PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}
+
+ORG_OPENCASTPROJECT_SERVER_URL_ADMIN=${parameters[app_org_opencastproject_server_url_admin]}
+
+ORG_OPENCASTPROJECT_SERVER_URL_PRESENTATION=${parameters[app_org_opencastproject_server_url_presentation]}
+
+ORG_OPENCASTPROJECT_SERVER_URL_WORKER_1=${parameters[app_org_opencastproject_server_url_worker]}
+
+DISABLE_INSTALL_DEMO_CONFIG=true
+DISABLE_SECURITY_PLUGIN=true
+OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+BOOTSTRAP_MEMORY_LOCK=true
+DISCOVERY_TYPE=single-node
 EOF
 
   logger::title "Launch the application"
-  ## Lancer l'application en arrière plan
-  ## docker-compose --env-file=config.env -f docker-compose.yml up -d
+  docker-compose --env-file=config.env -f docker-compose.yml up -d
 
   #############################################################################
 
