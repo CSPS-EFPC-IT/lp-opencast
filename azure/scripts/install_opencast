@@ -133,6 +133,9 @@ function main() {
   mkdir -p "${file_service_share_mount_point_path}/data"
   mkdir -p "${file_service_share_mount_point_path}/opensearch"
 
+  logger::title "Update docker-compose mount point path"
+  sed -i -e "s|{{FILE_SERVICE_SHARE_MOUNT_POINT_PATH}}|${file_service_share_mount_point_path}|g" docker-compose.yml
+
   logger::title "Create docker-compose environment file"
   cat <<EOF > config.env
 ELASTICSEARCH_SERVER_HOST=opensearch
@@ -151,8 +154,6 @@ PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject
 ORG_OPENCASTPROJECT_SERVER_URL_ADMIN=${parameters[app_org_opencastproject_server_url_admin]}
 
 ORG_OPENCASTPROJECT_SERVER_URL_PRESENTATION=${parameters[app_org_opencastproject_server_url_presentation]}
-
-ORG_OPENCASTPROJECT_SERVER_URL_WORKER_1=${parameters[app_org_opencastproject_server_url_worker]}
 
 DISABLE_INSTALL_DEMO_CONFIG=true
 DISABLE_SECURITY_PLUGIN=true
