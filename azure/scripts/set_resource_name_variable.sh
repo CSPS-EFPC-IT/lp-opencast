@@ -164,7 +164,10 @@ function main() {
     "Microsoft.OperationalInsights/workspaces")
       set_variable_in_azure_context "${parameters[--variable-name]}" "${resource_name_prefix}-LAW" "${parameters[--is-output]}"
       ;;
-   "Microsoft.Storage/storageAccounts")
+    "Microsoft.RecoveryServices/vaults")
+      set_variable_in_azure_context "${parameters[--variable-name]}" "${resource_name_prefix}-RSV" "${parameters[--is-output]}"
+      ;;
+    "Microsoft.Storage/storageAccounts")
       # Use lower case letters only.
       # See https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules#microsoftstorage
       set_variable_in_azure_context "${parameters[--variable-name]}" "$(tr -cd '[:alnum:]' <<< "${resource_name_prefix,,}sa")" "${parameters[--is-output]}"

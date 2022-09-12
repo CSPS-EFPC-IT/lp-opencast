@@ -1,0 +1,150 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dailyBackupRetentionPeriod": {
+            "type": "int",
+            "defaultValue": 30,
+            "metadata": {
+                "description": "The number of days to keep daily backups."
+            }
+        },
+        "dailyBackupScheduleRunTime": {
+            "type": "string",
+            "defaultValue": "00:00",
+            "metadata": {
+                "description": "The time at which the backups are to be taken."
+            }
+        },
+        "fileServiceShareName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the File Service Share to backup."
+            }
+        },
+        "locationName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The name of the Azure Location where resources will be created."
+            }
+        },
+        "recoveryServiceVaultName": {
+            "type": "String",
+            "metadata": {
+                "description": "The name of the Recovery Service Vault resource."
+            }
+        },
+        "resourceTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Generic tags for any resources."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the File Service Share's Storage Account resource."
+            }
+        },
+        "storageAccountResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Storage Account's Resource Group."
+            }
+        },
+        "storageAccountSubscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "The Subscription ID of the Storage Account."
+            }
+        }
+    },
+    "variables": {
+        "backupFabricName": "Azure",
+        "customBackupPolicyName": "custom-daily",
+        "protectedItemName": "[format('azurefileshare;{0}', parameters('fileServiceShareName'))]",
+        "protectionContainerName": "[format('storagecontainer;Storage;{0};{1}', parameters('storageAccountResourceGroupName'), parameters('storageAccountName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.RecoveryServices/vaults",
+            "apiVersion": "2022-04-01",
+            "name": "[parameters('recoveryServiceVaultName')]",
+            "location": "[parameters('locationName')]",
+            "tags": "[parameters('resourceTags')]",
+            "sku": {
+                "name": "RS0",
+                "tier": "Standard"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('recoveryServiceVaultName'), '/', variables('customBackupPolicyName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults', parameters('recoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureStorage",
+                "workloadType": "AzureFileShare",
+                "schedulePolicy": {
+                    "schedulePolicyType": "SimpleSchedulePolicy",
+                    "scheduleRunFrequency": "Daily",
+                    "scheduleRunTimes": [
+                        "[parameters('dailyBackupScheduleRunTime')]"
+                    ],
+                    "scheduleWeeklyFrequency": 0
+                },
+                "retentionPolicy": {
+                    "retentionPolicyType": "LongTermRetentionPolicy",
+                    "dailySchedule": {
+                        "retentionTimes": [
+                            "[parameters('dailyBackupScheduleRunTime')]"
+                        ],
+                        "retentionDuration": {
+                            "count": "[parameters('dailyBackupRetentionPeriod')]",
+                            "durationType": "Days"
+                        }
+                    },
+                    "weeklySchedule": null,
+                    "monthlySchedule": null,
+                    "yearlySchedule": null
+                },
+                "timeZone": "Eastern Standard Time"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers",
+            "apiVersion": "2022-03-01",
+            "name": "[format('{0}/{1}/{2}', parameters('recoveryServiceVaultName'), variables('backupFabricName'), variables('protectionContainerName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults', parameters('recoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureStorage",
+                "containerType": "StorageContainer",
+                "sourceResourceId": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
+            "apiVersion": "2022-03-01",
+            "name": "[format('{0}/{1}/{2}/{3}', parameters('recoveryServiceVaultName'), variables('backupFabricName'), variables('protectionContainerName'), variables('protectedItemName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('recoveryServiceVaultName'), variables('customBackupPolicyName'))]",
+                "[resourceId('Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers', parameters('recoveryServiceVaultName'), variables('backupFabricName'), variables('protectionContainerName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureStorage",
+                "workloadType": "AzureFileShare",
+                "friendlyName": "patate",
+                "protectedItemType": "AzureFileShareProtectedItem",
+                "policyId": "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('recoveryServiceVaultName'), variables('customBackupPolicyName'))]",
+                "sourceResourceId": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            }
+        }
+    ]
+}
