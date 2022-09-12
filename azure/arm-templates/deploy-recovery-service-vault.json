@@ -50,12 +50,14 @@
         },
         "storageAccountResourceGroupName": {
             "type": "string",
+            "defaultValue": "[resourceGroup().name]",
             "metadata": {
                 "description": "The name of the Storage Account's Resource Group."
             }
         },
         "storageAccountSubscriptionId": {
             "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
             "metadata": {
                 "description": "The Subscription ID of the Storage Account."
             }
