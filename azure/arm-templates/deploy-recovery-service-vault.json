@@ -30,7 +30,7 @@
             }
         },
         "recoveryServiceVaultName": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The name of the Recovery Service Vault resource."
             }
