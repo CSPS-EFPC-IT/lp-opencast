@@ -1,4 +1,4 @@
-FROM quay.io/opencast/admin:12.2
+FROM quay.io/opencast/adminpresentation:12.2
 
 ENV UPLOAD_ASSET_PROPERTIES /opencast/etc/listproviders/event.upload.asset.options.properties
 
