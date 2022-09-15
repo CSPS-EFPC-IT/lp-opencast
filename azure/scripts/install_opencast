@@ -131,9 +131,6 @@ function main() {
   mkdir -p "${file_service_share_mount_point_path}/data"
   mkdir -p "${file_service_share_mount_point_path}/opensearch"
 
-  logger::title "Update docker-compose mount point path"
-  sed -i -e "s|{{FILE_SERVICE_SHARE_MOUNT_POINT_PATH}}|${file_service_share_mount_point_path}|g" docker-compose.yml
-
   logger::title "Create docker-compose environment file"
   cat <<EOF > config.env
 ELASTICSEARCH_SERVER_HOST=opensearch
