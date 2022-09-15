@@ -326,12 +326,6 @@
                                     "locations": [
                                         "[parameters('location')]"
                                     ]
-                                },
-                                {
-                                    "service": "Microsoft.Storage",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
                                 }
                             ],
                             "delegations": [],
@@ -349,12 +343,6 @@
                             "serviceEndpoints": [
                                 {
                                     "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                },
-                                {
-                                    "service": "Microsoft.Storage",
                                     "locations": [
                                         "[parameters('location')]"
                                     ]
