@@ -274,6 +274,7 @@
                         "name": "[variables('httpsRequestRoutingRuleName')]",
                         "properties": {
                             "ruleType": "Basic",
+                            "priority": 1,
                             "httpListener": {
                                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/', variables('httpsHttpListenerName'))]"
                             },
@@ -291,14 +292,14 @@
                     {
                         "name": "[variables('httpRequestRoutingRuleName')]",
                         "properties": {
+                            "ruleType": "Basic",
+                            "priority": 2,
                             "httpListener": {
                                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/', variables('httpHttpListenerName'))]"
                             },
-                            "priority": 2,
                             "redirectConfiguration": {
                                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/redirectConfigurations/', variables('httpRedirectConfigurationName'))]"
-                            },
-                            "ruleType": "Basic"
+                            }
                         }
                     }
                 ],
