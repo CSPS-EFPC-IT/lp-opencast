@@ -146,11 +146,11 @@
         ],
         "applicationNetworkSecurityGroupStaticRuleArray": [
             {
-                "name": "Allow_ApplicationGateway_TCP_8080-8081_Inbound",
+                "name": "Allow_ApplicationGateway_TCP_8080_Inbound",
                 "properties": {
                     "access": "Allow",
                     "destinationAddressPrefix": "*",
-                    "destinationPortRange": "8080-8081",
+                    "destinationPortRange": "8080",
                     "direction": "Inbound",
                     "priority": 1000,
                     "protocol": "TCP",
