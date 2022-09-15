@@ -23,8 +23,6 @@ declare -A parameters=( \
   [database_server_admin_username]="" \
   [database_server_database_name]="" \
   [database_server_fqdn]="" \
-  [file_service_share_name]=""\
-  [file_service_share_url]=""\
   [server_admin_email]="" \
   [server_fqdn]="" \
   [server_reboot_utc_time]="" \
@@ -34,8 +32,6 @@ declare -A parameters=( \
   [smtp_server_password]="" \
   [smtp_server_port]="" \
   [smtp_server_username]="" \
-  [storage_account_key]=""\
-  [storage_account_name]=""\
 )
 
 # Functions
@@ -88,11 +84,7 @@ function main() {
     --database_server_admin_password "${parameters[database_server_admin_password]}" \
     --database_server_admin_username "${parameters[database_server_admin_username]}" \
     --database_server_database_name "${parameters[database_server_database_name]}" \
-    --database_server_fqdn "${parameters[database_server_fqdn]}" \
-    --file_service_share_name "${parameters[file_service_share_name]}"\
-    --file_service_share_url "${parameters[file_service_share_url]}"\
-    --storage_account_key "${parameters[storage_account_key]}"\
-    --storage_account_name "${parameters[storage_account_name]}"
+    --database_server_fqdn "${parameters[database_server_fqdn]}"
 
   #############################################################################
 

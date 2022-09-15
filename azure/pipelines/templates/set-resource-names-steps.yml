@@ -31,8 +31,6 @@ parameters:
   type: string
 - name: solutionName
   type: string
-- name: storageAccountNameVariableName
-  type: string
 - name: virtualMachineNameVariableName
   type: string
 - name: virtualMachineNetworkInterfaceCardNameVariableName
@@ -207,18 +205,6 @@ steps:
       --resource-type "Microsoft.DBforMariaDB/servers"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.databaseServerNameVariableName }}"
-
-# Setting File Service Share related resource names.
-- task: Bash@3
-  displayName: "Set Storage Account's Resource Name Variable"
-  inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-    arguments: >-
-      --component-name "data"
-      --environment-name "${{ parameters.environmentName }}"
-      --resource-type "Microsoft.Storage/storageAccounts"
-      --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.storageAccountNameVariableName }}"
 
 # Setting Virtual Machine related resource names.
 - task: Bash@3

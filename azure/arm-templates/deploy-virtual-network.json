@@ -185,22 +185,6 @@
                     "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
                     "sourcePortRange": "*"
                 }
-            },
-            {
-                "name": "Allow_Application_TCP_139-445_Inbound",
-                "properties": {
-                    "access": "Allow",
-                    "destinationAddressPrefix": "*",
-                    "destinationPortRanges": [
-                        "139",
-                        "445"
-                    ],
-                    "direction": "Inbound",
-                    "priority": 1010,
-                    "protocol": "TCP",
-                    "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
-                    "sourcePortRange": "*"
-                }
             }
         ],
         "deniedIpAddressArray": "[if(empty(parameters('deniedIpAddressList')), createArray(), split(parameters('deniedIpAddressList'), ','))]",
@@ -326,12 +310,6 @@
                                     "locations": [
                                         "[parameters('location')]"
                                     ]
-                                },
-                                {
-                                    "service": "Microsoft.Storage",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
                                 }
                             ],
                             "delegations": [],
@@ -349,12 +327,6 @@
                             "serviceEndpoints": [
                                 {
                                     "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                },
-                                {
-                                    "service": "Microsoft.Storage",
                                     "locations": [
                                         "[parameters('location')]"
                                     ]

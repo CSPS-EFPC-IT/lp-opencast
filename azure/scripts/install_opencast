@@ -23,10 +23,6 @@ declare -A parameters=( \
   [database_server_admin_username]="" \
   [database_server_database_name]="" \
   [database_server_fqdn]="" \
-  [file_service_share_name]=""\
-  [file_service_share_url]=""\
-  [storage_account_key]=""\
-  [storage_account_name]=""\
 )
 
 # Functions
@@ -39,60 +35,8 @@ source ./mysql.sh
 #shellcheck source=/dev/null
 source ./utils.sh
 
-#######################################
-# Create and mount a File Service Share.
-# Arguments:
-#   The Storage Account name, a string.
-#   The Storage Account ney, a string.
-#   The File Service Share name, a string.
-#   The File Service Share URL, a string.
-#   The Path where the File Service Share must be mounted, a string.
-# Outputs:
-#   Writes message to STDOUT.
-#######################################
-function mount_file_service_share() {
-
-  # Parameters
-  local storage_account_name="$1"
-  local storage_account_key="$2"
-  local file_service_share_name="$3"
-  local file_service_share_url="$4"
-  local mount_point_path="$5"
-
-  # Constants
-  SMB_CREDENTIALS_FOLDER_PATH="/etc/smbcredentials"
-  SMB_CREDENTIALS_FILE_PATH="${SMB_CREDENTIALS_FOLDER_PATH}/${storage_account_name}.cred"
-  FILE_SERVICE_SHARE_FQDN="$(echo "$file_service_share_url" | awk -F[/:] '{print $4}')"
-
-  # Variables
-  local new_fstab_entry
-
-  logger::info "Creating mount point directory..."
-  mkdir -p "${mount_point_path}"
-
-  logger::info "Creating or overwriting credentials file..."
-  mkdir -p "${SMB_CREDENTIALS_FOLDER_PATH}"
-  echo "username=${storage_account_name}" > "${SMB_CREDENTIALS_FILE_PATH}"
-  echo "password=${storage_account_key}" >> "${SMB_CREDENTIALS_FILE_PATH}"
-  chmod 600 "${SMB_CREDENTIALS_FILE_PATH}"
-
-  logger::info "Saving mount point configuration..."
-  new_fstab_entry="//${FILE_SERVICE_SHARE_FQDN}/${file_service_share_name} ${mount_point_path} cifs nofail,credentials=${SMB_CREDENTIALS_FILE_PATH},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30"
-  if grep -Fq "${new_fstab_entry}" /etc/fstab; then
-    logger::warning "Skipped. Mount point configuration already saved."
-  else
-    echo "${new_fstab_entry}" >> /etc/fstab
-    logger::info "fstab file updated."
-  fi
-
-  logger::info "Mounting all file system defined in fstab file..."
-  mount -a
-}
 
 function main() {
-
-  # Variables
-  local file_service_share_mount_point_path
 
   utils::set_exit_trap
   logger::title "Start of $0"
@@ -115,20 +59,6 @@ function main() {
     "${parameters[app_org_opencastproject_db_jdbc_user]}" \
     "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
     "${parameters[database_server_database_name]}"
-
-  file_service_share_mount_point_path="/mnt/${parameters[file_service_share_name]}"
-
-  logger::title "Configure File Shares"
-  mount_file_service_share \
-    "${parameters[storage_account_name]}" \
-    "${parameters[storage_account_key]}" \
-    "${parameters[file_service_share_name]}" \
-    "${parameters[file_service_share_url]}" \
-    "${file_service_share_mount_point_path}"
-
-  logger::title "Create required folder structure"
-  mkdir -p "${file_service_share_mount_point_path}/data"
-  mkdir -p "${file_service_share_mount_point_path}/opensearch"
 
   logger::title "Create docker-compose environment file"
   cat <<EOF > config.env
