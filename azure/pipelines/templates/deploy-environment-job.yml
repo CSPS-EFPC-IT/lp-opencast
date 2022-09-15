@@ -48,7 +48,6 @@ jobs:
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
               solutionName: '$(solutionName)'
-              storageAccountNameVariableName: 'storageAccountName'
               virtualMachineNameVariableName: 'virtualMachineName'
               virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
               virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
