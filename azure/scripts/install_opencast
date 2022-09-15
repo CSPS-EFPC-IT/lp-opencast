@@ -157,7 +157,7 @@ DISCOVERY_TYPE=single-node
 EOF
 
   logger::title "Launch the application"
-  docker-compose --env-file=config.env -f docker-compose.yml up -d
+  #docker-compose --env-file=config.env -f docker-compose.yml up -d
 
   #############################################################################
 
