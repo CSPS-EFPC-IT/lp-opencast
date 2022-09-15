@@ -15,8 +15,6 @@ declare -A parameters=( \
   [app_org_opencastproject_security_admin_user]="" \
   [app_org_opencastproject_security_digest_pass]="" \
   [app_org_opencastproject_security_digest_user]="" \
-  [app_org_opencastproject_server_url_admin]="" \
-  [app_org_opencastproject_server_url_presentation]="" \
   [app_org_opencastproject_server_url_worker]="" \
   [app_prop_org_opencastproject_admin_ui_url]=""\
   [app_prop_org_opencastproject_engage_ui_url]=""\
@@ -150,10 +148,6 @@ ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS=${parameters[app_org_opencastproject_se
 ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER=${parameters[app_org_opencastproject_security_digest_user]}
 PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL=${parameters[app_prop_org_opencastproject_admin_ui_url]}
 PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}
-
-ORG_OPENCASTPROJECT_SERVER_URL_ADMIN=${parameters[app_org_opencastproject_server_url_admin]}
-
-ORG_OPENCASTPROJECT_SERVER_URL_PRESENTATION=${parameters[app_org_opencastproject_server_url_presentation]}
 
 DISABLE_INSTALL_DEMO_CONFIG=true
 DISABLE_SECURITY_PLUGIN=true
