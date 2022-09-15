@@ -17,17 +17,13 @@ Opencast is an open source video capture and processing software. For more infor
 ## Container Image Build
 Run the following commands from the project root directory:
 
-opencast-admin
+opencast-adminpresentation
 ```
-docker build --tag lp-opencast/admin:12.0 --file docker/opencast-admin/Dockerfile .
-```
-opencast-presentation
-```
-docker build --tag lp-opencast/presentation:12.0 --file docker/opencast-presentation/Dockerfile .
+docker build --tag lp-opencast/adminpresentation:12.2 --file docker/opencast-adminpresentation/Dockerfile .
 ```
 opencast-worker
 ```
-docker build --tag lp-opencast/worker:12.0 --file docker/opencast-worker/Dockerfile .
+docker build --tag lp-opencast/worker:12.2 --file docker/opencast-worker/Dockerfile .
 ```
 
 # Runtime
@@ -45,8 +41,6 @@ The following environment variables are used to control the application at run-t
 -   **ORG_OPENCASTPROJECT_SECURITY_ADMIN_USER** * : Username of the admin user.
 -   **ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS** * : Password for the communication between Opencast nodes and capture agents.
 -   **ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER** * : Username for the communication between Opencast nodes and capture agents.
--   **ORG_OPENCASTPROJECT_SERVER_URL_ADMIN** * : The HTTP-URL where Opencast-admin is accessible.
--   **ORG_OPENCASTPROJECT_SERVER_URL_PRESENTATION** * : The HTTP-URL where Opencast-presentation is accessible.
 -   **PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL** * : HTTP-URL of the admin node.
 -   **PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL** * : HTTP-URL of the engage node.
 

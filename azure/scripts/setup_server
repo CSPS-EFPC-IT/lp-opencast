@@ -15,9 +15,6 @@ declare -A parameters=( \
   [app_org_opencastproject_security_admin_user]="" \
   [app_org_opencastproject_security_digest_pass]="" \
   [app_org_opencastproject_security_digest_user]="" \
-  [app_org_opencastproject_server_url_admin]="" \
-  [app_org_opencastproject_server_url_presentation]="" \
-  [app_org_opencastproject_server_url_worker]="" \
   [app_prop_org_opencastproject_admin_ui_url]=""\
   [app_prop_org_opencastproject_engage_ui_url]=""\
   [container_repository_root_name]=""\
@@ -84,9 +81,6 @@ function main() {
     --app_org_opencastproject_security_admin_user "${parameters[app_org_opencastproject_security_admin_user]}" \
     --app_org_opencastproject_security_digest_pass "${parameters[app_org_opencastproject_security_digest_pass]}" \
     --app_org_opencastproject_security_digest_user "${parameters[app_org_opencastproject_security_digest_user]}" \
-    --app_org_opencastproject_server_url_admin "${parameters[app_org_opencastproject_server_url_admin]}" \
-    --app_org_opencastproject_server_url_presentation "${parameters[app_org_opencastproject_server_url_presentation]}" \
-    --app_org_opencastproject_server_url_worker "${parameters[app_org_opencastproject_server_url_worker]}" \
     --app_prop_org_opencastproject_admin_ui_url "${parameters[app_prop_org_opencastproject_admin_ui_url]}"\
     --app_prop_org_opencastproject_engage_ui_url "${parameters[app_prop_org_opencastproject_engage_ui_url]}"\
     --container_repository_root_name "${parameters[container_repository_root_name]}"\

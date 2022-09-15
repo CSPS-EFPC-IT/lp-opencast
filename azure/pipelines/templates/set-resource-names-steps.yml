@@ -222,7 +222,7 @@ steps:
 
 # Setting Virtual Machine related resource names.
 - task: Bash@3
-  displayName: "Set Virtual Machine's Network Interface Card's Resourece Name Variable"
+  displayName: "Set Virtual Machine's Network Interface Card's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -244,7 +244,7 @@ steps:
       --variable-name "${{ parameters.virtualMachineNameVariableName }}"
 
 - task: Bash@3
-  displayName: "Set Virtual Machine's OS Disk's Resourece Name Variable"
+  displayName: "Set Virtual Machine's OS Disk's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
