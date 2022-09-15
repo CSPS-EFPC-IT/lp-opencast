@@ -4,8 +4,7 @@ parameters:
 - name: componentNames
   type: object
   default:
-    - admin
-    - presentation
+    - adminpresentation
     - worker
 - name: containerRegistryConnection
   type: string
