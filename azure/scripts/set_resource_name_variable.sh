@@ -51,7 +51,7 @@ function set_variable_in_azure_context() {
 function main() {
   # Input parameters with default value.
   declare -Ax parameters=( \
-    [--component-name]="none" \
+    [--component-name]="not provided" \
     [--environment-name]="" \
     [--is-output]="false" \
     [--resource-type]="" \
@@ -106,7 +106,7 @@ function main() {
     resource_name_prefix="${resource_name_prefix}-${parameters[--environment-name]^^}"
   fi
   # Add component name token, if provided.
-  if [[ "${parameters[--component-name]}" != "none" ]]; then
+  if [[ "${parameters[--component-name]}" != "not provided" ]]; then
       resource_name_prefix="${resource_name_prefix}-${parameters[--component-name]}"
   fi
   logger::debug "resource_name_prefix = \"${resource_name_prefix}\""
