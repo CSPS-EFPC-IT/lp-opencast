@@ -133,7 +133,7 @@
         },
         "virtualNetworkName": {
             "type": "string",
-            "defaultValue": "none",
+            "defaultValue": "not provided",
             "metadata": {
                 "description": "The name of the Virtual Network connected to the Database Server. Mandatory if \"virtualNetworkSubnetName\" is specified."
             }
@@ -147,7 +147,7 @@
         },
         "virtualNetworkSubnetName": {
             "type": "string",
-            "defaultValue": "none",
+            "defaultValue": "not provided",
             "metadata": {
                 "description": "The name of the Virtual Network Subnet connected to the Database Server."
             }
@@ -244,7 +244,7 @@
             "type": "Microsoft.DBforMariaDB/servers/virtualNetworkRules",
             "apiVersion": "2018-06-01",
             "name": "[concat(parameters('databaseServerName'), '/', parameters('virtualNetworkSubnetName'))]",
-            "condition": "[not(and(equals(parameters('virtualNetworkName'), 'none'), equals(parameters('virtualNetworkSubnetName'), 'none')))]",
+            "condition": "[and(equals(parameters('databaseServerPublicNetworkAccess'), 'Enabled'), not(equals(parameters('virtualNetworkName'), 'not provided')), not(equals(parameters('virtualNetworkSubnetName'), 'not provided')))]",
             "dependsOn": [
                 "[resourceId('Microsoft.DBforMariaDB/servers', parameters('databaseServerName'))]"
             ],

@@ -23,6 +23,10 @@ parameters:
   type: string
 - name: databaseServerNameVariableName
   type: string
+- name: databaseServerPrivateDnsZoneNameVariableName
+  type: string
+- name: databaseServerPrivateEndpointNameVariableName
+  type: string
 - name: environmentName
   type: string
 - name: keyVaultNameVariableName
@@ -205,6 +209,23 @@ steps:
       --resource-type "Microsoft.DBforMariaDB/servers"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.databaseServerNameVariableName }}"
+
+- task: bash@3
+  displayName: "Set MariaDB Private DNS Zone Resource Name Variable"
+  inputs:
+    targetType: 'inline'
+    script:  echo "##vso[task.setvariable variable=${{ databaseServerPrivateDnsZoneNameVariableName }};isOutput=false]privatelink.mariadb.database.azure.com"
+
+- task: Bash@3
+  displayName: "Set MariaDB Server Private Endpoint's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Network/privateEndpoints"
+      --solution-name "${{ parameters.solutionName }}"
+      --component-name "DB"
+      --variable-name "${{ parameters.databaseServerPrivateEndpointNameVariableName }}"
 
 # Setting Virtual Machine related resource names.
 - task: Bash@3
