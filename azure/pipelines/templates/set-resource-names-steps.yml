@@ -214,9 +214,7 @@ steps:
   displayName: "Set MariaDB Private DNS Zone Resource Name Variable"
   inputs:
     targetType: 'inline'
-    script:  echo "##vso[task.setvariable variable=${VARIABLE_NAME};isOutput=false]privatelink.mariadb.database.azure.com"
-  env:
-    VARIABLE_NAME: ${{ databaseServerPrivateDnsZoneNameVariableName }}
+    script:  echo "##vso[task.setvariable variable=${{ parameters.databaseServerPrivateDnsZoneNameVariableName }};isOutput=false]privatelink.mariadb.database.azure.com"
 
 - task: Bash@3
   displayName: "Set MariaDB Server Private Endpoint's Resource Name Variable"
