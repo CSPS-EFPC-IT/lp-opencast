@@ -186,6 +186,7 @@ jobs:
               overrideParameters: >-
                 -privateDnsZoneName "$(databaseServerPrivateDnsZoneName)"
                 -resourceTags $(resourceTags)
+                -virtualNetworkName "$(virtualNetworkName)"
               deploymentMode: 'Incremental'
               deploymentName: '$(solutionName)_mariadb-private-dns-zone_$(Build.BuildNumber)'
 
