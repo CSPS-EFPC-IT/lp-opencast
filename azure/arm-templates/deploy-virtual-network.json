@@ -304,14 +304,7 @@
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('applicationNetworkSecurityGroupName'))]"
                             },
-                            "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                }
-                            ],
+                            "serviceEndpoints": [],
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
@@ -324,14 +317,7 @@
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dataNetworkSecurityGroupName'))]"
                             },
-                            "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                }
-                            ],
+                            "serviceEndpoints": [],
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"

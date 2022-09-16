@@ -133,30 +133,30 @@
         },
         "virtualNetworkName": {
             "type": "string",
-            "defaultValue": "none",
+            "defaultValue": "not provided",
             "metadata": {
-                "description": "The name of the Virtual Network connected to the Database Server. Mandatory if \"virtualNetworkSubnetName\" is specified."
+                "description": "The name of the Virtual Network connected to the Database Server, if any. Omit this parameter if the Database Server Public Network Access is disabled."
             }
         },
         "virtualNetworkResourceGroupName": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]",
             "metadata": {
-                "description": "The name of the Resource Group containing the Virtual Network connected to the Database Server."
+                "description": "The name of the Resource Group containing the Virtual Network connected to the Database Server, if any."
             }
         },
         "virtualNetworkSubnetName": {
             "type": "string",
-            "defaultValue": "none",
+            "defaultValue": "not provided",
             "metadata": {
-                "description": "The name of the Virtual Network Subnet connected to the Database Server."
+                "description": "The name of the Virtual Network Subnet connected to the Database Server, if any. Omit this parameter if the Database Server Public Network Access is disabled."
             }
         },
         "virtualNetworkSubscriptionId": {
             "type": "string",
             "defaultValue": "[subscription().subscriptionId]",
             "metadata": {
-                "description": "The Subscription ID containing the Virtual Network connected to the Database Server."
+                "description": "The Subscription ID containing the Virtual Network connected to the Database Server, if any."
             }
         }
     },
@@ -244,7 +244,7 @@
             "type": "Microsoft.DBforMariaDB/servers/virtualNetworkRules",
             "apiVersion": "2018-06-01",
             "name": "[concat(parameters('databaseServerName'), '/', parameters('virtualNetworkSubnetName'))]",
-            "condition": "[not(and(equals(parameters('virtualNetworkName'), 'none'), equals(parameters('virtualNetworkSubnetName'), 'none')))]",
+            "condition": "[and(equals(parameters('databaseServerPublicNetworkAccess'), 'Enabled'), not(equals(parameters('virtualNetworkName'), 'not provided')), not(equals(parameters('virtualNetworkSubnetName'), 'not provided')))]",
             "dependsOn": [
                 "[resourceId('Microsoft.DBforMariaDB/servers', parameters('databaseServerName'))]"
             ],
