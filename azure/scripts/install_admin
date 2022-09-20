@@ -73,7 +73,7 @@ function main() {
 
   logger::info "Configuring share access..."
   # Remove pre-existing configuration before adding it back.
-  sed -i "\|^${SHARE_ROOT}|d" > /etc/exports
+  sed -i "\|^${SHARE_ROOT}|d" /etc/exports
   # Add access rules
   {
       echo "${SHARE_ROOT}             ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check,crossmnt,fsid=0)";
