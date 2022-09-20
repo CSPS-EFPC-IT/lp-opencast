@@ -113,10 +113,17 @@ DISCOVERY_TYPE=single-node
 EOF
 
   logger::title "Create Docker Volumes"
-  logger::info "Stoping running containers, if any..."
-  docker-compose --env-file=config.env -f docker-compose-adminpresentation.yml down
+  logger::info "Stoping previously launched containers..."
+  current_download_index=$(basename "$(pwd)")
+  if [[ ${current_download_index} -gt 0 ]]; then
+    previous_download_index=$(( --current_download_index ))
+    docker-compose \
+      --env-file=config.env \
+      --file=../${previous_download_index}/docker-compose-adminpresentation.yml \
+      down
+  fi
 
-  logger::info "Removing docker volumes, if any..."
+  logger::info "Removing previously defined docker volumes, if any..."
   for volume in $(docker volume ls | grep -v "VOLUME" | awk '{print $2}'); do
     docker volume rm "${volume}"
   done
