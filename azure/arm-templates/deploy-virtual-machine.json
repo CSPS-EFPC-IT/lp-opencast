@@ -388,7 +388,6 @@
                             "name": "[parameters('virtualMachineDataDiskName')]",
                             "createOption": "Attach",
                             "caching": "ReadWrite",
-                            "writeAcceleratorEnabled": true,
                             "managedDisk": {
                                 "id": "[resourceId('Microsoft.Compute/disks', parameters('virtualMachineDataDiskName'))]"
                             },
