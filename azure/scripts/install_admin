@@ -82,18 +82,6 @@ function main() {
   } >> /etc/exports
   exportfs -ar
 
-  # logger::info "Create local mount points for File Share folders..."
-  # mkdir -p "${LOCAL_DATA_PATH}"
-  # mkdir -p "${LOCAL_OPENSEARCH_PATH}"
-
-  # logger::info "Permanently bind File Share folders..."
-  # grep -v "^/[${LOCAL_DATA_PATH}|${LOCAL_OPENSEARCH_PATH}] " > /etc/fstab
-  # {
-  #   echo "${LOCAL_DATA_PATH}        ${SHARE_DATA_PATH}        none  bind  0  0";
-  #   echo "${LOCAL_OPENSEARCH_PATH}  ${SHARE_OPENSEARCH_PATH}  none  bind  0  0"
-  # } >> /etc/fstab
-  # mount -a
-
   logger::title "Create Database and credentials"
   mysql::create_database_and_credentials \
     "${parameters[database_server_fqdn]}" \
