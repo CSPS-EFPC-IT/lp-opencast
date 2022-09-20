@@ -20,7 +20,7 @@ declare -A parameters=( \
   [application_subnet_address_range]="" \
   [container_repository_root_name]="" \
   [container_repository_tag]="" \
-  [data_disk_size]="" \
+  [data_disk_size_gb]="" \
   [database_server_admin_password]="" \
   [database_server_admin_username]="" \
   [database_server_database_name]="" \
@@ -63,7 +63,7 @@ function main() {
   # Mount Data disk
   logger::title "Mount Data Disk"
   os::mount_data_disk_by_size \
-    "${parameters[data_disk_size]}" \
+    "${parameters[data_disk_size_gb]}G" \
     "${SHARE_ROOT}"
 
   # Configure NFS Server

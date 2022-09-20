@@ -24,7 +24,7 @@ declare -A parameters=( \
   [database_server_admin_username]="" \
   [database_server_database_name]="" \
   [database_server_fqdn]="" \
-  [data_disk_size]="" \
+  [data_disk_size_gb]="" \
   [server_admin_email]="" \
   [server_fqdn]="" \
   [server_reboot_utc_time]="" \
@@ -87,7 +87,7 @@ function main() {
         --application_subnet_address_range "${parameters[application_subnet_address_range]}" \
         --container_repository_root_name "${parameters[container_repository_root_name]}" \
         --container_repository_tag "${parameters[container_repository_tag]}" \
-        --data_disk_size "${parameters[data_disk_size]}" \
+        --data_disk_size_gb "${parameters[data_disk_size_gb]}" \
         --database_server_admin_password "${parameters[database_server_admin_password]}" \
         --database_server_admin_username "${parameters[database_server_admin_username]}" \
         --database_server_database_name "${parameters[database_server_database_name]}" \
