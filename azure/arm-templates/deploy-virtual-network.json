@@ -170,6 +170,19 @@
                     "sourceAddressPrefix": "[parameters('bastionHostSubnetAddressRange')]",
                     "sourcePortRange": "*"
                 }
+            },
+            {
+                "name": "Allow_NFS_TCP_2049_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                    "destinationPortRange": "2049",
+                    "direction": "Inbound",
+                    "priority": 1020,
+                    "protocol": "*",
+                    "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                    "sourcePortRange": "*"
+                }
             }
         ],
         "dataNetworkSecurityGroupStaticRuleArray": [

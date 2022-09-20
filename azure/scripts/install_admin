@@ -15,10 +15,12 @@ declare -A parameters=( \
   [app_org_opencastproject_security_admin_user]="" \
   [app_org_opencastproject_security_digest_pass]="" \
   [app_org_opencastproject_security_digest_user]="" \
-  [app_prop_org_opencastproject_admin_ui_url]=""\
-  [app_prop_org_opencastproject_engage_ui_url]=""\
-  [container_repository_root_name]=""\
-  [container_repository_tag]=""\
+  [app_prop_org_opencastproject_admin_ui_url]="" \
+  [app_prop_org_opencastproject_engage_ui_url]="" \
+  [application_subnet_address_range]="" \
+  [container_repository_root_name]="" \
+  [container_repository_tag]="" \
+  [data_disk_size]="" \
   [database_server_admin_password]="" \
   [database_server_admin_username]="" \
   [database_server_database_name]="" \
@@ -33,10 +35,16 @@ source ./logger.sh
 #shellcheck source=/dev/null
 source ./mysql.sh
 #shellcheck source=/dev/null
+source ./os.sh
+#shellcheck source=/dev/null
 source ./utils.sh
 
-
 function main() {
+
+  # Constants
+  SHARE_ROOT="/srv/nfs4"
+  SHARE_DATA_PATH="${SHARE_ROOT}/data"
+  SHARE_OPENSEARCH_PATH="${SHARE_ROOT}/opensearch"
 
   utils::set_exit_trap
   logger::title "Start of $0"
@@ -49,7 +57,42 @@ function main() {
   logger::title "Install Application Dependencies"
   apt-get install --yes --quiet \
     docker-compose \
-    mysql-client
+    mysql-client \
+    nfs-kernel-server
+
+  # Mount Data disk
+  logger::title "Mount Data Disk"
+  os::mount_data_disk_by_size \
+    "${parameters[data_disk_size]}" \
+    "${SHARE_ROOT}"
+
+  # Configure NFS Server
+  logger::info "Creating share folders..."
+  mkdir -p "${SHARE_DATA_PATH}"
+  mkdir -p "${SHARE_OPENSEARCH_PATH}"
+
+  logger::info "Configuring share access..."
+  # Remove pre-existing configuration before adding it back.
+  grep -v "^${SHARE_ROOT}" > /etc/exports
+  # Add access rules
+  {
+      echo "${SHARE_ROOT}             ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check,crossmnt,fsid=0)";
+      echo "${SHARE_DATA_PATH}        ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check)";
+      echo "${SHARE_OPENSEARCH_PATH}  ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check)"
+  } >> /etc/exports
+  exportfs -ar
+
+  # logger::info "Create local mount points for File Share folders..."
+  # mkdir -p "${LOCAL_DATA_PATH}"
+  # mkdir -p "${LOCAL_OPENSEARCH_PATH}"
+
+  # logger::info "Permanently bind File Share folders..."
+  # grep -v "^/[${LOCAL_DATA_PATH}|${LOCAL_OPENSEARCH_PATH}] " > /etc/fstab
+  # {
+  #   echo "${LOCAL_DATA_PATH}        ${SHARE_DATA_PATH}        none  bind  0  0";
+  #   echo "${LOCAL_OPENSEARCH_PATH}  ${SHARE_OPENSEARCH_PATH}  none  bind  0  0"
+  # } >> /etc/fstab
+  # mount -a
 
   logger::title "Create Database and credentials"
   mysql::create_database_and_credentials \
@@ -82,8 +125,20 @@ BOOTSTRAP_MEMORY_LOCK=true
 DISCOVERY_TYPE=single-node
 EOF
 
-  logger::title "Launch the application"
-  #docker-compose --env-file=config.env -f docker-compose.yml up -d
+  logger::info "Stoping running containers, if any..."
+  docker-compose --env-file=config.env -f docker-compose-adminpresentation.yml down
+
+  logger::info "Removing docker volumes, if any..."
+  for volume in $(docker volume ls | grep -v "VOLUME" | awk '{print $2}'); do
+    docker volume rm "${volume}"
+  done
+
+  logger::info "Binding local share folders to docker volumes..."
+  docker volume create --name "$(basename "${SHARE_DATA_PATH}")" --driver=local -o o=bind -o type=none -o "device=${SHARE_DATA_PATH}"
+  docker volume create --name "$(basename "${SHARE_OPENSEARCH_PATH}")" --driver=local -o o=bind -o type=none -o "device=${SHARE_OPENSEARCH_PATH}"
+
+  logger::info "Starting the application..."
+  docker-compose --env-file=config.env -f docker-compose-adminpresentation.yml up -d
 
   #############################################################################
 

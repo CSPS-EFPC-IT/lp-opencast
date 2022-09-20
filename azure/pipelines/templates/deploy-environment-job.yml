@@ -44,12 +44,13 @@ jobs:
               dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
               dataSubnetNameVariableName:  'dataSubnetName'
               databaseServerNameVariableName: 'databaseServerName'
-              databaseServerPrivateEndpointNameVariableName: 'databaseServerPrivateEndpointName'
               databaseServerPrivateDnsZoneNameVariableName: 'databaseServerPrivateDnsZoneName'
+              databaseServerPrivateEndpointNameVariableName: 'databaseServerPrivateEndpointName'
               environmentName: '$(environmentName)'
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
               solutionName: '$(solutionName)'
+              virtualMachineDataDiskNameVariableName: 'virtualMachineDataDiskName'
               virtualMachineNameVariableName: 'virtualMachineName'
               virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
               virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
@@ -285,6 +286,8 @@ jobs:
                 -virtualMachineAdminEmail "$(adminUserEmail)"
                 -virtualMachineAdminPassword "$(virtualMachineAdminPassword)"
                 -virtualMachineAdminUsername "$(virtualMachineAdminUsername)"
+                -virtualMachineDataDiskName "$(virtualMachineDataDiskName)"
+                -virtualMachineDataDiskSizeGB  $(virtualMachineDataDiskSizeGB)
                 -virtualMachineName "$(virtualMachineName)"
                 -virtualMachineOsDiskName "$(virtualMachineOsDiskName)"
                 -virtualMachineSize "$(virtualMachineSize)"
