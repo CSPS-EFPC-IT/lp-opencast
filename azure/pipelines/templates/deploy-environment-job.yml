@@ -273,7 +273,7 @@ jobs:
                 -databaseServerFqdn "$(databaseServerFqdn)"
                 -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
                 -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
-                -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)"
+                -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)/$(Build.SourceBranchName)"
                 -resourceTags $(resourceTags)
                 -smtpServerFqdn "$(smtpServerFqdn)"
                 -smtpServerFromAddress "$(smtpServerFromAddress)"
