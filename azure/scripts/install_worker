@@ -61,6 +61,9 @@ function main() {
 
   logger::title "Create docker-compose environment file"
   cat <<EOF > config.env
+CONTAINER_REPOSITORY_ROOT_NAME=${parameters[container_repository_root_name]}
+CONTAINER_REPOSITORY_TAG=${parameters[container_repository_tag]}
+
 ORG_OPENCASTPROJECT_DB_JDBC_PASS=${parameters[app_org_opencastproject_db_jdbc_pass]}
 ORG_OPENCASTPROJECT_DB_JDBC_URL=${parameters[app_org_opencastproject_db_jdbc_url]}
 ORG_OPENCASTPROJECT_DB_JDBC_USER=${parameters[app_org_opencastproject_db_jdbc_user]}
