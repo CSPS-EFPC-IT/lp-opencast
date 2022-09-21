@@ -57,8 +57,6 @@ function main() {
   logger::title "Parse Input Parameters"
   utils::parse_parameters "$@"
 
-exit 1 # simulating error
-
   logger::title "Install Application Dependencies"
   apt-get install --yes --quiet \
     docker-compose \
