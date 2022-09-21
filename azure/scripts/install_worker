@@ -75,6 +75,7 @@ ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS=${parameters[app_org_opencastproject_se
 ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER=${parameters[app_org_opencastproject_security_digest_user]}
 PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL=${parameters[app_prop_org_opencastproject_admin_ui_url]}
 PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}
+ORG_OPENCASTPROJECT_SERVER_URL=http://$(hostname):8080
 EOF
 
   logger::title "Create Docker Volumes"
@@ -94,12 +95,20 @@ EOF
   done
 
   logger::info "Adding docker volume definition..."
+  # docker volume create \
+  #   --driver "local" \
+  #   --name "data" \
+  #   --opt "device=:/data" \
+  #   --opt "o=addr=${parameters[nfs_server_name]},rw" \
+  #   --opt "type=nfs"
+
   docker volume create \
     --driver "local" \
     --name "data" \
-    --opt "device=:data" \
-    --opt "o=addr=${parameters[nfs_server_name]},rw" \
-    --opt "type=nfs"
+    --opt "device=/mnt/data" \
+    --opt "o=bind" \
+    --opt "type=none"
+
 
   logger::title "Starting OpenCast Worker node..."
   docker-compose \
