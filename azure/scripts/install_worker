@@ -56,7 +56,8 @@ function main() {
   logger::info "Removing pre-existing mount configuration, if any..."
   sed -i "\|^${parameters[nfs_server_name]}|d" /etc/fstab
   # Add mountpoint definition
-  echo "${parameters[nfs_server_name]}:data ${SHARE_DATA_MOUNTPOINT}  nfs defaults  0 0" >> /etc/fstab
+  echo "${parameters[nfs_server_name]}:/data ${SHARE_DATA_MOUNTPOINT}  nfs defaults  0 0" >> /etc/fstab
+  mount -a
 
   logger::title "Create docker-compose environment file"
   cat <<EOF > config.env
@@ -100,7 +101,7 @@ EOF
   logger::title "Starting OpenCast Worker node..."
   docker-compose \
     --env-file "config.env" \
-    -file "docker-compose-worker.yml" \
+    --file "docker-compose-worker.yml" \
     up -d
 
   #############################################################################
