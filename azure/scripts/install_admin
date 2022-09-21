@@ -46,10 +46,6 @@ function main() {
   SHARE_DATA_PATH="${SHARE_ROOT}/data"
   SHARE_OPENSEARCH_PATH="${SHARE_ROOT}/opensearch"
 
-  DATA_DISK_MOUNT_POINT="/var/lib/opencast"
-  LOCAL_DATA_PATH="${DATA_DISK_MOUNT_POINT}/data"
-  LOCAL_OPENSEARCH_PATH="${DATA_DISK_MOUNT_POINT}/opensearch"
-
   utils::set_exit_trap
   logger::title "Start of $0"
 
@@ -67,26 +63,12 @@ function main() {
   logger::title "Mount Data Disk"
   os::mount_data_disk_by_size \
     "${parameters[data_disk_size_gb]}G" \
-    "${DATA_DISK_MOUNT_POINT}"
-
-  logger::title "Create local data folders"
-  mkdir -p "${LOCAL_DATA_PATH}"
-  mkdir -p "${LOCAL_OPENSEARCH_PATH}"
+    "${SHARE_ROOT}"
 
   logger::title "Configure NFS Server"
   logger::info "Creating share folders..."
   mkdir -p "${SHARE_DATA_PATH}"
   mkdir -p "${SHARE_OPENSEARCH_PATH}"
-
-  logger::info "Permanently bind local directories to Share mount points..."
-  # Delete previously configured bindings.
-  sed --in-place --regexp-extended "\#^(${LOCAL_DATA_PATH}|${LOCAL_OPENSEARCH_PATH})[[:space:]]#d" /etc/fstab
-  # Add binding configuration.
-  {
-    echo "${LOCAL_DATA_PATH}        ${SHARE_DATA_PATH}        none  bind  0  0";
-    echo "${LOCAL_OPENSEARCH_PATH}  ${SHARE_OPENSEARCH_PATH}  none  bind  0  0"
-  } >> /etc/fstab
-  mount -a
 
   logger::info "Configuring share access..."
   # Remove pre-existing configuration before adding it back.
@@ -147,10 +129,10 @@ EOF
   done
 
   logger::info "Binding local share folders to docker volumes..."
-  docker volume create --name "$(basename "${LOCAL_DATA_PATH}")" --driver=local -o o=bind -o type=none -o "device=${LOCAL_DATA_PATH}"
-  docker volume create --name "$(basename "${LOCAL_OPENSEARCH_PATH}")" --driver=local -o o=bind -o type=none -o "device=${LOCAL_OPENSEARCH_PATH}"
+  docker volume create --name "$(basename "${SHARE_DATA_PATH}")" --driver=local -o o=bind -o type=none -o "device=${SHARE_DATA_PATH}"
+  docker volume create --name "$(basename "${SHARE_OPENSEARCH_PATH}")" --driver=local -o o=bind -o type=none -o "device=${SHARE_OPENSEARCH_PATH}"
 
-  logger::title "Starting the application..."
+  logger::title "Starting OpenCast..."
   docker-compose --env-file=config.env -f docker-compose-adminpresentation.yml up -d
 
   #############################################################################
