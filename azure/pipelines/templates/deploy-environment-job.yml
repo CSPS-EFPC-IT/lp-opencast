@@ -44,12 +44,13 @@ jobs:
               dataNetworkSecurityGroupNameVariableName: 'dataNetworkSecurityGroupName'
               dataSubnetNameVariableName:  'dataSubnetName'
               databaseServerNameVariableName: 'databaseServerName'
-              databaseServerPrivateEndpointNameVariableName: 'databaseServerPrivateEndpointName'
               databaseServerPrivateDnsZoneNameVariableName: 'databaseServerPrivateDnsZoneName'
+              databaseServerPrivateEndpointNameVariableName: 'databaseServerPrivateEndpointName'
               environmentName: '$(environmentName)'
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
               solutionName: '$(solutionName)'
+              virtualMachineDataDiskNameVariableName: 'virtualMachineDataDiskName'
               virtualMachineNameVariableName: 'virtualMachineName'
               virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
               virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
@@ -240,56 +241,55 @@ jobs:
                 --subscription-name "$(subscriptionName)"
                 --variable-name "databaseServerFqdn"
 
-          # - task: AzureResourceManagerTemplateDeployment@3
-          #   displayName: 'Deploy Virtual Machine Resource'
-          #   inputs:
-          #     deploymentScope: 'Resource Group'
-          #     azureResourceManagerConnection: '$(serviceConnectionName)'
-          #     subscriptionId: '$(subscriptionId)'
-          #     action: 'Create Or Update Resource Group'
-          #     resourceGroupName: '$(resourceGroupName)'
-          #     location: '$(locationName)'
-          #     templateLocation: 'Linked artifact'
-          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-machine.json'
-          #     overrideParameters: >-
-          #       -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
-          #       -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
-          #       -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true&useSSL=true"
-          #       -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
-          #       -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
-          #       -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
-          #       -appOrgOpenCastProjectSecurityAdminUser "$(appOrgOpenCastProjectSecurityAdminUser)"
-          #       -appOrgOpenCastProjectSecurityDigestPass "$(appOrgOpenCastProjectSecurityDigestPass)"
-          #       -appOrgOpenCastProjectSecurityDigestUser "$(appOrgOpenCastProjectSecurityDigestUser)"
-          #       -appOrgOpenCastProjectServerUrlAdmin "$(appOrgOpenCastProjectServerUrlAdmin)"
-          #       -appOrgOpenCastProjectServerUrlPresentation "$(appOrgOpenCastProjectServerUrlPresentation)"
-          #       -appOrgOpenCastProjectServerUrlWorker "$(appOrgOpenCastProjectServerUrlWorker)"
-          #       -appPropOrgOpenCastProjectAdminUiUrl "$(appPropOrgOpenCastProjectAdminUiUrl)"
-          #       -appPropOrgOpenCastProjectEngageUiUrl "$(appPropOrgOpenCastProjectEngageUiUrl)"
-          #       -applicationGatewayName "$(applicationGatewayName)"
-          #       -containerRepositoryRootName "$(containerRepositoryRootName)"
-          #       -containerRepositoryTag "$(containerRepositoryTag)"
-          #       -databaseServerAdminPassword "$(databaseServerAdminPassword)"
-          #       -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
-          #       -databaseServerDatabaseName "$(containerRepositoryRootName)"
-          #       -databaseServerFqdn "$(databaseServerFqdn)"
-          #       -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
-          #       -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
-          #       -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)"
-          #       -resourceTags $(resourceTags)
-          #       -smtpServerFqdn "$(smtpServerFqdn)"
-          #       -smtpServerFromAddress "$(smtpServerFromAddress)"
-          #       -smtpServerPassword "$(smtpServerPassword)"
-          #       -smtpServerPort "$(smtpServerPort)"
-          #       -smtpServerUsername "$(smtpServerUsername)"
-          #       -virtualMachineAdminEmail "$(adminUserEmail)"
-          #       -virtualMachineAdminPassword "$(virtualMachineAdminPassword)"
-          #       -virtualMachineAdminUsername "$(virtualMachineAdminUsername)"
-          #       -virtualMachineName "$(virtualMachineName)"
-          #       -virtualMachineOsDiskName "$(virtualMachineOsDiskName)"
-          #       -virtualMachineSize "$(virtualMachineSize)"
-          #       -virtualMachineTags $(virtualMachineTags)
-          #       -virtualNetworkName "$(virtualNetworkName)"
-          #       -virtualNetworkSubnetName "$(applicationSubnetName)"
-          #     deploymentMode: 'Incremental'
-          #     deploymentName: '$(solutionName)_virtual-machine_$(Build.BuildNumber)'
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Virtual Machine Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-machine.json'
+              overrideParameters: >-
+                -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
+                -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
+                -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true&useSSL=true"
+                -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
+                -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
+                -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
+                -appOrgOpenCastProjectSecurityAdminUser "$(appOrgOpenCastProjectSecurityAdminUser)"
+                -appOrgOpenCastProjectSecurityDigestPass "$(appOrgOpenCastProjectSecurityDigestPass)"
+                -appOrgOpenCastProjectSecurityDigestUser "$(appOrgOpenCastProjectSecurityDigestUser)"
+                -appPropOrgOpenCastProjectAdminUiUrl "$(appPropOrgOpenCastProjectAdminUiUrl)"
+                -appPropOrgOpenCastProjectEngageUiUrl "$(appPropOrgOpenCastProjectEngageUiUrl)"
+                -applicationGatewayName "$(applicationGatewayName)"
+                -containerRepositoryRootName "$(containerRepositoryRootName)"
+                -containerRepositoryTag "$(containerRepositoryTag)"
+                -databaseServerAdminPassword "$(databaseServerAdminPassword)"
+                -databaseServerAdminUsername "$(databaseServerAdminUsername)@$(databaseServerName)"
+                -databaseServerDatabaseName "$(containerRepositoryRootName)"
+                -databaseServerFqdn "$(databaseServerFqdn)"
+                -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
+                -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
+                -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)/$(Build.SourceBranchName)"
+                -resourceTags $(resourceTags)
+                -smtpServerFqdn "$(smtpServerFqdn)"
+                -smtpServerFromAddress "$(smtpServerFromAddress)"
+                -smtpServerPassword "$(smtpServerPassword)"
+                -smtpServerPort "$(smtpServerPort)"
+                -smtpServerUsername "$(smtpServerUsername)"
+                -virtualMachineAdminEmail "$(adminUserEmail)"
+                -virtualMachineAdminPassword "$(virtualMachineAdminPassword)"
+                -virtualMachineAdminUsername "$(virtualMachineAdminUsername)"
+                -virtualMachineDataDiskName "$(virtualMachineDataDiskName)"
+                -virtualMachineDataDiskSizeGB  $(virtualMachineDataDiskSizeGB)
+                -virtualMachineName "$(virtualMachineName)"
+                -virtualMachineOsDiskName "$(virtualMachineOsDiskName)"
+                -virtualMachineSize "$(virtualMachineSize)"
+                -virtualMachineTags $(virtualMachineTags)
+                -virtualNetworkName "$(virtualNetworkName)"
+                -virtualNetworkSubnetName "$(applicationSubnetName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_virtual-machine_$(Build.BuildNumber)'

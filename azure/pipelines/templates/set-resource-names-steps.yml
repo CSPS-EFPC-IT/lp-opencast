@@ -35,6 +35,8 @@ parameters:
   type: string
 - name: solutionName
   type: string
+- name: virtualMachineDataDiskNameVariableName
+  type: string
 - name: virtualMachineNameVariableName
   type: string
 - name: virtualMachineNetworkInterfaceCardNameVariableName
@@ -260,3 +262,14 @@ steps:
       --resource-type "Microsoft.Compute/disks"
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.virtualMachineOsDiskNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Virtual Machine's Data Disk's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Admin-VM-Data"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Compute/disks"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.virtualMachineDataDiskNameVariableName }}"
