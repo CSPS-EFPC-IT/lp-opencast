@@ -46,6 +46,9 @@ function main() {
   SHARE_DATA_PATH="${SHARE_ROOT}/data"
   SHARE_OPENSEARCH_PATH="${SHARE_ROOT}/opensearch"
 
+  # Variables
+  current_deployment_index
+
   utils::set_exit_trap
   logger::title "Start of $0"
 
@@ -113,15 +116,15 @@ DISCOVERY_TYPE=single-node
 EOF
 
   logger::title "Create Docker Volumes"
-  logger::info "Stoping previously launched containers..."
-  current_download_index=$(basename "$(pwd)")
-  if [[ ${current_download_index} -gt 0 ]]; then
-    previous_download_index=$(( --current_download_index ))
+  logger::info "Stoping all previously deployed containers..."
+  current_deployment_index=$(basename "$(pwd)")
+  while [[ ${current_deployment_index} -gt 0 ]]; do
+    (( --current_deployment_index ))
     docker-compose \
       --env-file=config.env \
-      --file=../${previous_download_index}/docker-compose-adminpresentation.yml \
+      --file="../${current_deployment_index}/docker-compose-adminpresentation.yml" \
       down
-  fi
+  done
 
   logger::info "Removing previously defined docker volumes, if any..."
   for volume in $(docker volume ls | grep -v "VOLUME" | awk '{print $2}'); do
