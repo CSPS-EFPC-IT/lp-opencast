@@ -57,6 +57,8 @@ function main() {
   logger::title "Parse Input Parameters"
   utils::parse_parameters "$@"
 
+exit 1 # simulating error
+
   logger::title "Install Application Dependencies"
   apt-get install --yes --quiet \
     docker-compose \
@@ -118,6 +120,7 @@ EOF
   logger::title "Create Docker Volumes"
   logger::info "Stoping all previously deployed containers..."
   deployment_index=$(basename "$(pwd)")
+
   while [[ ${deployment_index} -gt 0 ]]; do
     ((deployment_index--))
     docker-compose \
