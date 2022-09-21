@@ -128,7 +128,7 @@ EOF
     docker volume rm "${volume}"
   done
 
-  logger::info "Binding local share folders to docker volumes..."
+  logger::info "Adding new or updated docker volume definitions..."
   docker volume create --name "$(basename "${SHARE_DATA_PATH}")" --driver=local -o o=bind -o type=none -o "device=${SHARE_DATA_PATH}"
   docker volume create --name "$(basename "${SHARE_OPENSEARCH_PATH}")" --driver=local -o o=bind -o type=none -o "device=${SHARE_OPENSEARCH_PATH}"
 
