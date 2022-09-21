@@ -73,9 +73,9 @@ ORG_OPENCASTPROJECT_SECURITY_ADMIN_PASS=${parameters[app_org_opencastproject_sec
 ORG_OPENCASTPROJECT_SECURITY_ADMIN_USER=${parameters[app_org_opencastproject_security_admin_user]}
 ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS=${parameters[app_org_opencastproject_security_digest_pass]}
 ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER=${parameters[app_org_opencastproject_security_digest_user]}
+ORG_OPENCASTPROJECT_SERVER_URL=http://$(hostname):8080
 PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL=${parameters[app_prop_org_opencastproject_admin_ui_url]}
 PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}
-ORG_OPENCASTPROJECT_SERVER_URL=http://$(hostname):8080
 EOF
 
   logger::title "Create Docker Volumes"
