@@ -10,7 +10,7 @@ declare -A parameters=( \
   [app_org_opencastproject_db_jdbc_pass]="" \
   [app_org_opencastproject_db_jdbc_url]="" \
   [app_org_opencastproject_db_jdbc_user]="" \
-  [app_org_opencastproject_download_url]="" \
+  [app_org_opencastproject_db_vendor]="" \
   [app_org_opencastproject_security_admin_pass]="" \
   [app_org_opencastproject_security_admin_user]="" \
   [app_org_opencastproject_security_digest_pass]="" \
@@ -77,7 +77,7 @@ function main() {
         --app_org_opencastproject_db_jdbc_pass "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
         --app_org_opencastproject_db_jdbc_url "${parameters[app_org_opencastproject_db_jdbc_url]}" \
         --app_org_opencastproject_db_jdbc_user "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-        --app_org_opencastproject_download_url "${parameters[app_org_opencastproject_download_url]}" \
+        --app_org_opencastproject_db_vendor "${parameters[app_org_opencastproject_db_vendor]}" \
         --app_org_opencastproject_security_admin_pass "${parameters[app_org_opencastproject_security_admin_pass]}" \
         --app_org_opencastproject_security_admin_user "${parameters[app_org_opencastproject_security_admin_user]}" \
         --app_org_opencastproject_security_digest_pass "${parameters[app_org_opencastproject_security_digest_pass]}" \

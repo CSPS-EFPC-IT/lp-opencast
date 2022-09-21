@@ -257,7 +257,7 @@ jobs:
                 -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
                 -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true&useSSL=true"
                 -appOrgOpenCastProjectDbJdbcUser "$(containerRepositoryRootName)"
-                -appOrgOpenCastProjectDownloadUrl "$(appOrgOpenCastProjectDownloadUrl)"
+                -appOrgOpenCastProjectDbVendor "MariaDB"
                 -appOrgOpenCastProjectSecurityAdminPass "$(appOrgOpenCastProjectSecurityAdminPass)"
                 -appOrgOpenCastProjectSecurityAdminUser "$(appOrgOpenCastProjectSecurityAdminUser)"
                 -appOrgOpenCastProjectSecurityDigestPass "$(appOrgOpenCastProjectSecurityDigestPass)"
