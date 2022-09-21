@@ -20,7 +20,7 @@ services:
       - opensearch:/usr/share/opensearch/data
 
   opencast-adminpresentation:
-    image: cspcappdevcr.azurecr.io/lp-opencast_master/adminpresentation:latest
+    image: cspcappdevcr.azurecr.io/${CONTAINER_REPOSITORY_ROOT_NAME}/adminpresentation:${CONTAINER_REPOSITORY_TAG}
     environment:
       ELASTICSEARCH_SERVER_HOST: opensearch
       ORG_OPENCASTPROJECT_DB_JDBC_PASS: ${ORG_OPENCASTPROJECT_DB_JDBC_PASS}
