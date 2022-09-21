@@ -120,6 +120,7 @@ EOF
   deployment_index=$(basename "$(pwd)")
   while [[ ${deployment_index} -gt 0 ]]; do
     ((deployment_index--))
+    exit 1
     docker-compose \
       --env-file=config.env \
       --file="../${deployment_index}/docker-compose-adminpresentation.yml" \
