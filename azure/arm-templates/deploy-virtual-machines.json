@@ -568,7 +568,7 @@
                 "[resourceId('Microsoft.Compute/virtualMachines/', parameters('workerVirtualMachineName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('adminVirtualMachineName'), 'setup')]"
             ],
-            "comments": "Must run AFTER the Admin VM extension for the NFS client to succesfully connect to NFS Server.",
+            "comments": "Must run AFTER the Admin VM extension for the Worker VM NFS client to succesfully connect to the Admin VM NFS Server.",
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",
                 "type": "CustomScript",
