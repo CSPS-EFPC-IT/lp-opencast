@@ -119,7 +119,7 @@ EOF
   logger::info "Stoping all previously deployed containers..."
   current_deployment_index=$(basename "$(pwd)")
   while [[ ${current_deployment_index} -gt 0 ]]; do
-    (( --current_deployment_index ))
+    ((current_deployment_index--))
     docker-compose \
       --env-file=config.env \
       --file="../${current_deployment_index}/docker-compose-adminpresentation.yml" \
