@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# Install and launch OpenCast Worker node.
+# This script must be run as root (ex.: sudo sh ./[script_name])
+# Style Guide: https://google.github.io/styleguide/shellguide.html
+
+# Parameters: all manadatory and must be prefixed with "--" on command line.
+declare -A parameters=( \
+  [app_org_opencastproject_db_jdbc_pass]="" \
+  [app_org_opencastproject_db_jdbc_url]="" \
+  [app_org_opencastproject_db_jdbc_user]="" \
+  [app_org_opencastproject_db_vendor]="" \
+  [app_org_opencastproject_security_admin_pass]="" \
+  [app_org_opencastproject_security_admin_user]="" \
+  [app_org_opencastproject_security_digest_pass]="" \
+  [app_org_opencastproject_security_digest_user]="" \
+  [app_prop_org_opencastproject_admin_ui_url]="" \
+  [app_prop_org_opencastproject_engage_ui_url]="" \
+  [container_repository_root_name]="" \
+  [container_repository_tag]="" \
+  [nfs_server_name]="" \
+)
+
+# Functions
+
+# All libraries not available at build time.
+# shellcheck source=/dev/null
+source ./logger.sh
+#shellcheck source=/dev/null
+source ./utils.sh
+
+function main() {
+
+  # Constants
+  SHARE_DATA_MOUNTPOINT="/mnt/data"
+
+  # Variables
+  local deployment_index
+
+  utils::set_exit_trap
+  logger::title "Start of $0"
+
+  #############################################################################
+
+  logger::title "Parse Input Parameters"
+  utils::parse_parameters "$@"
+
+  logger::title "Install Application Dependencies"
+  apt-get install --yes --quiet \
+    docker-compose \
+    nfs-common
+
+  logger::title "Mount Data Share"
+  logger::info "Creating mountpoint directory..."
+  mkdir -p "${SHARE_DATA_MOUNTPOINT}"
+  logger::info "Removing pre-existing mount configuration, if any..."
+  sed -i "\|^${parameters[nfs_server_name]}|d" /etc/fstab
+  # Add mountpoint definition
+  echo "${parameters[nfs_server_name]}:data ${SHARE_DATA_MOUNTPOINT}  nfs defaults  0 0" >> /etc/fstab
+
+  logger::title "Create docker-compose environment file"
+  cat <<EOF > config.env
+ORG_OPENCASTPROJECT_DB_JDBC_PASS=${parameters[app_org_opencastproject_db_jdbc_pass]}
+ORG_OPENCASTPROJECT_DB_JDBC_URL=${parameters[app_org_opencastproject_db_jdbc_url]}
+ORG_OPENCASTPROJECT_DB_JDBC_USER=${parameters[app_org_opencastproject_db_jdbc_user]}
+ORG_OPENCASTPROJECT_DB_VENDOR=${parameters[app_org_opencastproject_db_vendor]}
+ORG_OPENCASTPROJECT_DOWNLOAD_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}/static
+ORG_OPENCASTPROJECT_SECURITY_ADMIN_PASS=${parameters[app_org_opencastproject_security_admin_pass]}
+ORG_OPENCASTPROJECT_SECURITY_ADMIN_USER=${parameters[app_org_opencastproject_security_admin_user]}
+ORG_OPENCASTPROJECT_SECURITY_DIGEST_PASS=${parameters[app_org_opencastproject_security_digest_pass]}
+ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER=${parameters[app_org_opencastproject_security_digest_user]}
+PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL=${parameters[app_prop_org_opencastproject_admin_ui_url]}
+PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}
+EOF
+
+  logger::title "Create Docker Volumes"
+  logger::info "Stoping all previously deployed containers..."
+  deployment_index=$(basename "$(pwd)")
+  while [[ ${deployment_index} -gt 0 ]]; do
+    ((deployment_index--))
+    docker-compose \
+      --env-file=config.env \
+      --file="../${deployment_index}/docker-compose-worker.yml" \
+      down
+  done
+
+  logger::info "Removing previously defined docker volumes, if any..."
+  for volume in $(docker volume ls | grep -v "VOLUME" | awk '{print $2}'); do
+    docker volume rm "${volume}"
+  done
+
+  logger::info "Adding docker volume definition..."
+  docker volume create \
+    --driver "local" \
+    --name "data" \
+    --opt "device=:data" \
+    --opt "o=addr=${parameters[nfs_server_name]},rw" \
+    --opt "type=nfs"
+
+  logger::title "Starting OpenCast Worker node..."
+  docker-compose \
+    --env-file "config.env" \
+    -file "docker-compose-worker.yml" \
+    up -d
+
+  #############################################################################
+
+  logger::title "End of $0"
+  utils::unset_exit_trap
+}
+
+main "$@"
