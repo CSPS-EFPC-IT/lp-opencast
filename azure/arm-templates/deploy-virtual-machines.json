@@ -452,7 +452,7 @@
             "name": "[concat(parameters('adminVirtualMachineName'),'/setup')]",
             "location": "[parameters('locationName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('adminVirtualMachineName'))]"
+                // "[resourceId('Microsoft.Compute/virtualMachines', parameters('adminVirtualMachineName'))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",
