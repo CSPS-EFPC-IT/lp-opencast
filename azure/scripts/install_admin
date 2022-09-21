@@ -47,7 +47,7 @@ function main() {
   SHARE_OPENSEARCH_PATH="${SHARE_ROOT}/opensearch"
 
   # Variables
-  current_deployment_index
+  local deployment_index
 
   utils::set_exit_trap
   logger::title "Start of $0"
@@ -117,12 +117,12 @@ EOF
 
   logger::title "Create Docker Volumes"
   logger::info "Stoping all previously deployed containers..."
-  current_deployment_index=$(basename "$(pwd)")
-  while [[ ${current_deployment_index} -gt 0 ]]; do
-    ((current_deployment_index--))
+  deployment_index=$(basename "$(pwd)")
+  while [[ ${deployment_index} -gt 0 ]]; do
+    ((deployment_index--))
     docker-compose \
       --env-file=config.env \
-      --file="../${current_deployment_index}/docker-compose-adminpresentation.yml" \
+      --file="../${deployment_index}/docker-compose-adminpresentation.yml" \
       down
   done
 
