@@ -338,7 +338,7 @@
         },
         {
             "type": "Microsoft.Compute/disks",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "2022-03-02",
             "name": "[parameters('virtualMachineDataDiskName')]",
             "tags": "[parameters('resourceTags')]",
             "location": "[parameters('locationName')]",
