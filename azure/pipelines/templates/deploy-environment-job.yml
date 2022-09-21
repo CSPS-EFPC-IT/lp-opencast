@@ -56,161 +56,161 @@ jobs:
               virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
               virtualNetworkNameVariableName: 'virtualNetworkName'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Log Analytics Workspace Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-common/azure/arm-templates/deploy-log-analytics-workspace.json'
-              overrideParameters: >-
-                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-                -logAnalyticsWorkspaceRetentionDays "$(logAnalyticsWorkspaceRetentionDays)"
-                -resourceTags $(resourceTags)
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_log-analytics-workspace_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Log Analytics Workspace Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-common/azure/arm-templates/deploy-log-analytics-workspace.json'
+          #     overrideParameters: >-
+          #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+          #       -logAnalyticsWorkspaceRetentionDays "$(logAnalyticsWorkspaceRetentionDays)"
+          #       -resourceTags $(resourceTags)
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_log-analytics-workspace_$(Build.BuildNumber)'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Virtual Network Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
-              overrideParameters: >-
-                -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
-                -applicationGatewaySubnetAddressRange "$(virtualNetworkAddressRangePrefix).0/27"
-                -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
-                -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
-                -applicationSubnetAddressRange "$(virtualNetworkAddressRangePrefix).32/27"
-                -applicationSubnetName "$(applicationSubnetName)"
-                -bastionHostSubnetAddressRange "$(virtualNetworkAddressRangePrefix).96/27"
-                -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
-                -dataSubnetName "$(dataSubnetName)"
-                -dataSubnetAddressRange "$(virtualNetworkAddressRangePrefix).64/27"
-                -deniedIpAddressList "$(deniedIpAddressList)"
-                -resourceTags $(resourceTags)
-                -virtualNetworkAddressRange "$(virtualNetworkAddressRangePrefix).0/24"
-                -virtualNetworkName "$(virtualNetworkName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_virtual-network_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Virtual Network Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
+          #     overrideParameters: >-
+          #       -applicationGatewayNetworkSecurityGroupName "$(applicationGatewayNetworkSecurityGroupName)"
+          #       -applicationGatewaySubnetAddressRange "$(virtualNetworkAddressRangePrefix).0/27"
+          #       -applicationGatewaySubnetName "$(applicationGatewaySubnetName)"
+          #       -applicationNetworkSecurityGroupName "$(applicationNetworkSecurityGroupName)"
+          #       -applicationSubnetAddressRange "$(virtualNetworkAddressRangePrefix).32/27"
+          #       -applicationSubnetName "$(applicationSubnetName)"
+          #       -bastionHostSubnetAddressRange "$(virtualNetworkAddressRangePrefix).96/27"
+          #       -dataNetworkSecurityGroupName "$(dataNetworkSecurityGroupName)"
+          #       -dataSubnetName "$(dataSubnetName)"
+          #       -dataSubnetAddressRange "$(virtualNetworkAddressRangePrefix).64/27"
+          #       -deniedIpAddressList "$(deniedIpAddressList)"
+          #       -resourceTags $(resourceTags)
+          #       -virtualNetworkAddressRange "$(virtualNetworkAddressRangePrefix).0/24"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_virtual-network_$(Build.BuildNumber)'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Application Gateway Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-application-gateway.json'
-              overrideParameters: >-
-                -applicationGatewayName "$(applicationGatewayName)"
-                -keyVaultCertificateName "$(applicationGatewayKeyVaultCertificateName)"
-                -keyVaultName "$(keyVaultName)"
-                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-                -publicIpAddressName "$(applicationGatewayPublicIpAddressName)"
-                -userAssignedIdentityName "$(applicationGatewayUserAssignedIdentityName)"
-                -virtualNetworkName "$(virtualNetworkName)"
-                -virtualNetworkSubnetName "$(applicationGatewaySubnetName)"
-                -resourceTags $(resourceTags)
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_application-gateway_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Application Gateway Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-application-gateway.json'
+          #     overrideParameters: >-
+          #       -applicationGatewayName "$(applicationGatewayName)"
+          #       -keyVaultCertificateName "$(applicationGatewayKeyVaultCertificateName)"
+          #       -keyVaultName "$(keyVaultName)"
+          #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+          #       -publicIpAddressName "$(applicationGatewayPublicIpAddressName)"
+          #       -userAssignedIdentityName "$(applicationGatewayUserAssignedIdentityName)"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #       -virtualNetworkSubnetName "$(applicationGatewaySubnetName)"
+          #       -resourceTags $(resourceTags)
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_application-gateway_$(Build.BuildNumber)'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Bastion Host Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-bastion-host.json'
-              overrideParameters: >-
-                -bastionHostName "$(bastionHostName)"
-                -publicIpAddressName "$(bastionHostPublicIpAddressName)"
-                -virtualNetworkName "$(virtualNetworkName)"
-                -resourceTags $(resourceTags)
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_bastion-host_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   displayName: 'Deploy Bastion Host Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-bastion-host.json'
+          #     overrideParameters: >-
+          #       -bastionHostName "$(bastionHostName)"
+          #       -publicIpAddressName "$(bastionHostPublicIpAddressName)"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #       -resourceTags $(resourceTags)
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_bastion-host_$(Build.BuildNumber)'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            name: deployDbForMariaDbServerResource
-            displayName: 'Deploy DB for MariaDB Server Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-db-for-mariadb.json'
-              overrideParameters: >-
-                -databaseServerAdminPassword "$(databaseServerAdminPassword)"
-                -databaseServerAdminUsername "$(databaseServerAdminUsername)"
-                -databaseServerBackupRetentionDays "$(databaseServerBackupRetentionDays)"
-                -databaseServerCapacity "$(databaseServerCapacity)"
-                -databaseServerName "$(databaseServerName)"
-                -databaseServerPublicNetworkAccess "Disabled"
-                -databaseServerStorageMb "$(databaseServerStorageMb)"
-                -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
-                -resourceTags $(resourceTags)
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   name: deployDbForMariaDbServerResource
+          #   displayName: 'Deploy DB for MariaDB Server Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-db-for-mariadb.json'
+          #     overrideParameters: >-
+          #       -databaseServerAdminPassword "$(databaseServerAdminPassword)"
+          #       -databaseServerAdminUsername "$(databaseServerAdminUsername)"
+          #       -databaseServerBackupRetentionDays "$(databaseServerBackupRetentionDays)"
+          #       -databaseServerCapacity "$(databaseServerCapacity)"
+          #       -databaseServerName "$(databaseServerName)"
+          #       -databaseServerPublicNetworkAccess "Disabled"
+          #       -databaseServerStorageMb "$(databaseServerStorageMb)"
+          #       -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
+          #       -resourceTags $(resourceTags)
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            name: deployPrivateDnsZoneForMariaDbServerResource
-            displayName: 'Deploy Private DNS Zone for MariaDB Server Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-private-dns-zone.json'
-              overrideParameters: >-
-                -privateDnsZoneName "$(databaseServerPrivateDnsZoneName)"
-                -resourceTags $(resourceTags)
-                -virtualNetworkName "$(virtualNetworkName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_mariadb-private-dns-zone_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   name: deployPrivateDnsZoneForMariaDbServerResource
+          #   displayName: 'Deploy Private DNS Zone for MariaDB Server Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-opencast/azure/arm-templates/deploy-private-dns-zone.json'
+          #     overrideParameters: >-
+          #       -privateDnsZoneName "$(databaseServerPrivateDnsZoneName)"
+          #       -resourceTags $(resourceTags)
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_mariadb-private-dns-zone_$(Build.BuildNumber)'
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            name: deployPrivateEnpointForMariaDbServerResource
-            displayName: 'Deploy Private Endpoint for MariaDB Server Resource'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(serviceConnectionName)'
-              subscriptionId: '$(subscriptionId)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
-              templateLocation: 'Linked artifact'
-              csmFile: 'lp-common/azure/arm-templates/deploy-private-endpoint.json'
-              overrideParameters: >-
-                -privateDnsZoneName "$(databaseServerPrivateDnsZoneName)"
-                -privateEndpointName "$(databaseServerPrivateEndpointName)"
-                -privateLinkServiceName "$(databaseServerName)"
-                -privateLinkServiceType "Microsoft.DBforMariaDB/servers"
-                -virtualNetworkName "$(virtualNetworkName)"
-                -virtualNetworkSubnetName "$(dataSubnetName)"
-              deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_mariadb-private-endpoint_$(Build.BuildNumber)'
+          # - task: AzureResourceManagerTemplateDeployment@3
+          #   name: deployPrivateEnpointForMariaDbServerResource
+          #   displayName: 'Deploy Private Endpoint for MariaDB Server Resource'
+          #   inputs:
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: '$(serviceConnectionName)'
+          #     subscriptionId: '$(subscriptionId)'
+          #     action: 'Create Or Update Resource Group'
+          #     resourceGroupName: '$(resourceGroupName)'
+          #     location: '$(locationName)'
+          #     templateLocation: 'Linked artifact'
+          #     csmFile: 'lp-common/azure/arm-templates/deploy-private-endpoint.json'
+          #     overrideParameters: >-
+          #       -privateDnsZoneName "$(databaseServerPrivateDnsZoneName)"
+          #       -privateEndpointName "$(databaseServerPrivateEndpointName)"
+          #       -privateLinkServiceName "$(databaseServerName)"
+          #       -privateLinkServiceType "Microsoft.DBforMariaDB/servers"
+          #       -virtualNetworkName "$(virtualNetworkName)"
+          #       -virtualNetworkSubnetName "$(dataSubnetName)"
+          #     deploymentMode: 'Incremental'
+          #     deploymentName: '$(solutionName)_mariadb-private-endpoint_$(Build.BuildNumber)'
 
           # Overwrite library defined containerRepositoryTag variable if equal to "latest".
           - task: AzureCLI@2
