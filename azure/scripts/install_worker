@@ -105,6 +105,7 @@ EOF
   docker-compose \
     --env-file "config.env" \
     --file "docker-compose-worker.yml" \
+    --verbose \
     up -d
 
   #############################################################################
