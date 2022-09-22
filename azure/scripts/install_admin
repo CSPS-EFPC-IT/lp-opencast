@@ -32,11 +32,11 @@ declare -A parameters=( \
 # All libraries not available at build time.
 # shellcheck source=/dev/null
 source ./logger.sh
-#shellcheck source=/dev/null
+# shellcheck source=/dev/null
 source ./mysql.sh
-#shellcheck source=/dev/null
+# shellcheck source=/dev/null
 source ./os.sh
-#shellcheck source=/dev/null
+# shellcheck source=/dev/null
 source ./utils.sh
 
 function main() {
