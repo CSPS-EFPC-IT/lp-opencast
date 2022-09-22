@@ -319,6 +319,6 @@ jobs:
                 -dailyBackupScheduleRunTime "$(recoveryServiceVaultDailyBackupScheduleRunTime)"
                 -recoveryServiceVaultName "$(recoveryServiceVaultName)"
                 -resourceTags $(resourceTags)
-                -virtualMachineName "$(virtualMachineName)"
+                -virtualMachineName "$(adminVirtualMachineName)"
               deploymentMode: 'Incremental'
               deploymentName: '$(solutionName)_recovery-service-vault-for-vm_$(Build.BuildNumber)'
