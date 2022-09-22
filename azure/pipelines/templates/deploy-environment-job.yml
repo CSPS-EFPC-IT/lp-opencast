@@ -226,7 +226,7 @@ jobs:
               scriptPath: 'lp-common/azure/scripts/set_alternate_container_repository_tag_variable.sh'
               arguments: >-
                 --container-registry-name "$(containerRegistryName)"
-                --container-repository-name "$(containerRepositoryRootName)/admin"
+                --container-repository-name "$(containerRepositoryRootName)/adminpresentation"
                 --container-repository-tag "$(containerRepositoryTag)"
                 --variable-name "containerRepositoryTag"
               failOnStandardError: true
