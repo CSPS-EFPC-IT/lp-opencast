@@ -95,20 +95,12 @@ EOF
   done
 
   logger::info "Adding docker volume definition..."
-  # docker volume create \
-  #   --driver "local" \
-  #   --name "data" \
-  #   --opt "device=:/data" \
-  #   --opt "o=addr=${parameters[nfs_server_name]},rw" \
-  #   --opt "type=nfs"
-
   docker volume create \
     --driver "local" \
     --name "data" \
-    --opt "device=/mnt/data" \
-    --opt "o=bind" \
-    --opt "type=none"
-
+    --opt "device=:/data" \
+    --opt "o=addr=${parameters[nfs_server_name]},nfsvers=4" \
+    --opt "type=nfs"
 
   logger::title "Starting OpenCast Worker node..."
   docker-compose \
