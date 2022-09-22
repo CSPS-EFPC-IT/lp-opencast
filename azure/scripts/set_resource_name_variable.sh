@@ -6,7 +6,7 @@
 set -e
 
 # Load helper libraries.
-# shellcheck source=/dev/null
+# shellcheck source=./logger.sh
 source "$(dirname "$0")"/logger.sh
 
 ######################################
