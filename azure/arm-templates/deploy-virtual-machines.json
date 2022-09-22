@@ -1,0 +1,597 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminVirtualMachineDataDiskName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Data Disk resource attached to the Admin Virtual Machine."
+            }
+        },
+        "adminVirtualMachineDataDiskSizeGB": {
+            "type": "int",
+            "defaultValue": 4,
+            "allowedValues": [
+                4,
+                8,
+                16,
+                32,
+                128,
+                256,
+                512,
+                1024,
+                2048,
+                4096,
+                8192,
+                16384,
+                32767
+            ],
+            "metadata": {
+                "description": "The size of the virtual machine's data disk in Gigabytes. Note: Size cannot be 64 GB as it interferes with the device mounting logic used."
+            }
+        },
+        "adminVirtualMachineName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Admin Virtual Machine's resource."
+            }
+        },
+        "adminVirtualMachineNetworkInterfaceCardName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of Network InterCard Card resource used by the Admin Virtual Machine."
+            }
+        },
+        "adminVirtualMachineOsDiskName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the OS Disk resource attached to the Admin Virtual machine."
+            }
+        },
+        "adminVirtualMachineSize":{
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+            "metadata": {
+                "description": "The Size of the Admin Virtual Machine. Ref.: https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?pivots=deployment-language-arm-template#hardwareprofile-1 "
+            }
+        },
+        "applicationGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Application Gateway resource used by the Virtual Machine."
+            }
+        },
+        "applicationGatewayResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Application Gateway used by the Virtual machine."
+            }
+        },
+        "applicationGatewaySubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription Id of the Application Gateway used by the Virtual Machine."
+            }
+        },
+        "appOpenSearchJavaOpts": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbJdbcPass": {
+            "type": "securestring",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbJdbcUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbJdbcUser": {
+            "type": "securestring",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectDbVendor": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityAdminPass": {
+            "type": "securestring",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityAdminUser": {
+            "type": "securestring",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityDigestPass": {
+            "type": "securestring",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appOrgOpenCastProjectSecurityDigestUser": {
+            "type": "securestring",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appPropOrgOpenCastProjectAdminUiUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "appPropOrgOpenCastProjectEngageUiUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "See the project's README for details."
+            }
+        },
+        "containerRepositoryRootName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Container Repository's root name."
+            }
+        },
+        "containerRepositoryTag": {
+            "type": "string",
+            "metadata": {
+                "description": "The Container Repository's tag."
+            }
+        },
+        "databaseServerAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Database Server Administrator's password."
+            }
+        },
+        "databaseServerAdminUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Database Server Administrator's username."
+            }
+        },
+        "databaseServerDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the application database within the Database Server."
+            }
+        },
+        "databaseServerFqdn": {
+            "type": "string",
+            "metadata": {
+                "description": "The Fully Qualified Domain Name of the Database Server."
+            }
+        },
+        "deploymentTimestamp" : {
+            "type": "int",
+            "defaultValue": "[int(utcNow('ddHHmmss'))]",
+            "metadata": {
+                "description": "The deployment timestamp. Determines whether the Virtual Machine Custom Script extension is rerun. Default value will have the Virtual Machine Custom Script extension rerun at each ARM template deployment. Ref.: https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux#property-value-details"
+            }
+        },
+        "genericShellScriptsRepoRawFilesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URL of the Generic Shell Scripts repository raw files."
+            }
+        },
+        "locationName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The name of the Azure Location where resources will be created."
+            }
+        },
+        "projectRepoRawFilesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URL of the current project repository raw files."
+            }
+        },
+        "resourceTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional tags to add to each resource created."
+            }
+        },
+        "smtpServerFqdn": {
+            "type": "string",
+            "metadata": {
+                "description": "The Fully Qualified Domain Name of the SMTP server."
+            }
+        },
+        "smtpServerFromAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The FROM address to used with the SMTP server."
+            }
+        },
+        "smtpServerPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Password of the SMTP server account."
+            }
+        },
+       "smtpServerPort": {
+            "type": "int",
+            "defaultValue": 587,
+            "metadata": {
+                "description": "The Port number used by the SMTP server."
+            }
+        },
+        "smtpServerUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Username of the SMTP server account."
+            }
+        },
+        "virtualMachineAdminEmail": {
+            "type": "string",
+            "metadata": {
+                "description": "The Email address of the Virtual Machine Administrator."
+            }
+        },
+        "virtualMachineAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password of the Virtual Machine's Administrator."
+            }
+        },
+        "virtualMachineAdminUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The username of the Virtual Machine's Administrator."
+            }
+        },
+        "virtualMachineRebootUtcTime": {
+            "type": "string",
+            "defaultValue": "07:00",
+            "metadata": {
+                "description": "The Time of the day at which the Virtual Machine will be rebooted after an automatic upgrade."
+            }
+        },
+        "virtualMachineTags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Optional tags specific to Virtual Machines."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network resource used by the Virtual Machine."
+            }
+        },
+        "virtualNetworkResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group containing the Virtual Network used by the Virtual Machine."
+
+            }
+        },
+        "virtualNetworkSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network Subnet used by the Virtual Machine."
+            }
+        },
+        "virtualNetworkSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription Id of the Virtual Network used by the Virtual Machine."
+            }
+        },
+        "workerVirtualMachineName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Worker Virtual Machine's resource."
+            }
+        },
+        "workerVirtualMachineNetworkInterfaceCardName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of Network InterCard Card resource used by the Worker Virtual Machine."
+            }
+        },
+        "workerVirtualMachineOsDiskName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the OS Disk resource attached to the Worker Virtual machine."
+            }
+        },
+        "workerVirtualMachineSize":{
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+            "metadata": {
+                "description": "The Size of the Worker Virtual Machine. Ref.: https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?pivots=deployment-language-arm-template#hardwareprofile-1"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('adminVirtualMachineNetworkInterfaceCardName')]",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('locationName')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId(parameters('virtualNetworkSubscriptionId'), parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('virtualNetworkSubnetName'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "applicationGatewayBackendAddressPools": [
+                                {
+                                    "id": "[reference(resourceId(parameters('applicationGatewaySubscriptionId'), parameters('applicationGatewayResourceGroupName'), 'Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '2022-01-01').backendAddressPools[0].id]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": true,
+                "enableIPForwarding": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2022-03-02",
+            "name": "[parameters('adminVirtualMachineDataDiskName')]",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('locationName')]",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            },
+            "properties": {
+                "creationData": {
+                    "createOption": "Empty"
+                },
+                "diskSizeGB": "[parameters('adminVirtualMachineDataDiskSizeGB')]",
+                "encryption": {
+                    "type": "EncryptionAtRestWithPlatformKey"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('adminVirtualMachineName')]",
+            "tags": "[union(parameters('resourceTags'), parameters('virtualMachineTags'))]",
+            "location": "[parameters('locationName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('adminVirtualMachineNetworkInterfaceCardName'))]",
+                "[resourceId('Microsoft.Compute/disks', parameters('adminVirtualMachineDataDiskName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('adminVirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "canonical",
+                        "offer": "0001-com-ubuntu-server-focal",
+                        "sku": "20_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[parameters('adminVirtualMachineOsDiskName')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "name": "[parameters('adminVirtualMachineDataDiskName')]",
+                            "createOption": "Attach",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "id": "[resourceId('Microsoft.Compute/disks', parameters('adminVirtualMachineDataDiskName'))]"
+                            },
+                            "toBeDetached": false
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[toLower(parameters('adminVirtualMachineName'))]",
+                    "adminUsername": "[parameters('virtualMachineAdminUsername')]",
+                    "adminPassword": "[parameters('virtualMachineAdminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('adminVirtualMachineNetworkInterfaceCardName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(parameters('adminVirtualMachineName'),'/setup')]",
+            "location": "[parameters('locationName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('adminVirtualMachineName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "timestamp": "[parameters('deploymentTimestamp')]",
+                    "fileUris":[]
+                },
+                "protectedSettings": {
+                    "fileUris": [
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/install_unattended_upgrade_tools')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/logger.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/os.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/mysql.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/upgrade_server')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/utils.sh')]",
+                        "[concat(parameters('projectRepoRawFilesBaseUrl'),'/azure/scripts/install_admin')]",
+                        "[concat(parameters('projectRepoRawFilesBaseUrl'),'/docker/docker-compose-adminpresentation.yml')]"
+                    ],
+                    "commandToExecute": "[concat('logfile=\"/var/log/setup.$(date +\"%Y%m%dT%H%M%S\").log\" && sudo ./upgrade_server > \"${logfile}\" 2>&1 && sudo ./install_unattended_upgrade_tools --server_admin_email ', '\"', parameters('virtualMachineAdminEmail'), '\"', ' --server_fqdn ', '\"', parameters('adminVirtualMachineName'), '\"', ' --server_reboot_utc_time ', '\"', parameters('virtualMachineRebootUtcTime'), '\"',  ' --server_resource_name ', '\"', parameters('adminVirtualMachineName'), '\"', ' --smtp_server_fqdn ', '\"', parameters('smtpServerFqdn'), '\"', ' --smtp_server_from_address ', '\"', parameters('smtpServerFromAddress'), '\"', ' --smtp_server_password ', '\"', parameters('smtpServerPassword'), '\"', ' --smtp_server_port ', '\"', parameters('smtpServerPort'), '\"', ' --smtp_server_username ', '\"', parameters('smtpServerUsername'), '\"', ' >> \"${logfile}\" 2>&1 && sudo ./install_admin --app_opensearch_java_opts ', '\"', parameters('appOpenSearchJavaOpts'), '\"', ' --app_org_opencastproject_db_jdbc_pass ', '\"', parameters('appOrgOpenCastProjectDbJdbcPass'), '\"', ' --app_org_opencastproject_db_jdbc_url ', '\"',  parameters('appOrgOpenCastProjectDbJdbcUrl'), '\"', ' --app_org_opencastproject_db_jdbc_user ', '\"', parameters('appOrgOpenCastProjectDbJdbcUser'), '\"', ' --app_org_opencastproject_db_vendor ', '\"', parameters('appOrgOpenCastProjectDbVendor'), '\"', ' --app_org_opencastproject_security_admin_pass ', '\"', parameters('appOrgOpenCastProjectSecurityAdminPass'), '\"', ' --app_org_opencastproject_security_admin_user ', '\"', parameters('appOrgOpenCastProjectSecurityAdminUser'), '\"', ' --app_org_opencastproject_security_digest_pass ', '\"', parameters('appOrgOpenCastProjectSecurityDigestPass'), '\"', ' --app_org_opencastproject_security_digest_user ', '\"', parameters('appOrgOpenCastProjectSecurityDigestUser'), '\"', ' --app_prop_org_opencastproject_admin_ui_url ', '\"',  parameters('appPropOrgOpenCastProjectAdminUiUrl'), '\"', ' --app_prop_org_opencastproject_engage_ui_url ', '\"', parameters('appPropOrgOpenCastProjectEngageUiUrl'), '\"', ' --application_subnet_address_range ', '\"', reference(resourceId(parameters('virtualNetworkSubscriptionId'), parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('virtualNetworkSubnetName')), '2022-01-01').addressPrefix, '\"', ' --container_repository_root_name ',  '\"', parameters('containerRepositoryRootName'), '\"', ' --container_repository_tag ',  '\"', parameters('containerRepositoryTag'), '\"', ' --data_disk_size_gb ', '\"', parameters('adminVirtualMachineDataDiskSizeGB'), '\"', ' --database_server_admin_password ', '\"', parameters('databaseServerAdminPassword'), '\"', ' --database_server_admin_username ', '\"', parameters('databaseServerAdminUsername'), '\"', ' --database_server_database_name ', '\"', parameters('databaseServerDatabaseName'), '\"', ' --database_server_fqdn ', '\"', parameters('databaseServerFqdn'), '\"', ' >> \"${logfile}\" 2>&1')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('workerVirtualMachineNetworkInterfaceCardName')]",
+            "tags": "[parameters('resourceTags')]",
+            "location": "[parameters('locationName')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId(parameters('virtualNetworkSubscriptionId'), parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('virtualNetworkSubnetName'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "applicationGatewayBackendAddressPools": []
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": true,
+                "enableIPForwarding": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('workerVirtualMachineName')]",
+            "tags": "[union(parameters('resourceTags'), parameters('virtualMachineTags'))]",
+            "location": "[parameters('locationName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('workerVirtualMachineNetworkInterfaceCardName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('workerVirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "canonical",
+                        "offer": "0001-com-ubuntu-server-focal",
+                        "sku": "20_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[parameters('workerVirtualMachineOsDiskName')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[toLower(parameters('workerVirtualMachineName'))]",
+                    "adminUsername": "[parameters('virtualMachineAdminUsername')]",
+                    "adminPassword": "[parameters('virtualMachineAdminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('workerVirtualMachineNetworkInterfaceCardName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(parameters('workerVirtualMachineName'),'/setup')]",
+            "location": "[parameters('locationName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('workerVirtualMachineName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('adminVirtualMachineName'), 'setup')]"
+            ],
+            "comments": "Must run AFTER the Admin VM extension for the Worker VM NFS client to succesfully connect to the Admin VM NFS Server.",
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "timestamp": "[parameters('deploymentTimestamp')]",
+                    "fileUris":[]
+                },
+                "protectedSettings": {
+                    "fileUris": [
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/install_unattended_upgrade_tools')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/logger.sh')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/upgrade_server')]",
+                        "[concat(parameters('genericShellScriptsRepoRawFilesBaseUrl'),'/ubuntu-20.04/utils.sh')]",
+                        "[concat(parameters('projectRepoRawFilesBaseUrl'),'/azure/scripts/install_worker')]",
+                        "[concat(parameters('projectRepoRawFilesBaseUrl'),'/docker/docker-compose-worker.yml')]"
+                    ],
+                    "commandToExecute": "[concat('logfile=\"/var/log/setup.$(date +\"%Y%m%dT%H%M%S\").log\" && sudo ./upgrade_server > \"${logfile}\" 2>&1 && sudo ./install_unattended_upgrade_tools --server_admin_email ', '\"', parameters('virtualMachineAdminEmail'), '\"', ' --server_fqdn ', '\"', parameters('adminVirtualMachineName'), '\"', ' --server_reboot_utc_time ', '\"', parameters('virtualMachineRebootUtcTime'), '\"',  ' --server_resource_name ', '\"', parameters('adminVirtualMachineName'), '\"', ' --smtp_server_fqdn ', '\"', parameters('smtpServerFqdn'), '\"', ' --smtp_server_from_address ', '\"', parameters('smtpServerFromAddress'), '\"', ' --smtp_server_password ', '\"', parameters('smtpServerPassword'), '\"', ' --smtp_server_port ', '\"', parameters('smtpServerPort'), '\"', ' --smtp_server_username ', '\"', parameters('smtpServerUsername'), '\"', ' >> \"${logfile}\" 2>&1 &&  sudo ./install_worker --app_org_opencastproject_db_jdbc_pass ', '\"', parameters('appOrgOpenCastProjectDbJdbcPass'), '\"', ' --app_org_opencastproject_db_jdbc_url ', '\"',  parameters('appOrgOpenCastProjectDbJdbcUrl'), '\"', ' --app_org_opencastproject_db_jdbc_user ', '\"', parameters('appOrgOpenCastProjectDbJdbcUser'), '\"', ' --app_org_opencastproject_db_vendor ', '\"', parameters('appOrgOpenCastProjectDbVendor'), '\"', ' --app_org_opencastproject_security_admin_pass ', '\"', parameters('appOrgOpenCastProjectSecurityAdminPass'), '\"', ' --app_org_opencastproject_security_admin_user ', '\"', parameters('appOrgOpenCastProjectSecurityAdminUser'), '\"', ' --app_org_opencastproject_security_digest_pass ', '\"', parameters('appOrgOpenCastProjectSecurityDigestPass'), '\"', ' --app_org_opencastproject_security_digest_user ', '\"', parameters('appOrgOpenCastProjectSecurityDigestUser'), '\"', ' --app_prop_org_opencastproject_admin_ui_url ', '\"',  parameters('appPropOrgOpenCastProjectAdminUiUrl'), '\"', ' --app_prop_org_opencastproject_engage_ui_url ', '\"', parameters('appPropOrgOpenCastProjectEngageUiUrl'), '\"', ' --container_repository_root_name ',  '\"', parameters('containerRepositoryRootName'), '\"', ' --container_repository_tag ',  '\"', parameters('containerRepositoryTag'), '\"', ' --nfs_server_name ', '\"', parameters('adminVirtualMachineName'), '\"', ' >> \"${logfile}\" 2>&1')]"
+
+                }
+            }
+        }
+     ],
+    "outputs": {}
+}

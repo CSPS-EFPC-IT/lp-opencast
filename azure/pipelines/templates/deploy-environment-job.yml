@@ -32,6 +32,10 @@ jobs:
 
           - template: set-resource-names-steps.yml
             parameters:
+              adminVirtualMachineDataDiskNameVariableName: 'adminVirtualMachineDataDiskName'
+              adminVirtualMachineNameVariableName: 'adminVirtualMachineName'
+              adminVirtualMachineNetworkInterfaceCardNameVariableName: 'adminVirtualMachineNetworkInterfaceCardName'
+              adminVirtualMachineOsDiskNameVariableName: 'adminVirtualMachineOsDiskName'
               applicationGatewayNameVariableName: 'applicationGatewayName'
               applicationGatewayNetworkSecurityGroupNameVariableName: 'applicationGatewayNetworkSecurityGroupName'
               applicationGatewayPublicIpAddressNameVariableName: 'applicationGatewayPublicIpAddressName'
@@ -50,11 +54,10 @@ jobs:
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
               solutionName: '$(solutionName)'
-              virtualMachineDataDiskNameVariableName: 'virtualMachineDataDiskName'
-              virtualMachineNameVariableName: 'virtualMachineName'
-              virtualMachineNetworkInterfaceCardNameVariableName: 'virtualMachineNetworkInterfaceCardName'
-              virtualMachineOsDiskNameVariableName: 'virtualMachineOsDiskName'
               virtualNetworkNameVariableName: 'virtualNetworkName'
+              workerVirtualMachineNameVariableName: 'workerVirtualMachineName'
+              workerVirtualMachineNetworkInterfaceCardNameVariableName: 'workerVirtualMachineNetworkInterfaceCardName'
+              workerVirtualMachineOsDiskNameVariableName: 'workerVirtualMachineOsDiskName'
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Log Analytics Workspace Resource'
@@ -223,7 +226,7 @@ jobs:
               scriptPath: 'lp-common/azure/scripts/set_alternate_container_repository_tag_variable.sh'
               arguments: >-
                 --container-registry-name "$(containerRegistryName)"
-                --container-repository-name "$(containerRepositoryRootName)/admin"
+                --container-repository-name "$(containerRepositoryRootName)/adminpresentation"
                 --container-repository-tag "$(containerRepositoryTag)"
                 --variable-name "containerRepositoryTag"
               failOnStandardError: true
@@ -242,7 +245,7 @@ jobs:
                 --variable-name "databaseServerFqdn"
 
           - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy Virtual Machine Resource'
+            displayName: 'Deploy Virtual Machine Resources'
             inputs:
               deploymentScope: 'Resource Group'
               azureResourceManagerConnection: '$(serviceConnectionName)'
@@ -251,8 +254,14 @@ jobs:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(locationName)'
               templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-machine.json'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-machines.json'
               overrideParameters: >-
+                -adminVirtualMachineDataDiskName "$(adminVirtualMachineDataDiskName)"
+                -adminVirtualMachineDataDiskSizeGB  $(adminVirtualMachineDataDiskSizeGB)
+                -adminVirtualMachineName "$(adminVirtualMachineName)"
+                -adminVirtualMachineNetworkInterfaceCardName "$(adminVirtualMachineNetworkInterfaceCardName)"
+                -adminVirtualMachineOsDiskName "$(adminVirtualMachineOsDiskName)"
+                -adminVirtualMachineSize "$(adminVirtualMachineSize)"
                 -appOpenSearchJavaOpts "$(appOpenSearchJavaOpts)"
                 -appOrgOpenCastProjectDbJdbcPass "$(appOrgOpenCastProjectDbJdbcPass)"
                 -appOrgOpenCastProjectDbJdbcUrl "jdbc:mariadb://$(databaseServerFqdn)/$(containerRepositoryRootName)?useMysqlMetadata=true&useSSL=true"
@@ -272,7 +281,6 @@ jobs:
                 -databaseServerDatabaseName "$(containerRepositoryRootName)"
                 -databaseServerFqdn "$(databaseServerFqdn)"
                 -genericShellScriptsRepoRawFilesBaseUrl "$(genericShellScriptsRepoRawFilesBaseUrl)"
-                -networkInterfaceCardName "$(virtualMachineNetworkInterfaceCardName)"
                 -projectRepoRawFilesBaseUrl "$(projectRepoRawFilesBaseUrl)/$(Build.SourceBranchName)"
                 -resourceTags $(resourceTags)
                 -smtpServerFqdn "$(smtpServerFqdn)"
@@ -283,13 +291,13 @@ jobs:
                 -virtualMachineAdminEmail "$(adminUserEmail)"
                 -virtualMachineAdminPassword "$(virtualMachineAdminPassword)"
                 -virtualMachineAdminUsername "$(virtualMachineAdminUsername)"
-                -virtualMachineDataDiskName "$(virtualMachineDataDiskName)"
-                -virtualMachineDataDiskSizeGB  $(virtualMachineDataDiskSizeGB)
-                -virtualMachineName "$(virtualMachineName)"
-                -virtualMachineOsDiskName "$(virtualMachineOsDiskName)"
-                -virtualMachineSize "$(virtualMachineSize)"
+                -virtualMachineRebootUtcTime "$(virtualMachineRebootUtcTime)"
                 -virtualMachineTags $(virtualMachineTags)
                 -virtualNetworkName "$(virtualNetworkName)"
                 -virtualNetworkSubnetName "$(applicationSubnetName)"
+                -workerVirtualMachineName "$(workerVirtualMachineName)"
+                -workerVirtualMachineNetworkInterfaceCardName "$(workerVirtualMachineNetworkInterfaceCardName)"
+                -workerVirtualMachineOsDiskName "$(workerVirtualMachineOsDiskName)"
+                -workerVirtualMachineSize "$(workerVirtualMachineSize)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_virtual-machine_$(Build.BuildNumber)'
+              deploymentName: '$(solutionName)_virtual-machines_$(Build.BuildNumber)'

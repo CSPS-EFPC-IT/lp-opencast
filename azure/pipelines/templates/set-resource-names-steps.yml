@@ -1,4 +1,12 @@
 parameters:
+- name: adminVirtualMachineDataDiskNameVariableName
+  type: string
+- name: adminVirtualMachineNameVariableName
+  type: string
+- name: adminVirtualMachineNetworkInterfaceCardNameVariableName
+  type: string
+- name: adminVirtualMachineOsDiskNameVariableName
+  type: string
 - name: applicationGatewayNameVariableName
   type: string
 - name: applicationGatewayNetworkSecurityGroupNameVariableName
@@ -35,15 +43,13 @@ parameters:
   type: string
 - name: solutionName
   type: string
-- name: virtualMachineDataDiskNameVariableName
-  type: string
-- name: virtualMachineNameVariableName
-  type: string
-- name: virtualMachineNetworkInterfaceCardNameVariableName
-  type: string
-- name: virtualMachineOsDiskNameVariableName
-  type: string
 - name: virtualNetworkNameVariableName
+  type: string
+- name: workerVirtualMachineNameVariableName
+  type: string
+- name: workerVirtualMachineNetworkInterfaceCardNameVariableName
+  type: string
+- name: workerVirtualMachineOsDiskNameVariableName
   type: string
 
 steps:
@@ -231,7 +237,7 @@ steps:
 
 # Setting Virtual Machine related resource names.
 - task: Bash@3
-  displayName: "Set Virtual Machine's Network Interface Card's Resource Name Variable"
+  displayName: "Set Admin Virtual Machine's Network Interface Card's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -239,10 +245,10 @@ steps:
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/networkInterfaces"
       --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.virtualMachineNetworkInterfaceCardNameVariableName }}"
+      --variable-name "${{ parameters.adminVirtualMachineNetworkInterfaceCardNameVariableName }}"
 
 - task: Bash@3
-  displayName: "Set Virtual Machine's Resource Name Variable"
+  displayName: "Set Admin Virtual Machine's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -250,10 +256,10 @@ steps:
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Compute/virtualMachines"
       --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.virtualMachineNameVariableName }}"
+      --variable-name "${{ parameters.adminVirtualMachineNameVariableName }}"
 
 - task: Bash@3
-  displayName: "Set Virtual Machine's OS Disk's Resource Name Variable"
+  displayName: "Set Admin Virtual Machine's OS Disk's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -261,10 +267,10 @@ steps:
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Compute/disks"
       --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.virtualMachineOsDiskNameVariableName }}"
+      --variable-name "${{ parameters.adminVirtualMachineOsDiskNameVariableName }}"
 
 - task: Bash@3
-  displayName: "Set Virtual Machine's Data Disk's Resource Name Variable"
+  displayName: "Set Admin Virtual Machine's Data Disk's Resource Name Variable"
   inputs:
     filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
@@ -272,4 +278,37 @@ steps:
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Compute/disks"
       --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.virtualMachineDataDiskNameVariableName }}"
+      --variable-name "${{ parameters.adminVirtualMachineDataDiskNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Worker Virtual Machine's Network Interface Card's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Worker-VM"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Network/networkInterfaces"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.workerVirtualMachineNetworkInterfaceCardNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Worker Virtual Machine's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Worker"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Compute/virtualMachines"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.workerVirtualMachineNameVariableName }}"
+
+- task: Bash@3
+  displayName: "Set Admin Virtual Machine's OS Disk's Resource Name Variable"
+  inputs:
+    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    arguments: >-
+      --component-name "Worker-VM-OS"
+      --environment-name "${{ parameters.environmentName }}"
+      --resource-type "Microsoft.Compute/disks"
+      --solution-name "${{ parameters.solutionName }}"
+      --variable-name "${{ parameters.workerVirtualMachineOsDiskNameVariableName }}"

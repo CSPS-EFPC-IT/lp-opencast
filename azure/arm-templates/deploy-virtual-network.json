@@ -159,15 +159,15 @@
                 }
             },
             {
-                "name": "Allow_BastionHost_TCP_22_Inbound",
+                "name": "Allow_OpenCast_TCP_8080_Inbound",
                 "properties": {
                     "access": "Allow",
-                    "destinationAddressPrefix": "*",
-                    "destinationPortRange": "22",
+                    "destinationAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                    "destinationPortRange": "8080",
                     "direction": "Inbound",
                     "priority": 1010,
                     "protocol": "TCP",
-                    "sourceAddressPrefix": "[parameters('bastionHostSubnetAddressRange')]",
+                    "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
                     "sourcePortRange": "*"
                 }
             },
@@ -181,6 +181,19 @@
                     "priority": 1020,
                     "protocol": "*",
                     "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
+                    "sourcePortRange": "*"
+                }
+            },
+            {
+                "name": "Allow_BastionHost_TCP_22_Inbound",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "22",
+                    "direction": "Inbound",
+                    "priority": 1030,
+                    "protocol": "TCP",
+                    "sourceAddressPrefix": "[parameters('bastionHostSubnetAddressRange')]",
                     "sourcePortRange": "*"
                 }
             }

@@ -1,12 +1,11 @@
 #!/bin/bash
 #
-# Install and launch OpenCast Admin and Presentation nodes.
+# Install and launch OpenCast Worker node.
 # This script must be run as root (ex.: sudo sh ./[script_name])
 # Style Guide: https://google.github.io/styleguide/shellguide.html
 
 # Parameters: all manadatory and must be prefixed with "--" on command line.
 declare -A parameters=( \
-  [app_opensearch_java_opts]="" \
   [app_org_opencastproject_db_jdbc_pass]="" \
   [app_org_opencastproject_db_jdbc_url]="" \
   [app_org_opencastproject_db_jdbc_user]="" \
@@ -17,14 +16,9 @@ declare -A parameters=( \
   [app_org_opencastproject_security_digest_user]="" \
   [app_prop_org_opencastproject_admin_ui_url]="" \
   [app_prop_org_opencastproject_engage_ui_url]="" \
-  [application_subnet_address_range]="" \
   [container_repository_root_name]="" \
   [container_repository_tag]="" \
-  [data_disk_size_gb]="" \
-  [database_server_admin_password]="" \
-  [database_server_admin_username]="" \
-  [database_server_database_name]="" \
-  [database_server_fqdn]="" \
+  [nfs_server_name]="" \
 )
 
 # Functions
@@ -33,18 +27,12 @@ declare -A parameters=( \
 # shellcheck source=/dev/null
 source ./logger.sh
 # shellcheck source=/dev/null
-source ./mysql.sh
-# shellcheck source=/dev/null
-source ./os.sh
-# shellcheck source=/dev/null
 source ./utils.sh
 
 function main() {
 
   # Constants
-  SHARE_ROOT="/srv/nfs4"
-  SHARE_DATA_PATH="${SHARE_ROOT}/data"
-  SHARE_OPENSEARCH_PATH="${SHARE_ROOT}/opensearch"
+  SHARE_DATA_MOUNTPOINT="/mnt/data"
 
   # Variables
   local deployment_index
@@ -60,45 +48,22 @@ function main() {
   logger::title "Install Application Dependencies"
   apt-get install --yes --quiet \
     docker-compose \
-    mysql-client \
-    nfs-kernel-server
+    nfs-common
 
-  logger::title "Mount Data Disk"
-  os::mount_data_disk_by_size \
-    "${parameters[data_disk_size_gb]}G" \
-    "${SHARE_ROOT}"
-
-  logger::title "Configure NFS Server"
-  logger::info "Creating share folders..."
-  mkdir -p "${SHARE_DATA_PATH}"
-  mkdir -p "${SHARE_OPENSEARCH_PATH}"
-
-  logger::info "Configuring share access..."
-  # Remove pre-existing configuration before adding it back.
-  sed -i "\|^${SHARE_ROOT}|d" /etc/exports
-  # Add access rules
-  {
-      echo "${SHARE_ROOT}             ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check,crossmnt,fsid=0)";
-      echo "${SHARE_DATA_PATH}        ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check)";
-      echo "${SHARE_OPENSEARCH_PATH}  ${parameters[application_subnet_address_range]}(rw,sync,no_subtree_check)"
-  } >> /etc/exports
-  exportfs -ar
-
-  logger::title "Create Database and credentials"
-  mysql::create_database_and_credentials \
-    "${parameters[database_server_fqdn]}" \
-    "${parameters[database_server_admin_username]}" \
-    "${parameters[database_server_admin_password]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_user]}" \
-    "${parameters[app_org_opencastproject_db_jdbc_pass]}" \
-    "${parameters[database_server_database_name]}"
+  logger::title "Mount Data Share"
+  logger::info "Creating mountpoint directory..."
+  mkdir -p "${SHARE_DATA_MOUNTPOINT}"
+  logger::info "Removing pre-existing mount configuration, if any..."
+  sed -i "\|^${parameters[nfs_server_name]}|d" /etc/fstab
+  # Add mountpoint definition
+  echo "${parameters[nfs_server_name]}:/data ${SHARE_DATA_MOUNTPOINT}  nfs defaults  0 0" >> /etc/fstab
+  mount -a
 
   logger::title "Create docker-compose environment file"
   cat <<EOF > config.env
 CONTAINER_REPOSITORY_ROOT_NAME=${parameters[container_repository_root_name]}
 CONTAINER_REPOSITORY_TAG=${parameters[container_repository_tag]}
 
-ELASTICSEARCH_SERVER_HOST=opensearch
 ORG_OPENCASTPROJECT_DB_JDBC_PASS=${parameters[app_org_opencastproject_db_jdbc_pass]}
 ORG_OPENCASTPROJECT_DB_JDBC_URL=${parameters[app_org_opencastproject_db_jdbc_url]}
 ORG_OPENCASTPROJECT_DB_JDBC_USER=${parameters[app_org_opencastproject_db_jdbc_user]}
@@ -111,23 +76,16 @@ ORG_OPENCASTPROJECT_SECURITY_DIGEST_USER=${parameters[app_org_opencastproject_se
 ORG_OPENCASTPROJECT_SERVER_URL=http://$(hostname):8080
 PROP_ORG_OPENCASTPROJECT_ADMIN_UI_URL=${parameters[app_prop_org_opencastproject_admin_ui_url]}
 PROP_ORG_OPENCASTPROJECT_ENGAGE_UI_URL=${parameters[app_prop_org_opencastproject_engage_ui_url]}
-
-DISABLE_INSTALL_DEMO_CONFIG=true
-DISABLE_SECURITY_PLUGIN=true
-OPENSEARCH_JAVA_OPTS=${parameters[app_opensearch_java_opts]}
-BOOTSTRAP_MEMORY_LOCK=true
-DISCOVERY_TYPE=single-node
 EOF
 
   logger::title "Create Docker Volumes"
   logger::info "Stoping all previously deployed containers..."
   deployment_index=$(basename "$(pwd)")
-
   while [[ ${deployment_index} -gt 0 ]]; do
     ((deployment_index--))
     docker-compose \
       --env-file=config.env \
-      --file="../${deployment_index}/docker-compose-adminpresentation.yml" \
+      --file="../${deployment_index}/docker-compose-worker.yml" \
       down
   done
 
@@ -136,25 +94,18 @@ EOF
     docker volume rm "${volume}"
   done
 
-  logger::info "Adding docker volume definitions..."
+  logger::info "Adding docker volume definition..."
   docker volume create \
     --driver "local" \
     --name "data" \
-    --opt "device=${SHARE_DATA_PATH}" \
-    --opt "o=bind" \
-    --opt "type=none"
+    --opt "device=:/data" \
+    --opt "o=addr=${parameters[nfs_server_name]},nfsvers=4" \
+    --opt "type=nfs"
 
-  docker volume create \
-    --driver "local" \
-    --name "opensearch" \
-    --opt "device=${SHARE_OPENSEARCH_PATH}" \
-    --opt "o=bind" \
-    --opt "type=none"
-
-  logger::title "Starting OpenCast Admin, OpenCast Presentation and OpenSearch nodes..."
+  logger::title "Starting OpenCast Worker node..."
   docker-compose \
     --env-file "config.env" \
-    --file "docker-compose-adminpresentation.yml" \
+    --file "docker-compose-worker.yml" \
     up -d
 
   #############################################################################
