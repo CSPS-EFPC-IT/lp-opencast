@@ -4,7 +4,7 @@
     "parameters": {
         "dailyBackupRetentionPeriod": {
             "type": "int",
-            "defaultValue": 30,
+            "defaultValue": 35,
             "metadata": {
                 "description": "The number of days to keep daily backups."
             }
@@ -14,12 +14,6 @@
             "defaultValue": "00:00",
             "metadata": {
                 "description": "The time at which the backups are to be taken."
-            }
-        },
-        "fileServiceShareName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the File Service Share to backup."
             }
         },
         "locationName": {
@@ -42,20 +36,20 @@
                 "description": "Generic tags for any resources."
             }
         },
-        "storageAccountName": {
+        "virtualMachineName": {
             "type": "string",
             "metadata": {
                 "description": "The name of the File Service Share's Storage Account resource."
             }
         },
-        "storageAccountResourceGroupName": {
+        "virtualMachineResourceGroupName": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]",
             "metadata": {
                 "description": "The name of the Storage Account's Resource Group."
             }
         },
-        "storageAccountSubscriptionId": {
+        "virtualMachineSubscriptionId": {
             "type": "string",
             "defaultValue": "[subscription().subscriptionId]",
             "metadata": {
@@ -66,8 +60,8 @@
     "variables": {
         "backupFabricName": "Azure",
         "customBackupPolicyName": "custom-daily",
-        "protectedItemName": "[format('azurefileshare;{0}', parameters('fileServiceShareName'))]",
-        "protectionContainerName": "[format('storagecontainer;Storage;{0};{1}', parameters('storageAccountResourceGroupName'), parameters('storageAccountName'))]"
+        "protectedItemName": "[toLower(format('vm;iaasvmcontainerv2;{0};{1}', parameters('virtualMachineResourceGroupName'), parameters('virtualMachineName')))]",
+        "protectionContainerName": "[toLower(format('IaasVMContainer;iaasvmcontainerv2;{0};{1}', parameters('virtualMachineResourceGroupName'), parameters('virtualMachineName')))]"
     },
     "resources": [
         {
@@ -90,8 +84,7 @@
                 "[resourceId('Microsoft.RecoveryServices/vaults', parameters('recoveryServiceVaultName'))]"
             ],
             "properties": {
-                "backupManagementType": "AzureStorage",
-                "workloadType": "AzureFileShare",
+                "backupManagementType": "AzureIaasVM",
                 "schedulePolicy": {
                     "schedulePolicyType": "SimpleSchedulePolicy",
                     "scheduleRunFrequency": "Daily",
@@ -119,33 +112,18 @@
             }
         },
         {
-            "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers",
-            "apiVersion": "2022-03-01",
-            "name": "[format('{0}/{1}/{2}', parameters('recoveryServiceVaultName'), variables('backupFabricName'), variables('protectionContainerName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.RecoveryServices/vaults', parameters('recoveryServiceVaultName'))]"
-            ],
-            "properties": {
-                "backupManagementType": "AzureStorage",
-                "containerType": "StorageContainer",
-                "sourceResourceId": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
-            }
-        },
-        {
             "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
             "apiVersion": "2022-03-01",
             "name": "[format('{0}/{1}/{2}/{3}', parameters('recoveryServiceVaultName'), variables('backupFabricName'), variables('protectionContainerName'), variables('protectedItemName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('recoveryServiceVaultName'), variables('customBackupPolicyName'))]",
-                "[resourceId('Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers', parameters('recoveryServiceVaultName'), variables('backupFabricName'), variables('protectionContainerName'))]"
+                "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('recoveryServiceVaultName'), variables('customBackupPolicyName'))]"
             ],
             "properties": {
-                "backupManagementType": "AzureStorage",
-                "workloadType": "AzureFileShare",
-                "friendlyName": "patate",
-                "protectedItemType": "AzureFileShareProtectedItem",
+                "backupManagementType": "AzureIaasVM",
                 "policyId": "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', parameters('recoveryServiceVaultName'), variables('customBackupPolicyName'))]",
-                "sourceResourceId": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+                "protectedItemType": "Microsoft.Compute/virtualMachines",
+                "sourceResourceId": "[resourceId(parameters('virtualMachineSubscriptionId'), parameters('virtualMachineResourceGroupName'), 'Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+                "workloadType": "VM"
             }
         }
     ]

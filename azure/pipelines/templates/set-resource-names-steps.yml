@@ -248,17 +248,6 @@ steps:
       --solution-name "${{ parameters.solutionName }}"
       --variable-name "${{ parameters.recoveryServiceVaultNameVariableName }}"
 
-# Setting Recovery Service Vault related resource names.
-- task: Bash@3
-  displayName: "Set Recovery Service Vault's Resource Name Variable"
-  inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
-    arguments: >-
-      --environment-name "${{ parameters.environmentName }}"
-      --resource-type "Microsoft.RecoveryServices/vaults"
-      --solution-name "${{ parameters.solutionName }}"
-      --variable-name "${{ parameters.recoveryServiceVaultNameVariableName }}"
-
 # Setting Virtual Machine related resource names.
 - task: Bash@3
   displayName: "Set Admin Virtual Machine's Network Interface Card's Resource Name Variable"
