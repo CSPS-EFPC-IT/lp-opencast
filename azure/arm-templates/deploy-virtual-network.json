@@ -166,7 +166,7 @@
                     "destinationPortRange": "8080",
                     "direction": "Inbound",
                     "priority": 1010,
-                    "protocol": "*",
+                    "protocol": "TCP",
                     "sourceAddressPrefix": "[parameters('applicationSubnetAddressRange')]",
                     "sourcePortRange": "*"
                 }
