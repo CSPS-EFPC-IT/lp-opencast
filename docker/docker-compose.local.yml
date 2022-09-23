@@ -29,7 +29,7 @@ services:
     volumes:
       - opensearch:/usr/share/opensearch/data
 
-  opencast-admin:
+  opencast-adminpresentation:
     image: lp-opencast/adminpresentation:12.2
     environment:
       ELASTICSEARCH_SERVER_HOST: ${ELASTICSEARCH_SERVER_HOST}
