@@ -141,7 +141,7 @@ jobs:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(locationName)'
               templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-bastion-host.json'
+              csmFile: 'lp-common/azure/arm-templates/deploy-bastion-host.json'
               overrideParameters: >-
                 -bastionHostName "$(bastionHostName)"
                 -publicIpAddressName "$(bastionHostPublicIpAddressName)"
@@ -161,7 +161,7 @@ jobs:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(locationName)'
               templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-db-for-mariadb.json'
+              csmFile: 'lp-common/azure/arm-templates/deploy-db-for-mariadb.json'
               overrideParameters: >-
                 -databaseServerAdminPassword "$(databaseServerAdminPassword)"
                 -databaseServerAdminUsername "$(databaseServerAdminUsername)"
@@ -186,7 +186,7 @@ jobs:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(locationName)'
               templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-private-dns-zone.json'
+              csmFile: 'lp-common/azure/arm-templates/deploy-private-dns-zone.json'
               overrideParameters: >-
                 -privateDnsZoneName "$(databaseServerPrivateDnsZoneName)"
                 -resourceTags $(resourceTags)
@@ -313,7 +313,7 @@ jobs:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(locationName)'
               templateLocation: 'Linked artifact'
-              csmFile: 'lp-opencast/azure/arm-templates/deploy-recovery-service-vault-for-virtual-machine.json'
+              csmFile: 'lp-common/azure/arm-templates/deploy-recovery-service-vault-for-virtual-machine.json'
               overrideParameters: >-
                 -dailyBackupRetentionPeriod $(recoveryServiceVaultDailyBackupRetentionPeriod)
                 -dailyBackupScheduleRunTime "$(recoveryServiceVaultDailyBackupScheduleRunTime)"

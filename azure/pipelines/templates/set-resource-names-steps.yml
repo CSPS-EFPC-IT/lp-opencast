@@ -59,7 +59,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application Gateway's User Assigned Identity's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name 'AG'
       --environment-name "${{ parameters.environmentName }}"
@@ -70,7 +70,7 @@ steps:
 - task: Bash@3
   displayName: "Set Key Vaults' Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.KeyVault/vaults"
@@ -81,7 +81,7 @@ steps:
 - task: Bash@3
   displayName: "Set Log Analytics Workspace's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.OperationalInsights/workspaces"
@@ -92,7 +92,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application Gateway's Network Security Group's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "AG"
       --environment-name "${{ parameters.environmentName }}"
@@ -103,7 +103,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application's Network Security Group's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "App"
       --environment-name "${{ parameters.environmentName }}"
@@ -114,7 +114,7 @@ steps:
 - task: Bash@3
   displayName: "Set Data's Network Security Group's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Data"
       --environment-name "${{ parameters.environmentName }}"
@@ -125,7 +125,7 @@ steps:
 - task: Bash@3
   displayName: "Set Virtual Network's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/virtualNetworks"
@@ -135,7 +135,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application Gateway's VNet Subnet's Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "AG"
       --environment-name "${{ parameters.environmentName }}"
@@ -146,7 +146,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application's VNet Subnet's Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "App"
       --environment-name "${{ parameters.environmentName }}"
@@ -157,7 +157,7 @@ steps:
 - task: Bash@3
   displayName: "Set Data's VNet Subnet's Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Data"
       --environment-name "${{ parameters.environmentName }}"
@@ -169,7 +169,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application Gateway's Public IP Address' Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "AG"
       --environment-name "${{ parameters.environmentName }}"
@@ -180,7 +180,7 @@ steps:
 - task: Bash@3
   displayName: "Set Application Gateway's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/applicationGateways"
@@ -191,7 +191,7 @@ steps:
 - task: Bash@3
   displayName: "Set Bastion Host's Public IP Address' Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "BH"
       --environment-name "${{ parameters.environmentName }}"
@@ -202,7 +202,7 @@ steps:
 - task: Bash@3
   displayName: "Set Bastion Host's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/bastionHosts"
@@ -213,7 +213,7 @@ steps:
 - task: Bash@3
   displayName: "Set DB for MariaDB Server's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.DBforMariaDB/servers"
@@ -229,7 +229,7 @@ steps:
 - task: Bash@3
   displayName: "Set MariaDB Server Private Endpoint's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.Network/privateEndpoints"
@@ -241,7 +241,7 @@ steps:
 - task: Bash@3
   displayName: "Set Recovery Service Vault's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --environment-name "${{ parameters.environmentName }}"
       --resource-type "Microsoft.RecoveryServices/vaults"
@@ -252,7 +252,7 @@ steps:
 - task: Bash@3
   displayName: "Set Admin Virtual Machine's Network Interface Card's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Admin-VM"
       --environment-name "${{ parameters.environmentName }}"
@@ -263,7 +263,7 @@ steps:
 - task: Bash@3
   displayName: "Set Admin Virtual Machine's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Admin"
       --environment-name "${{ parameters.environmentName }}"
@@ -274,7 +274,7 @@ steps:
 - task: Bash@3
   displayName: "Set Admin Virtual Machine's OS Disk's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Admin-VM-OS"
       --environment-name "${{ parameters.environmentName }}"
@@ -285,7 +285,7 @@ steps:
 - task: Bash@3
   displayName: "Set Admin Virtual Machine's Data Disk's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Admin-VM-Data"
       --environment-name "${{ parameters.environmentName }}"
@@ -296,7 +296,7 @@ steps:
 - task: Bash@3
   displayName: "Set Worker Virtual Machine's Network Interface Card's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Worker-VM"
       --environment-name "${{ parameters.environmentName }}"
@@ -307,7 +307,7 @@ steps:
 - task: Bash@3
   displayName: "Set Worker Virtual Machine's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Worker"
       --environment-name "${{ parameters.environmentName }}"
@@ -318,7 +318,7 @@ steps:
 - task: Bash@3
   displayName: "Set Admin Virtual Machine's OS Disk's Resource Name Variable"
   inputs:
-    filePath: 'lp-opencast/azure/scripts/set_resource_name_variable.sh'
+    filePath: 'lp-common/azure/scripts/set_resource_name_variable.sh'
     arguments: >-
       --component-name "Worker-VM-OS"
       --environment-name "${{ parameters.environmentName }}"
