@@ -53,6 +53,7 @@ jobs:
               environmentName: '$(environmentName)'
               keyVaultNameVariableName: 'keyVaultName'
               logAnalyticsWorkspaceNameVariableName: 'logAnalyticsWorkspaceName'
+              recoveryServiceVaultNameVariableName: 'recoveryServiceVaultName'
               solutionName: '$(solutionName)'
               virtualNetworkNameVariableName: 'virtualNetworkName'
               workerVirtualMachineNameVariableName: 'workerVirtualMachineName'
@@ -301,3 +302,23 @@ jobs:
                 -workerVirtualMachineSize "$(workerVirtualMachineSize)"
               deploymentMode: 'Incremental'
               deploymentName: '$(solutionName)_virtual-machines_$(Build.BuildNumber)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Recovery Service Vault Resource'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(serviceConnectionName)'
+              subscriptionId: '$(subscriptionId)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(locationName)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'lp-opencast/azure/arm-templates/deploy-recovery-service-vault-for-virtual-machine.json'
+              overrideParameters: >-
+                -dailyBackupRetentionPeriod $(recoveryServiceVaultDailyBackupRetentionPeriod)
+                -dailyBackupScheduleRunTime "$(recoveryServiceVaultDailyBackupScheduleRunTime)"
+                -recoveryServiceVaultName "$(recoveryServiceVaultName)"
+                -resourceTags $(resourceTags)
+                -virtualMachineName "$(adminVirtualMachineName)"
+              deploymentMode: 'Incremental'
+              deploymentName: '$(solutionName)_recovery-service-vault-for-vm_$(Build.BuildNumber)'
