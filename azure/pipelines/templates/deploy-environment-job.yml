@@ -1,6 +1,8 @@
 parameters:
 - name: env
   type: string
+  values:
+  - dev
 
 resources:
   repositories:
@@ -10,11 +12,10 @@ resources:
 
 variables:
 - group: appDev-pb-public
+- group: common-${{ parameters.env }}-secret
 - group: lp-opencast-public
-- ${{ if eq(parameters.env, 'dev') }}:
-  - group: common-dev-secret
-  - group: lp-opencast-dev-public
-  - group: lp-opencast-dev-secret
+- group: lp-opencast-${{ parameters.env }}-public
+- group: lp-opencast-${{ parameters.env }}-secret
 
 jobs:
 - deployment: deployResourcesJob
