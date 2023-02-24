@@ -190,17 +190,17 @@
                 "description": "The base URL of the Generic Shell Scripts repository raw files."
             }
         },
-        "locationName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "The name of the Azure Location where resources will be created."
-            }
-        },
         "projectRepoRawFilesBaseUrl": {
             "type": "string",
             "metadata": {
                 "description": "The base URL of the current project repository raw files."
+            }
+        },
+        "resourceLocation": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The name of the Azure location where resources will be created."
             }
         },
         "resourceTags": {
@@ -334,7 +334,7 @@
             "apiVersion": "2020-05-01",
             "name": "[parameters('adminVirtualMachineNetworkInterfaceCardName')]",
             "tags": "[parameters('resourceTags')]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -366,7 +366,7 @@
             "apiVersion": "2022-03-02",
             "name": "[parameters('adminVirtualMachineDataDiskName')]",
             "tags": "[parameters('resourceTags')]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "sku": {
                 "name": "Premium_LRS",
                 "tier": "Premium"
@@ -386,7 +386,7 @@
             "apiVersion": "2020-06-01",
             "name": "[parameters('adminVirtualMachineName')]",
             "tags": "[union(parameters('resourceTags'), parameters('virtualMachineTags'))]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('adminVirtualMachineNetworkInterfaceCardName'))]",
                 "[resourceId('Microsoft.Compute/disks', parameters('adminVirtualMachineDataDiskName'))]"
@@ -450,7 +450,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2020-06-01",
             "name": "[concat(parameters('adminVirtualMachineName'),'/setup')]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('adminVirtualMachineName'))]"
             ],
@@ -483,7 +483,7 @@
             "apiVersion": "2020-05-01",
             "name": "[parameters('workerVirtualMachineNetworkInterfaceCardName')]",
             "tags": "[parameters('resourceTags')]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -511,7 +511,7 @@
             "apiVersion": "2020-06-01",
             "name": "[parameters('workerVirtualMachineName')]",
             "tags": "[union(parameters('resourceTags'), parameters('virtualMachineTags'))]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('workerVirtualMachineNetworkInterfaceCardName'))]"
             ],
@@ -563,7 +563,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2020-06-01",
             "name": "[concat(parameters('workerVirtualMachineName'),'/setup')]",
-            "location": "[parameters('locationName')]",
+            "location": "[parameters('resourceLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines/', parameters('workerVirtualMachineName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('adminVirtualMachineName'), 'setup')]"
