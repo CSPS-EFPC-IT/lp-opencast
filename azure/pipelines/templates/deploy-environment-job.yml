@@ -69,7 +69,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-log-analytics-workspace.json'
               overrideParameters: >-
@@ -87,7 +87,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-network.json'
               overrideParameters: >-
@@ -116,7 +116,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-opencast/azure/arm-templates/deploy-application-gateway.json'
               overrideParameters: >-
@@ -140,7 +140,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-bastion-host.json'
               overrideParameters: >-
@@ -160,7 +160,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-db-for-mariadb.json'
               overrideParameters: >-
@@ -185,7 +185,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-private-dns-zone.json'
               overrideParameters: >-
@@ -204,7 +204,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-private-endpoint.json'
               overrideParameters: >-
@@ -254,7 +254,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-opencast/azure/arm-templates/deploy-virtual-machines.json'
               overrideParameters: >-
@@ -312,7 +312,7 @@ jobs:
               subscriptionId: '$(subscriptionId)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: '$(locationName)'
+              location: '$(resourceLocation)'
               templateLocation: 'Linked artifact'
               csmFile: 'lp-common/azure/arm-templates/deploy-recovery-service-vault-for-virtual-machine.json'
               overrideParameters: >-
