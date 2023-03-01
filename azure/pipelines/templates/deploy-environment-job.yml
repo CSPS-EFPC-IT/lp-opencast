@@ -23,6 +23,8 @@ jobs:
   pool:
     vmImage: ubuntu-20.04
   environment: '$(resourceGroupName)'
+  variables:
+    deploymentNamePrefix: '$(solutionName)_deploy-environment_$(Build.BuildNumber)'
   strategy:
       runOnce:
         deploy:
@@ -77,7 +79,7 @@ jobs:
                 -logAnalyticsWorkspaceRetentionDays "$(logAnalyticsWorkspaceRetentionDays)"
                 -resourceTags $(resourceTags)
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_log-analytics-workspace_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_law'
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Virtual Network Resource'
@@ -106,7 +108,7 @@ jobs:
                 -virtualNetworkAddressRange "$(virtualNetworkAddressRangePrefix).0/24"
                 -virtualNetworkName "$(virtualNetworkName)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_virtual-network_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_vnet'
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Application Gateway Resource'
@@ -130,7 +132,7 @@ jobs:
                 -virtualNetworkSubnetName "$(applicationGatewaySubnetName)"
                 -resourceTags $(resourceTags)
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_application-gateway_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_app-gw'
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Bastion Host Resource'
@@ -149,7 +151,7 @@ jobs:
                 -virtualNetworkName "$(virtualNetworkName)"
                 -resourceTags $(resourceTags)
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_bastion-host_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_bastion'
 
           - task: AzureResourceManagerTemplateDeployment@3
             name: deployDbForMariaDbServerResource
@@ -174,7 +176,7 @@ jobs:
                 -logAnalyticsWorkspaceName "$(logAnalyticsWorkspaceName)"
                 -resourceTags $(resourceTags)
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_db-for-mariadb_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_mariadb'
 
           - task: AzureResourceManagerTemplateDeployment@3
             name: deployPrivateDnsZoneForMariaDbServerResource
@@ -193,7 +195,7 @@ jobs:
                 -resourceTags $(resourceTags)
                 -virtualNetworkName "$(virtualNetworkName)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_mariadb-private-dns-zone_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_mariadb-pdz'
 
           - task: AzureResourceManagerTemplateDeployment@3
             name: deployPrivateEnpointForMariaDbServerResource
@@ -215,7 +217,7 @@ jobs:
                 -virtualNetworkName "$(virtualNetworkName)"
                 -virtualNetworkSubnetName "$(dataSubnetName)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_mariadb-private-endpoint_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_mariadb-pe'
 
           # Overwrite library defined containerRepositoryTag variable if equal to "latest".
           - task: AzureCLI@2
@@ -302,7 +304,7 @@ jobs:
                 -workerVirtualMachineOsDiskName "$(workerVirtualMachineOsDiskName)"
                 -workerVirtualMachineSize "$(workerVirtualMachineSize)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_virtual-machines_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_vm'
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy Recovery Service Vault Resource'
@@ -322,4 +324,4 @@ jobs:
                 -resourceTags $(resourceTags)
                 -virtualMachineName "$(adminVirtualMachineName)"
               deploymentMode: 'Incremental'
-              deploymentName: '$(solutionName)_recovery-service-vault-for-vm_$(Build.BuildNumber)'
+              deploymentName: '$(deploymentNamePrefix)_rsv'
